@@ -5,6 +5,20 @@ import firebase_admin
 from firebase_admin import credentials, firestore
 import requests
 
+# 🔍 DEBUG: Controlla cosa contiene st.secrets
+st.write("🔐 TUTTE LE CHIAVI NEI SECRETS:", list(st.secrets.keys()))
+
+if "firebase" in st.secrets:
+    st.write("✅ Contenuto di st.secrets['firebase']:", st.secrets["firebase"])
+else:
+    st.warning("⚠️ 'firebase' non è presente in st.secrets")
+
+if "firebase_web_api_key" in st.secrets:
+    st.write("✅ Chiave 'firebase_web_api_key' presente:", st.secrets["firebase_web_api_key"])
+else:
+    st.error("❌ 'firebase_web_api_key' NON presente in st.secrets!")
+    st.stop()
+
 # 🔐 Firebase config
 firebase_config = {
     "type": st.secrets["firebase"]["type"],
