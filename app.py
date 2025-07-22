@@ -96,16 +96,19 @@ if st.session_state["user"] is None:
         if st.button("Registrati"):
             result = firebase_register(email, password)
 
-            if "error" in result:
-                st.error(f"Errore: {result['error']['message']}")
-            else:
-                send_email_verification(result["idToken"])
-                # ⛔ Salva in Firestore con approvazione False
-                db.collection("utenti_autorizzati").document(email).set({
-                    "approved": False
-                })
-                st.success("✅ Registrazione completata! Controlla la tua email per verificarla.")
-                st.info("Attendi l'approvazione dell'amministratore.")
+if "error" in result:
+    st.error(f"Errore: {result['error']['message']}")
+else:
+    send_email_verification(result["idToken"])
+    
+    # ✅ Salva l'utente in Firestore con approved=False
+    db.collection("utenti_autorizzati").document(email).set({
+        "email": email,
+        "approved": False
+    })
+
+    st.success("✅ Registrazione avvenuta! Ti abbiamo inviato un'email di verifica.")
+    st.info("Verifica l'email e attendi l'approvazione da parte dell'amministratore.")
 
     st.stop()
 
