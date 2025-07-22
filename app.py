@@ -5,13 +5,6 @@ import firebase_admin
 from firebase_admin import credentials, firestore
 import requests
 
-# 🔐 DEBUG - opzionale
-if "firebase" in st.secrets:
-    st.write("✅ Firebase config trovata")
-if "firebase_web_api_key" not in st.secrets:
-    st.error("❌ firebase_web_api_key mancante in st.secrets!")
-    st.stop()
-
 # 🔐 Config Firebase
 firebase_config = {
     "type": st.secrets["firebase"]["type"],
