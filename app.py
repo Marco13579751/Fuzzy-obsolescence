@@ -37,7 +37,7 @@ if "user_email" not in st.session_state:
 if st.session_state.user_email:
     if st.button("🔓 Logout"):
         st.session_state.user_email = None
-        st.experimental_rerun()
+        st.rerun()
 
 # 🔐 Login
 if not st.session_state.user_email:
@@ -59,7 +59,7 @@ if not st.session_state.user_email:
             if "idToken" in data:
                 st.session_state.user_email = email
                 st.success("✅ Login riuscito!")
-                st.experimental_rerun()
+                st.rerun()
             else:
                 st.error("❌ Credenziali errate")
         except Exception as e:
