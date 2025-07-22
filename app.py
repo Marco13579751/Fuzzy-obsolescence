@@ -63,7 +63,7 @@ def login(email, password):
 # Logout
 if "user" in st.session_state:
     with st.sidebar:
-        st.markdown(f"**Email:** {st.session_state.user['email']}")
+        st.markdown(f"**Email:** {st.session_state['user']['email']}")
         if st.button("Logout"):
             del st.session_state.user
             st.rerun()
