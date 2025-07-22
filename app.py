@@ -107,6 +107,7 @@ st.title("🏥 Dashboard Obsolescenza Dispositivo Medico")
 
 # 👮‍♂️ Se sei admin, gestisci approvazioni
 if st.session_state["user"] == "andreolimarco01@gmail.com":  
+    st.write("✅ Accesso come amministratore")
     st.subheader("🔐 Gestione utenti registrati")
     utenti = db.collection("utenti_autorizzati").stream()
     for u in utenti:
