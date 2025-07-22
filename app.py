@@ -7,7 +7,7 @@ import requests
 
 # --- Configurazione e inizializzazione Firebase ---
 firebase_config = {
-    "type": st.secrets["firebase"]["type"],
+    "ype": st.secrets["firebase"]["type"],
     "project_id": st.secrets["firebase"]["project_id"],
     "private_key_id": st.secrets["firebase"]["private_key_id"],
     "private_key": st.secrets["firebase"]["private_key"].replace("\\n", "\n"),
