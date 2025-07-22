@@ -38,8 +38,9 @@ if st.session_state["user"] is None:
     if st.button("Login"):
         auth_users = st.secrets["auth"]
         for key in auth_users:
-            if email_input == auth_users[key].get("email") and password_input == auth_users[key].get("password"):
-                st.session_state["user"] = email_input
+            creds = auth_users[key]
+            if email_input == creds["email"] and password_input == creds["password"]:
+                st.session_state["user"] = creds["email"]
                 st.rerun()
         st.error("❌ Credenziali errate")
     st.stop()
@@ -81,13 +82,13 @@ if st.button("Salva valutazione"):
         "obsolescenza": float(f"{obsolescenza:.2f}")
     }
     user_email = st.session_state["user"]
-    db.collection("valutazioni").document(user_email).collection("dati").add(doc)
+    db.collection("ospedali").document(user_email).collection("valutazioni").add(doc)
     st.success("✅ Dati salvati su Firebase Firestore!")
 
 # 📋 Visualizzazione delle valutazioni salvate dall'ospedale
 st.subheader("📋 Valutazioni salvate")
 user_email = st.session_state["user"]
-valutazioni_ref = db.collection("valutazioni").document(user_email).collection("dati")
+valutazioni_ref = db.collection("ospedali").document(user_email).collection("valutazioni")
 docs = valutazioni_ref.stream()
 
 for doc in docs:
