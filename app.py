@@ -120,7 +120,7 @@ if st.session_state["user"] == "andreolimarco01@gmail.com":
             if col2.button("Approva", key=email):
                 db.collection("utenti_autorizzati").document(email).update({"approved": True})
                 st.success(f"{email} approvato ✅")
-                st.experimental_rerun()
+                st.rerun()
 
 # --- Input utente ---
 eta = st.slider("Età del dispositivo (anni)", 0, 30, 10)
