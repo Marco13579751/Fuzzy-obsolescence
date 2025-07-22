@@ -3,7 +3,7 @@ scikit-fuzzy
 numpy
 scipy
 firebase-admin
-
+pyrebase4
 
 
 
