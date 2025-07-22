@@ -36,11 +36,12 @@ if st.session_state["user"] is None:
     password_input = st.text_input("Password", type="password")
 
     if st.button("Login"):
-        auth_users = st.secrets["auth"]
-        for key in auth_users:
-            creds = auth_users[key]
-            if email_input == creds["email"] and password_input == creds["password"]:
-                st.session_state["user"] = creds["email"]
+        auth_users = dict(st.secrets["auth"])
+        for key, value in auth_users.items():
+            if isinstance(value, str):
+                continue
+            if email_input == value.get("email") and password_input == value.get("password"):
+                st.session_state["user"] = value.get("email")
                 st.rerun()
         st.error("❌ Credenziali errate")
     st.stop()
@@ -51,7 +52,7 @@ st.title("Valutazione Obsolescenza Dispositivo Medico")
 eta = st.slider("Età del dispositivo (anni)", 0, 30, 10)
 utilizzo = st.slider("Ore di utilizzo annuali", 0, 5000, 1000)
 
-# 🎛️ Definizione fuzzy
+# 🎛⃣ Definizione fuzzy
 eta_range = np.arange(0, 31, 1)
 uso_range = np.arange(0, 5001, 100)
 
@@ -74,7 +75,7 @@ if obsolescenza > 0.6:
 else:
     st.success("✅ Dispositivo in buone condizioni")
 
-# 📅 Salva nel database nella collezione dell'ospedale
+# 🗕️ Salva nel database nella collezione dell'ospedale
 if st.button("Salva valutazione"):
     doc = {
         "eta": eta,
