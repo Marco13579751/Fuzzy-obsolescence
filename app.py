@@ -41,7 +41,8 @@ if not st.session_state.logged_in:
             st.session_state.logged_in = True
             st.session_state.user_email = email
             st.success("✅ Login effettuato!")
-            st.experimental_rerun()
+            st.rerun()
+
         else:
             st.error("❌ Credenziali errate")
     st.stop()
