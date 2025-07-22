@@ -2,3 +2,5 @@ streamlit
 scikit-fuzzy
 numpy
 scipy
+firebase-admin
+python-jose
