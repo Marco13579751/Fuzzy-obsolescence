@@ -3,8 +3,9 @@ import numpy as np
 import skfuzzy as fuzz
 import firebase_admin
 from firebase_admin import credentials, firestore
+import pyrebase
 
-# 🔐 Configura Firebase con i segreti da .streamlit/secrets.toml
+# 🔐 Firebase Admin SDK (per Firestore)
 firebase_config = {
     "type": st.secrets["firebase"]["type"],
     "project_id": st.secrets["firebase"]["project_id"],
@@ -19,29 +20,54 @@ firebase_config = {
     "universe_domain": st.secrets["firebase"]["universe_domain"]
 }
 
-# 🔌 Inizializza Firebase una sola volta
 if not firebase_admin._apps:
     cred = credentials.Certificate(firebase_config)
     firebase_admin.initialize_app(cred)
-
 db = firestore.client()
 
-# 🔐 Login Ospedale
-ospedale = st.text_input("🔑 Inserisci l'ID dell'ospedale", max_chars=30)
+# 🔑 Firebase Client SDK per autenticazione
+pyrebase_config = {
+    "apiKey": st.secrets["firebase"]["api_key"],
+    "authDomain": st.secrets["firebase"]["auth_domain"],
+    "projectId": st.secrets["firebase"]["project_id"],
+    "storageBucket": st.secrets["firebase"]["storage_bucket"],
+    "messagingSenderId": st.secrets["firebase"]["messaging_sender_id"],
+    "appId": st.secrets["firebase"]["app_id"],
+    "databaseURL": st.secrets["firebase"]["database_url"]
+}
+firebase = pyrebase.initialize_app(pyrebase_config)
+auth = firebase.auth()
 
-if ospedale:
-    st.success(f"Ospedale selezionato: `{ospedale}`")
-else:
-    st.warning("Inserisci l'ID dell'ospedale per continuare.")
+# 🧑‍⚕️ Login ospedale
+st.title("Accesso Ospedale 🔐")
+with st.form("login_form"):
+    email = st.text_input("Email")
+    password = st.text_input("Password", type="password")
+    submitted = st.form_submit_button("Accedi")
+
+if submitted:
+    try:
+        user = auth.sign_in_with_email_and_password(email, password)
+        st.session_state["user"] = user
+        st.success("✅ Login effettuato")
+    except Exception as e:
+        st.error("❌ Email o password errati")
+
+if "user" not in st.session_state:
     st.stop()
 
-# 📌 Interfaccia utente
+user = st.session_state["user"]
+user_id = user["localId"]  # UID univoco dell'ospedale
+
+# ----------------------------
+# Sezione principale dopo login
+# ----------------------------
 st.title("Valutazione Obsolescenza Dispositivo Medico")
 
 eta = st.slider("Età del dispositivo (anni)", 0, 30, 10)
 utilizzo = st.slider("Ore di utilizzo annuali", 0, 5000, 1000)
 
-# 🎛️ Definizione fuzzy
+# 🎛️ Logica fuzzy
 eta_range = np.arange(0, 31, 1)
 uso_range = np.arange(0, 5001, 100)
 
@@ -57,34 +83,35 @@ uso_a = fuzz.interp_membership(uso_range, alto, utilizzo)
 
 obsolescenza = max(eta_v, uso_a)
 
-# 🎯 Risultato
 st.write("**Grado di obsolescenza:**", f"{obsolescenza:.2f}")
 if obsolescenza > 0.6:
     st.error("⚠️ Dispositivo potenzialmente obsoleto")
 else:
     st.success("✅ Dispositivo in buone condizioni")
 
-# 💾 Salva nel database
+# 💾 Salva valutazione
 if st.button("💾 Salva valutazione"):
     doc = {
         "eta": eta,
         "utilizzo": utilizzo,
         "obsolescenza": float(f"{obsolescenza:.2f}")
     }
-    db.collection("ospedali").document(ospedale).collection("valutazioni").add(doc)
-    st.success("✅ Dati salvati nella sezione ospedale su Firebase Firestore!")
+    db.collection("ospedali").document(user_id).collection("valutazioni").add(doc)
+    st.success("✅ Dati salvati nel database!")
 
-# 📊 Visualizza valutazioni salvate
+# 📊 Visualizza valutazioni
 st.subheader("📂 Valutazioni salvate")
 try:
-    docs = db.collection("ospedali").document(ospedale).collection("valutazioni").stream()
-    records = [{"Età (anni)": d.get("eta"),
-                "Ore utilizzo": d.get("utilizzo"),
-                "Obsolescenza": d.get("obsolescenza")} for d in docs]
+    docs = db.collection("ospedali").document(user_id).collection("valutazioni").stream()
+    dati = [{
+        "Età (anni)": d.get("eta"),
+        "Ore utilizzo": d.get("utilizzo"),
+        "Obsolescenza": d.get("obsolescenza")
+    } for d in docs]
 
-    if records:
-        st.dataframe(records)
+    if dati:
+        st.dataframe(dati)
     else:
-        st.info("Nessuna valutazione salvata per questo ospedale.")
+        st.info("Nessuna valutazione presente.")
 except Exception as e:
-    st.error(f"Errore nella lettura del database: {e}")
+    st.error("Errore nel caricamento dati.")
