@@ -3,22 +3,34 @@ import numpy as np
 import skfuzzy as fuzz
 import firebase_admin
 from firebase_admin import credentials, firestore
-import pyrebase
-from datetime import datetime
 
-# 🌐 Firebase config
-firebase_auth_config = {
-    "apiKey": st.secrets["firebase_auth"]["api_key"],
-    "authDomain": st.secrets["firebase_auth"]["auth_domain"],
-    "databaseURL": st.secrets["firebase_auth"]["database_url"],
-    "storageBucket": st.secrets["firebase_auth"]["storage_bucket"],
-    "messagingSenderId": st.secrets["firebase_auth"]["messaging_sender_id"],
-    "appId": st.secrets["firebase_auth"]["app_id"]
-}
-firebase = pyrebase.initialize_app(firebase_auth_config)
-auth = firebase.auth()
+# Autenticazione semplice ospedale
+with st.sidebar:
+    st.header("Login Ospedale")
+    email = st.text_input("Email")
+    password = st.text_input("Password", type="password")
+    login_btn = st.button("Login")
 
-# 🔐 Firebase Admin SDK init
+logged_in = False
+ospedale_id = None
+
+if login_btn:
+    for key in st.secrets["auth"]:
+        if key.endswith("_email") and st.secrets["auth"][key] == email:
+            user_prefix = key.replace("_email", "")
+            if st.secrets["auth"].get(f"{user_prefix}_password") == password:
+                logged_in = True
+                ospedale_id = user_prefix
+                st.success(f"✅ Accesso effettuato come {ospedale_id}")
+                break
+    if not logged_in:
+        st.error("❌ Credenziali non valide")
+
+# Blocca tutto se non loggato
+if not logged_in:
+    st.stop()
+
+# Configura Firebase
 firebase_config = {
     "type": st.secrets["firebase"]["type"],
     "project_id": st.secrets["firebase"]["project_id"],
@@ -39,35 +51,13 @@ if not firebase_admin._apps:
 
 db = firestore.client()
 
-# ---------------------
-# 🔐 Login
-# ---------------------
-st.title("Login Ospedale")
-
-if "user" not in st.session_state:
-    email = st.text_input("Email")
-    password = st.text_input("Password", type="password")
-    if st.button("Accedi"):
-        try:
-            user = auth.sign_in_with_email_and_password(email, password)
-            st.session_state.user = user
-            st.rerun()
-        except:
-            st.error("Credenziali non valide. Riprova.")
-    st.stop()
-
-user_email = st.session_state.user["email"]
-st.success(f"✅ Accesso effettuato come **{user_email}**")
-
-# ---------------------
-# 📋 Valutazione dispositivo
-# ---------------------
-st.header("Valutazione Obsolescenza Dispositivo Medico")
+# UI valutazione
+st.title("Valutazione Obsolescenza Dispositivo Medico")
 
 eta = st.slider("Età del dispositivo (anni)", 0, 30, 10)
 utilizzo = st.slider("Ore di utilizzo annuali", 0, 5000, 1000)
 
-# Fuzzy logic
+# Def fuzzy
 eta_range = np.arange(0, 31, 1)
 uso_range = np.arange(0, 5001, 100)
 
@@ -89,33 +79,20 @@ if obsolescenza > 0.6:
 else:
     st.success("✅ Dispositivo in buone condizioni")
 
-# ---------------------
-# 💾 Salva valutazione
-# ---------------------
+# Salva valutazione
 if st.button("Salva valutazione"):
     doc = {
-        "utente": user_email,
         "eta": eta,
         "utilizzo": utilizzo,
-        "obsolescenza": float(f"{obsolescenza:.2f}"),
-        "timestamp": datetime.utcnow()
+        "obsolescenza": float(f"{obsolescenza:.2f}")
     }
-    db.collection("valutazioni").add(doc)
-    st.success("✅ Dati salvati su Firebase!")
+    db.collection(f"valutazioni_{ospedale_id}").add(doc)
+    st.success("✅ Dati salvati nel database!")
 
-# ---------------------
-# 📄 Visualizza valutazioni utente
-# ---------------------
-st.header("📊 Storico valutazioni")
+# Visualizza valutazioni
+st.subheader("📊 Valutazioni precedenti")
+valutazioni = db.collection(f"valutazioni_{ospedale_id}").stream()
 
-valutazioni = db.collection("valutazioni").where("utente", "==", user_email).stream()
-
-for val in valutazioni:
-    data = val.to_dict()
-    st.markdown(f"""
-    - 📅 Data: `{data['timestamp'].strftime('%Y-%m-%d %H:%M:%S') if 'timestamp' in data else 'N/A'}`
-    - 🧪 Età: `{data['eta']} anni`
-    - ⚙️ Utilizzo: `{data['utilizzo']} ore/anno`
-    - 📉 Obsolescenza: `{data['obsolescenza']}`
-    ---
-    """)
+for v in valutazioni:
+    d = v.to_dict()
+    st.write(f"🩺 Età: {d['eta']} anni | 🕓 Utilizzo: {d['utilizzo']} ore | ⚙️ Obsolescenza: {d['obsolescenza']}")
