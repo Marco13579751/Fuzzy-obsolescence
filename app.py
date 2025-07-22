@@ -5,7 +5,7 @@ import firebase_admin
 from firebase_admin import credentials, firestore
 import requests
 
-# 📦 Firebase Admin SDK
+# 🔐 Firebase config
 firebase_config = {
     "type": st.secrets["firebase"]["type"],
     "project_id": st.secrets["firebase"]["project_id"],
@@ -20,54 +20,86 @@ firebase_config = {
     "universe_domain": st.secrets["firebase"]["universe_domain"]
 }
 
-FIREBASE_API_KEY = st.secrets["firebase"]["api_key"]  # Devi aggiungerlo nei secrets
+API_KEY = st.secrets["firebase_web_api_key"]
 
-# 🔐 Inizializza Firebase Admin una sola volta
+# 🔌 Inizializza Firebase Admin SDK
 if not firebase_admin._apps:
     cred = credentials.Certificate(firebase_config)
     firebase_admin.initialize_app(cred)
-
 db = firestore.client()
 
-# 👤 Gestione sessione utente
-if "user_email" not in st.session_state:
-    st.session_state.user_email = None
+# 📦 Funzioni Firebase REST
+def firebase_signin(email, password):
+    url = f"https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key={API_KEY}"
+    res = requests.post(url, json={"email": email, "password": password, "returnSecureToken": True})
+    return res.json()
 
-# 🚪 Logout
-if st.session_state.user_email:
-    if st.button("🔓 Logout"):
-        st.session_state.user_email = None
-        st.rerun()
+def firebase_register(email, password):
+    url = f"https://identitytoolkit.googleapis.com/v1/accounts:signUp?key={API_KEY}"
+    res = requests.post(url, json={"email": email, "password": password, "returnSecureToken": True})
+    return res.json()
 
-# 🔐 Login
-if not st.session_state.user_email:
-    st.title("Login Ospedale via Firebase")
+def send_email_verification(id_token):
+    url = f"https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key={API_KEY}"
+    res = requests.post(url, json={"requestType": "VERIFY_EMAIL", "idToken": id_token})
+    return res.json()
+
+def get_user_data(id_token):
+    url = f"https://identitytoolkit.googleapis.com/v1/accounts:lookup?key={API_KEY}"
+    res = requests.post(url, json={"idToken": id_token})
+    return res.json()
+
+# 🧠 Stato
+if "user" not in st.session_state:
+    st.session_state["user"] = None
+if "id_token" not in st.session_state:
+    st.session_state["id_token"] = None
+
+# 🔁 Auth UI
+if st.session_state["user"] is None:
+    st.title("🔐 Accesso Ospedale")
+
+    mode = st.radio("Seleziona modalità", ["Login", "Registrati"])
+
     email = st.text_input("Email")
     password = st.text_input("Password", type="password")
 
-    if st.button("Login"):
-        try:
-            resp = requests.post(
-                f"https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key={FIREBASE_API_KEY}",
-                json={
-                    "email": email,
-                    "password": password,
-                    "returnSecureToken": True
-                }
-            )
-            data = resp.json()
-            if "idToken" in data:
-                st.session_state.user_email = email
-                st.success("✅ Login riuscito!")
-                st.rerun()
+    if mode == "Login":
+        if st.button("Login"):
+            result = firebase_signin(email, password)
+
+            if "error" in result:
+                st.error(f"Errore: {result['error']['message']}")
             else:
-                st.error("❌ Credenziali errate")
-        except Exception as e:
-            st.error(f"Errore: {e}")
+                user_data = get_user_data(result["idToken"])
+                user_info = user_data["users"][0]
+
+                if not user_info.get("emailVerified", False):
+                    st.warning("📧 Verifica la tua email prima di accedere. Controlla la posta.")
+                else:
+                    st.session_state["user"] = result["email"]
+                    st.session_state["id_token"] = result["idToken"]
+                    st.rerun()
+
+    else:  # Registrazione
+        if st.button("Registrati"):
+            result = firebase_register(email, password)
+
+            if "error" in result:
+                st.error(f"Errore: {result['error']['message']}")
+            else:
+                send_email_verification(result["idToken"])
+                st.success("✅ Registrazione avvenuta! Ti abbiamo inviato un'email di verifica.")
+                st.info("Verifica l'email prima di fare il login.")
     st.stop()
 
-# ✅ Utente autenticato
+# ✅ Utente loggato
 st.title("Valutazione Obsolescenza Dispositivo Medico")
+
+if st.button("Logout"):
+    st.session_state["user"] = None
+    st.session_state["id_token"] = None
+    st.rerun()
 
 eta = st.slider("Età del dispositivo (anni)", 0, 30, 10)
 utilizzo = st.slider("Ore di utilizzo annuali", 0, 5000, 1000)
@@ -88,29 +120,26 @@ uso_a = fuzz.interp_membership(uso_range, alto, utilizzo)
 
 obsolescenza = max(eta_v, uso_a)
 
-# 🌟 Risultato
 st.write("**Grado di obsolescenza:**", f"{obsolescenza:.2f}")
 if obsolescenza > 0.6:
     st.error("⚠️ Dispositivo potenzialmente obsoleto")
 else:
     st.success("✅ Dispositivo in buone condizioni")
 
-# 📝 Salva dati su Firestore nella collezione personale dell'ospedale
-if st.button("💾 Salva valutazione"):
+# 📤 Salva nel DB
+user_email = st.session_state["user"]
+if st.button("Salva valutazione"):
     doc = {
         "eta": eta,
         "utilizzo": utilizzo,
         "obsolescenza": float(f"{obsolescenza:.2f}")
     }
-    email = st.session_state.user_email
-    db.collection("ospedali").document(email).collection("valutazioni").add(doc)
-    st.success("✅ Dati salvati con successo!")
+    db.collection("ospedali").document(user_email).collection("valutazioni").add(doc)
+    st.success("✅ Valutazione salvata!")
 
-# 📋 Visualizzazione valutazioni
+# 📋 Visualizzazione
 st.subheader("📋 Valutazioni salvate")
-email = st.session_state.user_email
-valutazioni_ref = db.collection("ospedali").document(email).collection("valutazioni")
-docs = valutazioni_ref.stream()
-for doc in docs:
-    dati = doc.to_dict()
-    st.write(f"- Età: {dati['eta']} anni, Utilizzo: {dati['utilizzo']} ore/anno, Obsolescenza: {dati['obsolescenza']}")
+valutazioni = db.collection("ospedali").document(user_email).collection("valutazioni").stream()
+for doc in valutazioni:
+    d = doc.to_dict()
+    st.write(f"- Età: {d['eta']} | Utilizzo: {d['utilizzo']} | Obsolescenza: {d['obsolescenza']}")
