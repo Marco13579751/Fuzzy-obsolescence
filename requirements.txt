@@ -3,8 +3,7 @@ scikit-fuzzy
 numpy
 scipy
 firebase-admin
-python-jose
-requests
+pyrebase-auth
 
 
 
