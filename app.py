@@ -47,6 +47,11 @@ if st.session_state["user"] is None:
 # ✅ Utente autenticato
 st.title("Valutazione Obsolescenza Dispositivo Medico")
 
+# 🔓 Logout
+if st.button("Logout"):
+    st.session_state["user"] = None
+    st.rerun()
+
 eta = st.slider("Età del dispositivo (anni)", 0, 30, 10)
 utilizzo = st.slider("Ore di utilizzo annuali", 0, 5000, 1000)
 
