@@ -4,8 +4,21 @@ import skfuzzy as fuzz
 import firebase_admin
 from firebase_admin import credentials, firestore
 import pyrebase
+from datetime import datetime
 
-# 🔐 Firebase Admin SDK (per Firestore)
+# 🌐 Firebase config
+firebase_auth_config = {
+    "apiKey": st.secrets["firebase_auth"]["api_key"],
+    "authDomain": st.secrets["firebase_auth"]["auth_domain"],
+    "databaseURL": st.secrets["firebase_auth"]["database_url"],
+    "storageBucket": st.secrets["firebase_auth"]["storage_bucket"],
+    "messagingSenderId": st.secrets["firebase_auth"]["messaging_sender_id"],
+    "appId": st.secrets["firebase_auth"]["app_id"]
+}
+firebase = pyrebase.initialize_app(firebase_auth_config)
+auth = firebase.auth()
+
+# 🔐 Firebase Admin SDK init
 firebase_config = {
     "type": st.secrets["firebase"]["type"],
     "project_id": st.secrets["firebase"]["project_id"],
@@ -23,51 +36,38 @@ firebase_config = {
 if not firebase_admin._apps:
     cred = credentials.Certificate(firebase_config)
     firebase_admin.initialize_app(cred)
+
 db = firestore.client()
 
-# 🔑 Firebase Client SDK per autenticazione
-pyrebase_config = {
-    "apiKey": st.secrets["firebase"]["api_key"],
-    "authDomain": st.secrets["firebase"]["auth_domain"],
-    "projectId": st.secrets["firebase"]["project_id"],
-    "storageBucket": st.secrets["firebase"]["storage_bucket"],
-    "messagingSenderId": st.secrets["firebase"]["messaging_sender_id"],
-    "appId": st.secrets["firebase"]["app_id"],
-    "databaseURL": st.secrets["firebase"]["database_url"]
-}
-firebase = pyrebase.initialize_app(pyrebase_config)
-auth = firebase.auth()
-
-# 🧑‍⚕️ Login ospedale
-st.title("Accesso Ospedale 🔐")
-with st.form("login_form"):
-    email = st.text_input("Email")
-    password = st.text_input("Password", type="password")
-    submitted = st.form_submit_button("Accedi")
-
-if submitted:
-    try:
-        user = auth.sign_in_with_email_and_password(email, password)
-        st.session_state["user"] = user
-        st.success("✅ Login effettuato")
-    except Exception as e:
-        st.error("❌ Email o password errati")
+# ---------------------
+# 🔐 Login
+# ---------------------
+st.title("Login Ospedale")
 
 if "user" not in st.session_state:
+    email = st.text_input("Email")
+    password = st.text_input("Password", type="password")
+    if st.button("Accedi"):
+        try:
+            user = auth.sign_in_with_email_and_password(email, password)
+            st.session_state.user = user
+            st.rerun()
+        except:
+            st.error("Credenziali non valide. Riprova.")
     st.stop()
 
-user = st.session_state["user"]
-user_id = user["localId"]  # UID univoco dell'ospedale
+user_email = st.session_state.user["email"]
+st.success(f"✅ Accesso effettuato come **{user_email}**")
 
-# ----------------------------
-# Sezione principale dopo login
-# ----------------------------
-st.title("Valutazione Obsolescenza Dispositivo Medico")
+# ---------------------
+# 📋 Valutazione dispositivo
+# ---------------------
+st.header("Valutazione Obsolescenza Dispositivo Medico")
 
 eta = st.slider("Età del dispositivo (anni)", 0, 30, 10)
 utilizzo = st.slider("Ore di utilizzo annuali", 0, 5000, 1000)
 
-# 🎛️ Logica fuzzy
+# Fuzzy logic
 eta_range = np.arange(0, 31, 1)
 uso_range = np.arange(0, 5001, 100)
 
@@ -89,29 +89,33 @@ if obsolescenza > 0.6:
 else:
     st.success("✅ Dispositivo in buone condizioni")
 
+# ---------------------
 # 💾 Salva valutazione
-if st.button("💾 Salva valutazione"):
+# ---------------------
+if st.button("Salva valutazione"):
     doc = {
+        "utente": user_email,
         "eta": eta,
         "utilizzo": utilizzo,
-        "obsolescenza": float(f"{obsolescenza:.2f}")
+        "obsolescenza": float(f"{obsolescenza:.2f}"),
+        "timestamp": datetime.utcnow()
     }
-    db.collection("ospedali").document(user_id).collection("valutazioni").add(doc)
-    st.success("✅ Dati salvati nel database!")
+    db.collection("valutazioni").add(doc)
+    st.success("✅ Dati salvati su Firebase!")
 
-# 📊 Visualizza valutazioni
-st.subheader("📂 Valutazioni salvate")
-try:
-    docs = db.collection("ospedali").document(user_id).collection("valutazioni").stream()
-    dati = [{
-        "Età (anni)": d.get("eta"),
-        "Ore utilizzo": d.get("utilizzo"),
-        "Obsolescenza": d.get("obsolescenza")
-    } for d in docs]
+# ---------------------
+# 📄 Visualizza valutazioni utente
+# ---------------------
+st.header("📊 Storico valutazioni")
 
-    if dati:
-        st.dataframe(dati)
-    else:
-        st.info("Nessuna valutazione presente.")
-except Exception as e:
-    st.error("Errore nel caricamento dati.")
+valutazioni = db.collection("valutazioni").where("utente", "==", user_email).stream()
+
+for val in valutazioni:
+    data = val.to_dict()
+    st.markdown(f"""
+    - 📅 Data: `{data['timestamp'].strftime('%Y-%m-%d %H:%M:%S') if 'timestamp' in data else 'N/A'}`
+    - 🧪 Età: `{data['eta']} anni`
+    - ⚙️ Utilizzo: `{data['utilizzo']} ore/anno`
+    - 📉 Obsolescenza: `{data['obsolescenza']}`
+    ---
+    """)
