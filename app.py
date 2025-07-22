@@ -37,13 +37,18 @@ if st.session_state["user"] is None:
 
     if st.button("Login"):
         auth_users = dict(st.secrets["auth"])
-        for key, value in auth_users.items():
-            if isinstance(value, str):
-                continue
-            if email_input == value.get("email") and password_input == value.get("password"):
-                st.session_state["user"] = value.get("email")
-                st.rerun()
-        st.error("❌ Credenziali errate")
+        found = False
+        for key in auth_users:
+            if key.endswith("_email"):
+                user_key_prefix = key[:-6]  # rimuove '_email'
+                email = auth_users.get(f"{user_key_prefix}_email")
+                password = auth_users.get(f"{user_key_prefix}_password")
+                if email_input == email and password_input == password:
+                    st.session_state["user"] = email
+                    found = True
+                    st.rerun()
+        if not found:
+            st.error("❌ Credenziali errate")
     st.stop()
 
 # ✅ Utente autenticato
