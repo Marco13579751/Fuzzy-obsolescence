@@ -19,12 +19,21 @@ firebase_config = {
     "universe_domain": st.secrets["firebase"]["universe_domain"]
 }
 
-# 🔌 Inizializza Firebase una volta sola
+# 🔌 Inizializza Firebase una sola volta
 if not firebase_admin._apps:
     cred = credentials.Certificate(firebase_config)
     firebase_admin.initialize_app(cred)
 
 db = firestore.client()
+
+# 🔐 Login Ospedale (ID semplice)
+ospedale = st.text_input("🔑 Inserisci l'ID dell'ospedale", max_chars=30)
+
+if ospedale:
+    st.success(f"Ospedale selezionato: `{ospedale}`")
+else:
+    st.warning("Inserisci l'ID dell'ospedale per continuare.")
+    st.stop()
 
 # 📌 Interfaccia utente
 st.title("Valutazione Obsolescenza Dispositivo Medico")
@@ -55,15 +64,12 @@ if obsolescenza > 0.6:
 else:
     st.success("✅ Dispositivo in buone condizioni")
 
-# 💾 Salva nel database
-if st.button("Salva valutazione"):
+# 💾 Salva nel database, nella sezione ospedale
+if st.button("💾 Salva valutazione"):
     doc = {
         "eta": eta,
         "utilizzo": utilizzo,
         "obsolescenza": float(f"{obsolescenza:.2f}")
     }
-    try:
-        db.collection("valutazioni").add(doc)
-        st.success("✅ Dati salvati su Firebase Firestore!")
-    except Exception as e:
-        st.error(f"❌ Errore nel salvataggio: {e}")
+    db.collection("ospedali").document(ospedale).collection("valutazioni").add(doc)
+    st.success("✅ Dati salvati nella sezione ospedale su Firebase Firestore!")
