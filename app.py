@@ -4,7 +4,7 @@ import skfuzzy as fuzz
 import firebase_admin
 from firebase_admin import credentials, firestore
 
-# 🔐 Configura Firebase con i segreti da secrets.toml
+# 🔐 Configura Firebase con i segreti da .streamlit/secrets.toml
 firebase_config = {
     "type": st.secrets["firebase"]["type"],
     "project_id": st.secrets["firebase"]["project_id"],
@@ -37,25 +37,27 @@ if st.session_state["user"] is None:
 
     if st.button("Login"):
         auth_users = dict(st.secrets["auth"])
-        if email_input in auth_users and password_input == auth_users[email_input]:
-            st.session_state["user"] = email_input
-            st.rerun()
-        else:
+        found = False
+        for key in auth_users:
+            if key.endswith("_email"):
+                user_key_prefix = key[:-6]  # rimuove '_email'
+                email = auth_users.get(f"{user_key_prefix}_email")
+                password = auth_users.get(f"{user_key_prefix}_password")
+                if email_input == email and password_input == password:
+                    st.session_state["user"] = email
+                    found = True
+                    st.rerun()
+        if not found:
             st.error("❌ Credenziali errate")
     st.stop()
 
 # ✅ Utente autenticato
 st.title("Valutazione Obsolescenza Dispositivo Medico")
 
-# 🔓 Logout
-if st.button("Logout"):
-    st.session_state["user"] = None
-    st.rerun()
-
 eta = st.slider("Età del dispositivo (anni)", 0, 30, 10)
 utilizzo = st.slider("Ore di utilizzo annuali", 0, 5000, 1000)
 
-# 🎛 Definizione fuzzy
+# 🎛⃣ Definizione fuzzy
 eta_range = np.arange(0, 31, 1)
 uso_range = np.arange(0, 5001, 100)
 
@@ -78,7 +80,7 @@ if obsolescenza > 0.6:
 else:
     st.success("✅ Dispositivo in buone condizioni")
 
-# 🗃 Salva nel database nella collezione per ospedale (email come ID)
+# 🗕️ Salva nel database nella collezione dell'ospedale
 if st.button("Salva valutazione"):
     doc = {
         "eta": eta,
@@ -89,7 +91,7 @@ if st.button("Salva valutazione"):
     db.collection("ospedali").document(user_email).collection("valutazioni").add(doc)
     st.success("✅ Dati salvati su Firebase Firestore!")
 
-# 📋 Visualizzazione delle valutazioni salvate
+# 📋 Visualizzazione delle valutazioni salvate dall'ospedale
 st.subheader("📋 Valutazioni salvate")
 user_email = st.session_state["user"]
 valutazioni_ref = db.collection("ospedali").document(user_email).collection("valutazioni")
