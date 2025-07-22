@@ -26,7 +26,7 @@ if not firebase_admin._apps:
 
 db = firestore.client()
 
-# 🔐 Login Ospedale (ID semplice)
+# 🔐 Login Ospedale
 ospedale = st.text_input("🔑 Inserisci l'ID dell'ospedale", max_chars=30)
 
 if ospedale:
@@ -64,7 +64,7 @@ if obsolescenza > 0.6:
 else:
     st.success("✅ Dispositivo in buone condizioni")
 
-# 💾 Salva nel database, nella sezione ospedale
+# 💾 Salva nel database
 if st.button("💾 Salva valutazione"):
     doc = {
         "eta": eta,
@@ -73,3 +73,18 @@ if st.button("💾 Salva valutazione"):
     }
     db.collection("ospedali").document(ospedale).collection("valutazioni").add(doc)
     st.success("✅ Dati salvati nella sezione ospedale su Firebase Firestore!")
+
+# 📊 Visualizza valutazioni salvate
+st.subheader("📂 Valutazioni salvate")
+try:
+    docs = db.collection("ospedali").document(ospedale).collection("valutazioni").stream()
+    records = [{"Età (anni)": d.get("eta"),
+                "Ore utilizzo": d.get("utilizzo"),
+                "Obsolescenza": d.get("obsolescenza")} for d in docs]
+
+    if records:
+        st.dataframe(records)
+    else:
+        st.info("Nessuna valutazione salvata per questo ospedale.")
+except Exception as e:
+    st.error(f"Errore nella lettura del database: {e}")
