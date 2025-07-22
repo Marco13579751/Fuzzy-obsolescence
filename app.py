@@ -4,7 +4,7 @@ import skfuzzy as fuzz
 import firebase_admin
 from firebase_admin import credentials, firestore
 
-# 🔐 Configura Firebase con i segreti da secrets.toml
+# 🔐 Configura Firebase con i segreti da .streamlit/secrets.toml
 firebase_config = {
     "type": st.secrets["firebase"]["type"],
     "project_id": st.secrets["firebase"]["project_id"],
@@ -26,28 +26,25 @@ if not firebase_admin._apps:
 
 db = firestore.client()
 
-# 🛡️ Login
-if "logged_in" not in st.session_state:
-    st.session_state.logged_in = False
+# 👤 Autenticazione email/password
+if "user" not in st.session_state:
+    st.session_state["user"] = None
 
-if not st.session_state.logged_in:
+if st.session_state["user"] is None:
     st.title("🔐 Login Ospedale")
-    email = st.text_input("Email")
-    password = st.text_input("Password", type="password")
+    email_input = st.text_input("Email")
+    password_input = st.text_input("Password", type="password")
 
-    if st.button("Accedi"):
-        auth_dict = st.secrets["auth"]
-        if email in auth_dict and password == auth_dict[email]:
-            st.session_state.logged_in = True
-            st.session_state.user_email = email
-            st.success("✅ Login effettuato!")
-            st.rerun()
-
-        else:
-            st.error("❌ Credenziali errate")
+    if st.button("Login"):
+        auth_users = st.secrets["auth"]
+        for key in auth_users:
+            if email_input == auth_users[key].get("email") and password_input == auth_users[key].get("password"):
+                st.session_state["user"] = email_input
+                st.rerun()
+        st.error("❌ Credenziali errate")
     st.stop()
 
-# ✅ App dopo login
+# ✅ Utente autenticato
 st.title("Valutazione Obsolescenza Dispositivo Medico")
 
 eta = st.slider("Età del dispositivo (anni)", 0, 30, 10)
@@ -69,27 +66,30 @@ uso_a = fuzz.interp_membership(uso_range, alto, utilizzo)
 
 obsolescenza = max(eta_v, uso_a)
 
+# 🌟 Risultato
 st.write("**Grado di obsolescenza:**", f"{obsolescenza:.2f}")
 if obsolescenza > 0.6:
     st.error("⚠️ Dispositivo potenzialmente obsoleto")
 else:
     st.success("✅ Dispositivo in buone condizioni")
 
-# 💾 Salva nel database
+# 📅 Salva nel database nella collezione dell'ospedale
 if st.button("Salva valutazione"):
     doc = {
         "eta": eta,
         "utilizzo": utilizzo,
-        "obsolescenza": float(f"{obsolescenza:.2f}"),
-        "ospedale": st.session_state.user_email
+        "obsolescenza": float(f"{obsolescenza:.2f}")
     }
-    db.collection("valutazioni").add(doc)
+    user_email = st.session_state["user"]
+    db.collection("valutazioni").document(user_email).collection("dati").add(doc)
     st.success("✅ Dati salvati su Firebase Firestore!")
 
-# 📄 Visualizza valutazioni salvate
-st.subheader("📊 Valutazioni precedenti")
-query = db.collection("valutazioni").where("ospedale", "==", st.session_state.user_email).stream()
+# 📋 Visualizzazione delle valutazioni salvate dall'ospedale
+st.subheader("📋 Valutazioni salvate")
+user_email = st.session_state["user"]
+valutazioni_ref = db.collection("valutazioni").document(user_email).collection("dati")
+docs = valutazioni_ref.stream()
 
-for doc in query:
-    val = doc.to_dict()
-    st.write(f"🩺 Età: {val['eta']} anni, ⏱️ Utilizzo: {val['utilizzo']} ore, 🧮 Obsolescenza: {val['obsolescenza']}")
+for doc in docs:
+    dati = doc.to_dict()
+    st.write(f"- Età: {dati['eta']}, Utilizzo: {dati['utilizzo']}, Obsolescenza: {dati['obsolescenza']}")
