@@ -34,7 +34,9 @@ firebase_config = {
     "universe_domain": st.secrets["firebase"]["universe_domain"]
 }
 
-API_KEY = st.secrets["firebase_web_api_key"]
+API_KEY = st.secrets.get("firebase_web_api_key", None)
+if not API_KEY:
+    st.stop()  # Ferma l'app se manca la chiave
 
 # 🔌 Inizializza Firebase Admin SDK
 if not firebase_admin._apps:
