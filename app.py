@@ -93,22 +93,25 @@ if st.session_state["user"] is None:
                 st.rerun()
 
     else:  # Registrazione
-        if st.button("Registrati"):
-            result = firebase_register(email, password)
+       # Registrazione con salvataggio utente su Firestore
+if st.button("Registrati"):
+    result = firebase_register(email, password)
 
-if "error" in result:
-    st.error(f"Errore: {result['error']['message']}")
-else:
-    send_email_verification(result["idToken"])
-    
-    # ✅ Salva l'utente in Firestore con approved=False
-    db.collection("utenti_autorizzati").document(email).set({
-        "email": email,
-        "approved": False
-    })
+    if "error" in result:
+        st.error(f"Errore: {result['error']['message']}")
+    else:
+        send_email_verification(result["idToken"])
 
-    st.success("✅ Registrazione avvenuta! Ti abbiamo inviato un'email di verifica.")
-    st.info("Verifica l'email e attendi l'approvazione da parte dell'amministratore.")
+        try:
+            db.collection("utenti_autorizzati").document(email).set({
+                "email": email,
+                "approved": False
+            })
+            st.success("✅ Registrazione avvenuta! Utente aggiunto a Firestore.")
+        except Exception as e:
+            st.error(f"❌ Errore nel salvataggio su Firestore: {e}")
+
+        st.info("📧 Ti abbiamo inviato un'email di verifica. Verifica l'email e attendi l'approvazione da parte dell'amministratore.")
 
     st.stop()
 
