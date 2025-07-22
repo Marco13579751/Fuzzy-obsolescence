@@ -5,12 +5,7 @@ import firebase_admin
 from firebase_admin import credentials, firestore
 import requests
 
-# 🔐 Controllo secrets
-if "firebase" not in st.secrets or "firebase_web_api_key" not in st.secrets:
-    st.error("⚠️ Configurazione Firebase mancante. Controlla i secrets.")
-    st.stop()
-
-# 🔐 Configurazione Firebase
+# 🔐 Firebase config
 firebase_config = {
     "type": st.secrets["firebase"]["type"],
     "project_id": st.secrets["firebase"]["project_id"],
@@ -25,7 +20,9 @@ firebase_config = {
     "universe_domain": st.secrets["firebase"]["universe_domain"]
 }
 
-API_KEY = st.secrets["firebase_web_api_key"]
+API_KEY = st.secrets.get("firebase_web_api_key", None)
+if not API_KEY:
+    st.stop()
 
 # 🔌 Inizializza Firebase Admin SDK
 if not firebase_admin._apps:
@@ -46,8 +43,7 @@ def firebase_register(email, password):
 
 def send_email_verification(id_token):
     url = f"https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key={API_KEY}"
-    res = requests.post(url, json={"requestType": "VERIFY_EMAIL", "idToken": id_token})
-    return res.json()
+    requests.post(url, json={"requestType": "VERIFY_EMAIL", "idToken": id_token})
 
 def get_user_data(id_token):
     url = f"https://identitytoolkit.googleapis.com/v1/accounts:lookup?key={API_KEY}"
@@ -60,11 +56,12 @@ if "user" not in st.session_state:
 if "id_token" not in st.session_state:
     st.session_state["id_token"] = None
 
-# 🔐 Accesso / Registrazione
+# 🔁 Auth UI
 if st.session_state["user"] is None:
-    st.title("🔐 Accesso Riservato")
+    st.title("🔐 Accesso Ospedale")
 
-    mode = st.radio("Modalità", ["Login", "Registrazione"])
+    mode = st.radio("Seleziona modalità", ["Login", "Registrati"])
+
     email = st.text_input("Email")
     password = st.text_input("Password", type="password")
 
@@ -79,13 +76,15 @@ if st.session_state["user"] is None:
                 user_info = user_data["users"][0]
 
                 if not user_info.get("emailVerified", False):
-                    st.warning("📧 Devi prima verificare l'email.")
+                    st.warning("📧 Email non verificata. Controlla la posta.")
                     st.stop()
 
-                # ✅ Controllo approvazione
-                doc_ref = db.collection("utenti_autorizzati").document(email).get()
-                if not doc_ref.exists or not doc_ref.to_dict().get("approved", False):
-                    st.error("⛔ Il tuo account è in attesa di approvazione.")
+                # Controlla autorizzazione su Firestore
+                doc_ref = db.collection("utenti_autorizzati").document(email)
+                doc = doc_ref.get()
+
+                if not doc.exists or not doc.to_dict().get("approved", False):
+                    st.error("⛔ Accesso non autorizzato. Contatta l'amministratore.")
                     st.stop()
 
                 st.session_state["user"] = result["email"]
@@ -93,51 +92,33 @@ if st.session_state["user"] is None:
                 st.rerun()
 
     else:  # Registrazione
-       # Registrazione con salvataggio utente su Firestore
-if st.button("Registrati"):
-    result = firebase_register(email, password)
+        if st.button("Registrati"):
+            result = firebase_register(email, password)
 
-    if "error" in result:
-        st.error(f"Errore: {result['error']['message']}")
-    else:
-        send_email_verification(result["idToken"])
+            if "error" in result:
+                st.error(f"Errore: {result['error']['message']}")
+            else:
+                send_email_verification(result["idToken"])
+                try:
+                    db.collection("utenti_autorizzati").document(email).set({
+                        "email": email,
+                        "approved": False
+                    })
+                    st.success("✅ Registrazione avvenuta! Utente aggiunto in attesa di approvazione.")
+                except Exception as e:
+                    st.error(f"❌ Errore Firestore: {e}")
 
-        try:
-            db.collection("utenti_autorizzati").document(email).set({
-                "email": email,
-                "approved": False
-            })
-            st.success("✅ Registrazione avvenuta! Utente aggiunto a Firestore.")
-        except Exception as e:
-            st.error(f"❌ Errore nel salvataggio su Firestore: {e}")
-
-        st.info("📧 Ti abbiamo inviato un'email di verifica. Verifica l'email e attendi l'approvazione da parte dell'amministratore.")
-
+                st.info("📧 Ti abbiamo inviato un'email di verifica. Dopo aver verificato, attendi approvazione.")
     st.stop()
 
 # ✅ Utente loggato
-st.title("🏥 Valutazione Obsolescenza Dispositivo Medico")
-user_email = st.session_state["user"]
+st.title("Valutazione Obsolescenza Dispositivo Medico")
 
-# 🔓 Logout
 if st.button("Logout"):
     st.session_state["user"] = None
     st.session_state["id_token"] = None
     st.rerun()
 
-# 👮‍♀️ Admin Panel (solo per admin)
-if user_email == "andreolimarco01@gmail.com":
-    st.subheader("👮 Pannello di Approvazione Utenti")
-    utenti = db.collection("utenti_autorizzati").where("approved", "==", False).stream()
-    for u in utenti:
-        u_id = u.id
-        st.write(f"📧 {u_id}")
-        if st.button(f"✅ Approva {u_id}", key=u_id):
-            db.collection("utenti_autorizzati").document(u_id).update({"approved": True})
-            st.success(f"{u_id} approvato!")
-            st.rerun()
-
-# 🎚 Input
 eta = st.slider("Età del dispositivo (anni)", 0, 30, 10)
 utilizzo = st.slider("Ore di utilizzo annuali", 0, 5000, 1000)
 
@@ -163,7 +144,8 @@ if obsolescenza > 0.6:
 else:
     st.success("✅ Dispositivo in buone condizioni")
 
-# 💾 Salvataggio su Firestore
+# 📤 Salva nel DB
+user_email = st.session_state["user"]
 if st.button("Salva valutazione"):
     doc = {
         "eta": eta,
