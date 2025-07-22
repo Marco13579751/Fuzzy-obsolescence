@@ -3,8 +3,9 @@ import numpy as np
 import skfuzzy as fuzz
 import firebase_admin
 from firebase_admin import credentials, firestore
+import requests
 
-# 🔐 Configura Firebase con i segreti da .streamlit/secrets.toml
+# 📦 Firebase Admin SDK
 firebase_config = {
     "type": st.secrets["firebase"]["type"],
     "project_id": st.secrets["firebase"]["project_id"],
@@ -19,36 +20,50 @@ firebase_config = {
     "universe_domain": st.secrets["firebase"]["universe_domain"]
 }
 
-# 🔌 Inizializza Firebase una sola volta
+FIREBASE_API_KEY = st.secrets["firebase"]["api_key"]  # Devi aggiungerlo nei secrets
+
+# 🔐 Inizializza Firebase Admin una sola volta
 if not firebase_admin._apps:
     cred = credentials.Certificate(firebase_config)
     firebase_admin.initialize_app(cred)
 
 db = firestore.client()
 
-# 👤 Autenticazione email/password
-if "user" not in st.session_state:
-    st.session_state["user"] = None
+# 👤 Gestione sessione utente
+if "user_email" not in st.session_state:
+    st.session_state.user_email = None
 
-if st.session_state["user"] is None:
-    st.title("🔐 Login Ospedale")
-    email_input = st.text_input("Email")
-    password_input = st.text_input("Password", type="password")
+# 🚪 Logout
+if st.session_state.user_email:
+    if st.button("🔓 Logout"):
+        st.session_state.user_email = None
+        st.experimental_rerun()
+
+# 🔐 Login
+if not st.session_state.user_email:
+    st.title("Login Ospedale via Firebase")
+    email = st.text_input("Email")
+    password = st.text_input("Password", type="password")
 
     if st.button("Login"):
-        auth_users = dict(st.secrets["auth"])
-        found = False
-        for key in auth_users:
-            if key.endswith("_email"):
-                user_key_prefix = key[:-6]  # rimuove '_email'
-                email = auth_users.get(f"{user_key_prefix}_email")
-                password = auth_users.get(f"{user_key_prefix}_password")
-                if email_input == email and password_input == password:
-                    st.session_state["user"] = email
-                    found = True
-                    st.rerun()
-        if not found:
-            st.error("❌ Credenziali errate")
+        try:
+            resp = requests.post(
+                f"https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key={FIREBASE_API_KEY}",
+                json={
+                    "email": email,
+                    "password": password,
+                    "returnSecureToken": True
+                }
+            )
+            data = resp.json()
+            if "idToken" in data:
+                st.session_state.user_email = email
+                st.success("✅ Login riuscito!")
+                st.experimental_rerun()
+            else:
+                st.error("❌ Credenziali errate")
+        except Exception as e:
+            st.error(f"Errore: {e}")
     st.stop()
 
 # ✅ Utente autenticato
@@ -57,7 +72,7 @@ st.title("Valutazione Obsolescenza Dispositivo Medico")
 eta = st.slider("Età del dispositivo (anni)", 0, 30, 10)
 utilizzo = st.slider("Ore di utilizzo annuali", 0, 5000, 1000)
 
-# 🎛⃣ Definizione fuzzy
+# 🎛 Fuzzy logic
 eta_range = np.arange(0, 31, 1)
 uso_range = np.arange(0, 5001, 100)
 
@@ -80,23 +95,22 @@ if obsolescenza > 0.6:
 else:
     st.success("✅ Dispositivo in buone condizioni")
 
-# 🗕️ Salva nel database nella collezione dell'ospedale
-if st.button("Salva valutazione"):
+# 📝 Salva dati su Firestore nella collezione personale dell'ospedale
+if st.button("💾 Salva valutazione"):
     doc = {
         "eta": eta,
         "utilizzo": utilizzo,
         "obsolescenza": float(f"{obsolescenza:.2f}")
     }
-    user_email = st.session_state["user"]
-    db.collection("ospedali").document(user_email).collection("valutazioni").add(doc)
-    st.success("✅ Dati salvati su Firebase Firestore!")
+    email = st.session_state.user_email
+    db.collection("ospedali").document(email).collection("valutazioni").add(doc)
+    st.success("✅ Dati salvati con successo!")
 
-# 📋 Visualizzazione delle valutazioni salvate dall'ospedale
+# 📋 Visualizzazione valutazioni
 st.subheader("📋 Valutazioni salvate")
-user_email = st.session_state["user"]
-valutazioni_ref = db.collection("ospedali").document(user_email).collection("valutazioni")
+email = st.session_state.user_email
+valutazioni_ref = db.collection("ospedali").document(email).collection("valutazioni")
 docs = valutazioni_ref.stream()
-
 for doc in docs:
     dati = doc.to_dict()
-    st.write(f"- Età: {dati['eta']}, Utilizzo: {dati['utilizzo']}, Obsolescenza: {dati['obsolescenza']}")
+    st.write(f"- Età: {dati['eta']} anni, Utilizzo: {dati['utilizzo']} ore/anno, Obsolescenza: {dati['obsolescenza']}")
