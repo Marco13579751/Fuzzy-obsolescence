@@ -58,5 +58,38 @@ uso_range = np.arange(0, 5001, 100)
 
 giovane = fuzz.trimf(eta_range, [0, 0, 15])
 vecchio = fuzz.trimf(eta_range, [10, 30, 30])
-basso = fuzz.trimf(uso_range, [0, 0,]()_
+basso = fuzz.trimf(uso_range, [0, 0, 2000])
+alto = fuzz.trimf(uso_range, [1000, 5000, 5000])
 
+eta_g = fuzz.interp_membership(eta_range, giovane, eta)
+eta_v = fuzz.interp_membership(eta_range, vecchio, eta)
+uso_b = fuzz.interp_membership(uso_range, basso, utilizzo)
+uso_a = fuzz.interp_membership(uso_range, alto, utilizzo)
+
+obsolescenza = max(eta_v, uso_a)
+
+# Output
+st.write("**Grado di obsolescenza:**", f"{obsolescenza:.2f}")
+if obsolescenza > 0.6:
+    st.error("⚠️ Dispositivo potenzialmente obsoleto")
+else:
+    st.success("✅ Dispositivo in buone condizioni")
+
+# Salvataggio
+if st.button("Salva valutazione"):
+    doc = {
+        "ospedale": st.session_state.utente,
+        "eta": eta,
+        "utilizzo": utilizzo,
+        "obsolescenza": float(f"{obsolescenza:.2f}")
+    }
+    db.collection("valutazioni").add(doc)
+    st.success("✅ Dati salvati su Firebase!")
+
+# Visualizza valutazioni salvate
+st.subheader("📋 Valutazioni precedenti")
+valutazioni = db.collection("valutazioni").where("ospedale", "==", st.session_state.utente).stream()
+
+for val in valutazioni:
+    data = val.to_dict()
+    st.write(f"- Età: {data['eta']} anni, Utilizzo: {data['utilizzo']} h, Obsolescenza: {data['obsolescenza']}")
