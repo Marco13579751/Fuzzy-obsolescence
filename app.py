@@ -57,7 +57,7 @@ if "id_token" not in st.session_state:
 if st.session_state["user"] is None:
     st.title("🔐 Login / Registration")
 
-    mode = st.radio("Select modality", ["Login", "Register"])
+    mode = st.radio("Select modality", ["Login", "Registration"])
     email = st.text_input("Email")
     password = st.text_input("Password", type="password")
 
