@@ -172,35 +172,37 @@ st.subheader("➕ Aggiungi nuovo dispositivo medico")
 
 with st.form("add_device"):
     col1, col2, col3 = st.columns(3)
+
     with col1:
         ID_DM = st.number_input("ID_DM", min_value=1, step=1)
         ID_Padre = st.number_input("ID_Padre", min_value=0, step=1)
-        stanze_ref = db.collection("stanza").stream()
-stanze_esistenti = [doc.id for doc in stanze_ref]
 
-if stanze_esistenti:
-    ID_Stanza = st.selectbox("Seleziona una stanza esistente", stanze_esistenti)
-else:
-    st.warning("⚠️ Nessuna stanza trovata. Aggiungine una prima.")
-    ID_Stanza = None
-    ID_Categoria_III = st.text_input("Cat. III", max_chars=5)
+        # Recupera stanze
+        stanze_ref = db.collection("stanza").stream()
+        stanze_esistenti = [doc.id for doc in stanze_ref]
+
+        if stanze_esistenti:
+            ID_Stanza = st.selectbox("Seleziona una stanza", stanze_esistenti)
+        else:
+            st.warning("⚠️ Nessuna stanza trovata. Aggiungine una prima.")
+            ID_Stanza = None
+
+        ID_Categoria_III = st.text_input("Cat. III", max_chars=5)
+
     with col2:
         ID_Categoria_IV = st.text_input("Cat. IV", max_chars=7)
         ID_Categoria_V = st.text_input("Cat. V", max_chars=13)
         Descrizione = st.text_input("Descrizione", max_chars=255)
         Classe = st.text_input("Classe", max_chars=255)
+
     with col3:
         Tipo_Utilizzo = st.text_input("Tipo utilizzo", max_chars=255)
         Livello_Criticita = st.text_input("Criticità", max_chars=255)
         Costo = st.number_input("Costo (€)", min_value=0.0, step=0.01, format="%.2f")
         Presente = st.checkbox("Presente")
-
-    col4, col5 = st.columns(2)
-    with col4:
         Marca = st.text_input("Marca", max_chars=255)
         Modello = st.text_input("Modello", max_chars=255)
-    with col5:
-        Capitolato = st.file_uploader("Capitolato (PDF)")
+        Capitolato = st.file_uploader("Capitolato", type=["pdf"])
 
     submitted = st.form_submit_button("💾 Salva dispositivo")
 
