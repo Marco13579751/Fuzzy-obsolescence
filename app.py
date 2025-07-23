@@ -194,6 +194,12 @@ with st.form("add_device"):
     submitted = st.form_submit_button("💾 Salva dispositivo")
 
     if submitted:
+    # Controllo se il dispositivo con lo stesso ID_DM esiste già
+    existing_doc = db.collection("dispositivi_medici").document(str(ID_DM)).get()
+    
+    if existing_doc.exists:
+        st.error(f"❌ Esiste già un dispositivo con ID_DM = {ID_DM}. Usa un ID diverso.")
+    else:
         capitolato_bytes = Capitolato.read() if Capitolato else None
         dispositivo = {
             "ID_DM": ID_DM,
@@ -212,6 +218,9 @@ with st.form("add_device"):
             "Modello": Modello,
             "Capitolato": capitolato_bytes
         }
+
+        db.collection("dispositivi_medici").document(str(ID_DM)).set(dispositivo)
+        st.success("📦 Dispositivo medico salvato con successo!")
 
         db.collection("dispositivi_medici").document(str(ID_DM)).set(dispositivo)
         st.success("📦 Dispositivo medico salvato con successo!")
