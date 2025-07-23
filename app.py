@@ -170,9 +170,6 @@ for doc in valutazioni:
 # --- Aggiunta dispositivo medico ---
 st.subheader("➕ Aggiungi nuovo dispositivo medico")
 
-# --- Aggiunta dispositivo medico (versione compatta) ---
-st.subheader("➕ Aggiungi nuovo dispositivo medico")
-
 with st.form("add_device"):
     col1, col2, col3 = st.columns(3)
     with col1:
