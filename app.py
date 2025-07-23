@@ -57,7 +57,7 @@ if "id_token" not in st.session_state:
 if st.session_state["user"] is None:
     st.title("🔐 Login / Registration")
 
-    mode = st.radio("Select modality", ["Login", "Registrati"])
+    mode = st.radio("Select modality", ["Login", "Register"])
     email = st.text_input("Email")
     password = st.text_input("Password", type="password")
 
@@ -84,7 +84,7 @@ if st.session_state["user"] is None:
                         st.rerun()
 
     else:
-        if st.button("Registrati"):
+        if st.button("Register"):
             result = firebase_register(email, password)
             if "error" in result:
                 st.error(f"Errore: {result['error']['message']}")
