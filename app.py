@@ -175,7 +175,15 @@ with st.form("add_device"):
     with col1:
         ID_DM = st.number_input("ID_DM", min_value=1, step=1)
         ID_Padre = st.number_input("ID_Padre", min_value=0, step=1)
-        ID_Stanza = st.text_input("ID_Stanza", max_chars=15)
+        stanze_ref = db.collection("stanza").stream()
+stanze_esistenti = [doc.id for doc in stanze_ref]
+
+if stanze_esistenti:
+    ID_Stanza = st.selectbox("Seleziona una stanza esistente", stanze_esistenti)
+else:
+    st.warning("⚠️ Nessuna stanza trovata. Aggiungine una prima.")
+    ID_Stanza = None
+
         ID_Categoria_III = st.text_input("Cat. III", max_chars=5)
     with col2:
         ID_Categoria_IV = st.text_input("Cat. IV", max_chars=7)
@@ -294,3 +302,32 @@ if dispositivi:
 else:
     st.info("⚠️ Nessun dispositivo registrato.")
 
+# --- 🔍 Visualizza dispositivi per stanza ---
+st.subheader("🏥 Visualizza dispositivi in una stanza")
+
+# Recupera tutte le stanze presenti
+stanze_ref = db.collection("stanza").stream()
+stanze = [doc.id for doc in stanze_ref]
+
+if stanze:
+    stanza_selezionata = st.selectbox("Seleziona una stanza", stanze)
+
+    if stanza_selezionata:
+        st.write(f"📦 Dispositivi presenti nella stanza: `{stanza_selezionata}`")
+        dispositivi = db.collection("dispositivi_medici").where("ID_Stanza", "==", stanza_selezionata).stream()
+        
+        found = False
+        for dispositivo in dispositivi:
+            d = dispositivo.to_dict()
+            found = True
+            st.markdown(f"""
+            🔹 **ID_DM:** {d['ID_DM']}  
+            📝 **Descrizione:** {d['Descrizione']}  
+            💰 **Costo:** {d['Costo']} €  
+            ✅ **Presente:** {'Sì' if d['Presente'] else 'No'}  
+            ---  
+            """)
+        if not found:
+            st.info("Nessun dispositivo registrato per questa stanza.")
+else:
+    st.warning("⚠️ Nessuna stanza trovata. Aggiungine una prima.")
