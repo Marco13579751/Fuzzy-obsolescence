@@ -223,6 +223,46 @@ with st.form("add_device"):
             dispositivo_ref.set(dispositivo)
             st.success("📦 Dispositivo medico salvato con successo!")
 
+# --- Aggiunta e visualizzazione STANZE ---
+st.subheader("🏥 Aggiungi nuova stanza")
+
+with st.form("add_stanza"):
+    ID_Stanza = st.text_input("ID Stanza (univoco)", max_chars=15)
+    Nome_Stanza = st.text_input("Nome stanza", max_chars=255)
+    Piano = st.text_input("Piano", max_chars=50)
+    Reparto = st.text_input("Reparto", max_chars=100)
+
+    submitted_stanza = st.form_submit_button("💾 Salva stanza")
+
+    if submitted_stanza:
+        if not ID_Stanza:
+            st.error("⚠️ Devi inserire un ID Stanza.")
+            st.stop()
+
+        # Controlla se la stanza esiste già
+        stanza_ref = db.collection("stanza").document(ID_Stanza)
+        if stanza_ref.get().exists:
+            st.warning(f"❗ La stanza con ID '{ID_Stanza}' esiste già.")
+        else:
+            stanza_ref.set({
+                "ID_Stanza": ID_Stanza,
+                "Nome": Nome_Stanza,
+                "Piano": Piano,
+                "Reparto": Reparto
+            })
+            st.success("✅ Stanza salvata con successo!")
+
+# --- Visualizzazione Stanze Salvate ---
+st.subheader("📋 Elenco Stanze Registrate")
+
+stanze = db.collection("stanza").stream()
+for s in stanze:
+    data = s.to_dict()
+    with st.expander(f"🏷️ {data['ID_Stanza']} - {data.get('Nome', '')}"):
+        st.markdown(f"- **Reparto**: {data.get('Reparto', 'N/A')}")
+        st.markdown(f"- **Piano**: {data.get('Piano', 'N/A')}")
+
+
 # Recupera tutti i dispositivi
 dispositivi_ref = db.collection("dispositivi_medici").stream()
 
