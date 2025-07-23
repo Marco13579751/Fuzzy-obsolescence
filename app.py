@@ -165,3 +165,53 @@ valutazioni = db.collection("ospedali").document(user_email).collection("valutaz
 for doc in valutazioni:
     d = doc.to_dict()
     st.write(f"- Age: {d['eta']} | Annual usage: {d['utilizzo']} | Obsolescence: {d['obsolescenza']}")
+
+# --- Aggiunta dispositivo medico ---
+st.subheader("➕ Aggiungi nuovo dispositivo medico")
+
+with st.form("add_device"):
+    ID_DM = st.number_input("ID_DM (univoco)", min_value=1, step=1)
+    ID_Padre = st.number_input("ID_Padre", min_value=0, step=1)
+    ID_Stanza = st.text_input("ID_Stanza", max_chars=15)
+    ID_Categoria_III = st.text_input("ID_Categoria_III", max_chars=5)
+    ID_Categoria_IV = st.text_input("ID_Categoria_IV", max_chars=7)
+    ID_Categoria_V = st.text_input("ID_Categoria_V", max_chars=13)
+    Descrizione = st.text_input("Descrizione", max_chars=255)
+    Classe = st.text_input("Classe", max_chars=255)
+    Tipo_Utilizzo = st.text_input("Tipo di utilizzo", max_chars=255)
+    Livello_Criticita = st.text_input("Livello di criticità", max_chars=255)
+    Costo = st.number_input("Costo (€)", min_value=0.0, step=0.01, format="%.2f")
+    Presente = st.checkbox("Presente")
+    Marca = st.text_input("Marca", max_chars=255)
+    Modello = st.text_input("Modello", max_chars=255)
+    Capitolato = st.file_uploader("Capitolato (file allegato, PDF ecc.)")
+
+    submitted = st.form_submit_button("💾 Salva dispositivo")
+
+    if submitted:
+        # Conversione file (se presente)
+        capitolato_bytes = Capitolato.read() if Capitolato else None
+
+        # Creazione documento
+        dispositivo = {
+            "ID_DM": ID_DM,
+            "ID_Padre": ID_Padre,
+            "ID_Stanza": ID_Stanza,
+            "ID_Categoria_III": ID_Categoria_III,
+            "ID_Categoria_IV": ID_Categoria_IV,
+            "ID_Categoria_V": ID_Categoria_V,
+            "Descrizione": Descrizione,
+            "Classe": Classe,
+            "Tipo_Utilizzo": Tipo_Utilizzo,
+            "Livello_Criticità": Livello_Criticita,
+            "Costo": Costo,
+            "Presente": Presente,
+            "Marca": Marca,
+            "Modello": Modello,
+            "Capitolato": capitolato_bytes
+        }
+
+        # Salvataggio nel database
+        db.collection("dispositivi_medici").document(str(ID_DM)).set(dispositivo)
+        st.success("📦 Dispositivo medico salvato con successo!")
+
