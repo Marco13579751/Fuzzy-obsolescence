@@ -183,8 +183,8 @@ if stanze_esistenti:
 else:
     st.warning("⚠️ Nessuna stanza trovata. Aggiungine una prima.")
     ID_Stanza = None
-        ID_Categoria_III = st.text_input("Cat. III", max_chars=5)
     with col2:
+        ID_Categoria_III = st.text_input("Cat. III", max_chars=5)
         ID_Categoria_IV = st.text_input("Cat. IV", max_chars=7)
         ID_Categoria_V = st.text_input("Cat. V", max_chars=13)
         Descrizione = st.text_input("Descrizione", max_chars=255)
