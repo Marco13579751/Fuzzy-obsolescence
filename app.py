@@ -4,6 +4,7 @@ import skfuzzy as fuzz
 import firebase_admin
 from firebase_admin import credentials, firestore
 import requests
+import pandas as pd
 
 # --- Configurazione e inizializzazione Firebase ---
 firebase_config = {
@@ -218,3 +219,38 @@ with st.form("add_device"):
 
             doc_ref.set(dispositivo)
             st.success("📦 Dispositivo medico salvato con successo!")
+
+
+st.subheader("📦 Dispositivi Medici Registrati")
+
+# Recupera tutti i dispositivi
+dispositivi_ref = db.collection("dispositivi_medici").stream()
+
+# Estrae e prepara i dati
+dispositivi = []
+for doc in dispositivi_ref:
+    d = doc.to_dict()
+    dispositivi.append({
+        "ID_DM": d.get("ID_DM", ""),
+        "ID_Padre": d.get("ID_Padre", ""),
+        "ID_Stanza": d.get("ID_Stanza", ""),
+        "Categoria_III": d.get("ID_Categoria_III", ""),
+        "Categoria_IV": d.get("ID_Categoria_IV", ""),
+        "Categoria_V": d.get("ID_Categoria_V", ""),
+        "Descrizione": d.get("Descrizione", ""),
+        "Classe": d.get("Classe", ""),
+        "Tipo Utilizzo": d.get("Tipo_Utilizzo", ""),
+        "Criticità": d.get("Livello_Criticità", ""),
+        "Costo (€)": d.get("Costo", 0.0),
+        "Presente": "✅" if d.get("Presente", False) else "❌",
+        "Marca": d.get("Marca", ""),
+        "Modello": d.get("Modello", "")
+    })
+
+# Mostra tabella solo se ci sono dispositivi
+if dispositivi:
+    df = pd.DataFrame(dispositivi)
+    st.dataframe(df, use_container_width=True, hide_index=True)
+else:
+    st.info("⚠️ Nessun dispositivo registrato.")
+
