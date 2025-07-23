@@ -164,4 +164,4 @@ st.subheader("📋 Valutations saved")
 valutazioni = db.collection("ospedali").document(user_email).collection("valutazioni").stream()
 for doc in valutazioni:
     d = doc.to_dict()
-    st.write(f"- Età: {d['Age']} | Utilizzo: {d['Annualy usage']} | Obsolescenza: {d['Obsolescence score']}")
+    st.write(f"- Age: {d['eta']} | Annual usage: {d['utilizzo']} | Obsolescence: {d['obsolescenza']}")
