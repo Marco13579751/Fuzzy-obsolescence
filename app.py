@@ -170,35 +170,42 @@ for doc in valutazioni:
 # --- Aggiunta dispositivo medico ---
 st.subheader("➕ Aggiungi nuovo dispositivo medico")
 
+# --- Aggiunta dispositivo medico (versione compatta) ---
+st.subheader("➕ Aggiungi nuovo dispositivo medico")
+
 with st.form("add_device"):
-    ID_DM = st.number_input("ID_DM (univoco)", min_value=1, step=1)
-    ID_Padre = st.number_input("ID_Padre", min_value=0, step=1)
-    ID_Stanza = st.text_input("ID_Stanza", max_chars=15)
-    ID_Categoria_III = st.text_input("ID_Categoria_III", max_chars=5)
-    ID_Categoria_IV = st.text_input("ID_Categoria_IV", max_chars=7)
-    ID_Categoria_V = st.text_input("ID_Categoria_V", max_chars=13)
-    Descrizione = st.text_input("Descrizione", max_chars=255)
-    Classe = st.text_input("Classe", max_chars=255)
-    Tipo_Utilizzo = st.text_input("Tipo di utilizzo", max_chars=255)
-    Livello_Criticita = st.text_input("Livello di criticità", max_chars=255)
-    Costo = st.number_input("Costo (€)", min_value=0.0, step=0.01, format="%.2f")
-    Presente = st.checkbox("Presente")
-    Marca = st.text_input("Marca", max_chars=255)
-    Modello = st.text_input("Modello", max_chars=255)
-    Capitolato = st.file_uploader("Capitolato (file allegato, PDF ecc.)")
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        ID_DM = st.number_input("ID_DM", min_value=1, step=1)
+        ID_Padre = st.number_input("ID_Padre", min_value=0, step=1)
+        ID_Stanza = st.text_input("ID_Stanza", max_chars=15)
+        ID_Categoria_III = st.text_input("Cat. III", max_chars=5)
+    with col2:
+        ID_Categoria_IV = st.text_input("Cat. IV", max_chars=7)
+        ID_Categoria_V = st.text_input("Cat. V", max_chars=13)
+        Descrizione = st.text_input("Descrizione", max_chars=255)
+        Classe = st.text_input("Classe", max_chars=255)
+    with col3:
+        Tipo_Utilizzo = st.text_input("Tipo utilizzo", max_chars=255)
+        Livello_Criticita = st.text_input("Criticità", max_chars=255)
+        Costo = st.number_input("Costo (€)", min_value=0.0, step=0.01, format="%.2f")
+        Presente = st.checkbox("Presente")
+
+    col4, col5 = st.columns(2)
+    with col4:
+        Marca = st.text_input("Marca", max_chars=255)
+        Modello = st.text_input("Modello", max_chars=255)
+    with col5:
+        Capitolato = st.file_uploader("Capitolato (PDF)")
 
     submitted = st.form_submit_button("💾 Salva dispositivo")
 
     if submitted:
-        # 🔍 Controllo se esiste già un documento con lo stesso ID_DM
-        doc_ref = db.collection("dispositivi_medici").document(str(ID_DM))
-        existing_doc = doc_ref.get()
-
-        if existing_doc.exists:
-            st.error(f"⚠️ Esiste già un dispositivo con ID_DM {ID_DM}. Scegli un altro ID.")
+        dispositivo_ref = db.collection("dispositivi_medici").document(str(ID_DM))
+        if dispositivo_ref.get().exists:
+            st.error("❌ Esiste già un dispositivo con questo ID_DM!")
         else:
             capitolato_bytes = Capitolato.read() if Capitolato else None
-
             dispositivo = {
                 "ID_DM": ID_DM,
                 "ID_Padre": ID_Padre,
@@ -216,12 +223,8 @@ with st.form("add_device"):
                 "Modello": Modello,
                 "Capitolato": capitolato_bytes
             }
-
-            doc_ref.set(dispositivo)
+            dispositivo_ref.set(dispositivo)
             st.success("📦 Dispositivo medico salvato con successo!")
-
-
-st.subheader("📦 Dispositivi Medici Registrati")
 
 # Recupera tutti i dispositivi
 dispositivi_ref = db.collection("dispositivi_medici").stream()
