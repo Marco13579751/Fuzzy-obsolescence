@@ -55,9 +55,9 @@ if "id_token" not in st.session_state:
 
 # --- UI Autenticazione ---
 if st.session_state["user"] is None:
-    st.title("🔐 Login / Registrazione")
+    st.title("🔐 Login / Registration")
 
-    mode = st.radio("Seleziona modalità", ["Login", "Registrati"])
+    mode = st.radio("Select modality", ["Login", "Registrati"])
     email = st.text_input("Email")
     password = st.text_input("Password", type="password")
 
@@ -71,12 +71,12 @@ if st.session_state["user"] is None:
                 user_info = user_data["users"][0]
 
                 if not user_info.get("emailVerified", False):
-                    st.warning("📧 Verifica la tua email prima di accedere.")
+                    st.warning("📧 verify your email before sign in.")
                 else:
                     # Verifica se utente è approvato
                     doc = db.collection("utenti_autorizzati").document(email).get()
                     if not doc.exists or not doc.to_dict().get("approved", False):
-                        st.error("⛔ Utente non approvato. Contatta l'amministratore.")
+                        st.error("⛔ Utent doesn't approved. Wait for Admin approval.")
                     else:
                         st.session_state["user"] = email
                         st.session_state["id_token"] = result["idToken"]
@@ -92,8 +92,8 @@ if st.session_state["user"] is None:
                 send_email_verification(result["idToken"])
                 # Salva utente come non approvato
                 db.collection("utenti_autorizzati").document(email).set({"email": email, "approved": False})
-                st.success("✅ Registrazione completata. Controlla la tua email per la verifica.")
-                st.info("Dopo la verifica, attendi l'approvazione dell'amministratore.")
+                st.success("✅ Registration completed. Check your email box for verification.")
+                st.info("After verification, wait for admin approval.")
     st.stop()
 
 # --- Logout ---
@@ -103,19 +103,19 @@ if st.button("Logout"):
     st.rerun()
 
 # --- Dashboard ---
-st.title("🏥 Dashboard Obsolescenza Dispositivo Medico")
+st.title("Dashboard Obsolescence Medical Device")
 
 # 👮‍♂️ Se sei admin, gestisci approvazioni
 if st.session_state["user"] == "andreolimarco01@gmail.com":  
-    st.write("✅ Accesso come amministratore")
-    st.subheader("🔐 Gestione utenti registrati")
+    st.write("✅ Admin access")
+    st.subheader("🔐 Manage regstered users")
     utenti = db.collection("utenti_autorizzati").stream()
     for u in utenti:
         dati = u.to_dict()
         email = dati.get("email", "")
         approved = dati.get("approved", False)
         col1, col2 = st.columns([3, 1])
-        col1.write(f"👤 {email} - {'✅ APPROVATO' if approved else '❌ NON approvato'}")
+        col1.write(f"👤 {email} - {'✅ Approved' if approved else '❌ Not approved'}")
         if not approved:
             if col2.button("Approva", key=email):
                 db.collection("utenti_autorizzati").document(email).update({"approved": True})
@@ -123,8 +123,8 @@ if st.session_state["user"] == "andreolimarco01@gmail.com":
                 st.rerun()
 
 # --- Input utente ---
-eta = st.slider("Età del dispositivo (anni)", 0, 30, 10)
-utilizzo = st.slider("Ore di utilizzo annuali", 0, 5000, 1000)
+eta = st.slider("Age of device(anni)", 0, 30, 10)
+utilizzo = st.slider("Annualy hours of usage", 0, 5000, 1000)
 
 # --- Fuzzy logic ---
 eta_range = np.arange(0, 31, 1)
@@ -142,15 +142,15 @@ uso_a = fuzz.interp_membership(uso_range, alto, utilizzo)
 
 obsolescenza = max(eta_v, uso_a)
 
-st.write("**Grado di obsolescenza:**", f"{obsolescenza:.2f}")
+st.write("**Obsolescence score:**", f"{obsolescenza:.2f}")
 if obsolescenza > 0.6:
-    st.error("⚠️ Dispositivo potenzialmente obsoleto")
+    st.error("⚠️ Device partially obsolet")
 else:
-    st.success("✅ Dispositivo in buone condizioni")
+    st.success("✅ Device in good condition")
 
 # --- Salvataggio in Firestore ---
 user_email = st.session_state["user"]
-if st.button("Salva valutazione"):
+if st.button("Save valuation"):
     doc = {
         "eta": eta,
         "utilizzo": utilizzo,
@@ -160,8 +160,8 @@ if st.button("Salva valutazione"):
     st.success("✅ Valutazione salvata!")
 
 # --- Visualizzazione valutazioni salvate ---
-st.subheader("📋 Valutazioni salvate")
+st.subheader("📋 Valutations saved")
 valutazioni = db.collection("ospedali").document(user_email).collection("valutazioni").stream()
 for doc in valutazioni:
     d = doc.to_dict()
-    st.write(f"- Età: {d['eta']} | Utilizzo: {d['utilizzo']} | Obsolescenza: {d['obsolescenza']}")
+    st.write(f"- Età: {d['Age']} | Utilizzo: {d['Annualy usage']} | Obsolescenza: {d['Obsolescence score']}")
