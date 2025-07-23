@@ -157,7 +157,7 @@ if st.button("Save valuation"):
         "obsolescenza": float(f"{obsolescenza:.2f}")
     }
     db.collection("ospedali").document(user_email).collection("valutazioni").add(doc)
-    st.success("✅ Valutazione salvata!")
+    st.success("✅ Valutation saved!")
 
 # --- Visualizzazione valutazioni salvate ---
 st.subheader("📋 Valutations saved")
