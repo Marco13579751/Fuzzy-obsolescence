@@ -195,7 +195,7 @@ with st.form("add_device"):
 
     if submitted:
     # Controllo se il dispositivo con lo stesso ID_DM esiste già
-    existing_doc = db.collection("dispositivi_medici").document(str(ID_DM)).get()
+        existing_doc = db.collection("dispositivi_medici").document(str(ID_DM)).get()
     
     if existing_doc.exists:
         st.error(f"❌ Esiste già un dispositivo con ID_DM = {ID_DM}. Usa un ID diverso.")
