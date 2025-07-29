@@ -132,11 +132,22 @@ parametri_nome = [
 ]
 
 inputs = []
-membership_values = []
+
+# Mostra i box in righe da 3 colonne
+colonne = st.columns(3)
 
 for i, nome in enumerate(parametri_nome):
-    val = st.number_input(f"{nome}", min_value=0.0, max_value=1.0, step=0.1, format="%.2f", key=f"param_{i+1}")
-    inputs.append(val if val != 0.0 else None)
+    col = colonne[i % 3]  # scegli la colonna ciclicamente
+    with col:
+        val = st.number_input(
+            f"{nome}",
+            min_value=0.0,
+            max_value=1.0,
+            step=0.1,
+            format="%.2f",
+            key=f"param_{i+1}"
+        )
+        inputs.append(val if val != 0.0 else None)
 
 
 # --- Fuzzy logic ---
