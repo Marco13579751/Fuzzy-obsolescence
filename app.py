@@ -122,7 +122,7 @@ if st.session_state["user"] == "andreolimarco01@gmail.com":
                 st.rerun()
 
 # --- Input utente con 13 parametri opzionali e nomi specifici ---
-st.subheader("📥 Inserimento dati dispositivo")
+st.subheader("📥 Add Device's informations")
 
 parametri_nome = [
     'normalizedAge', 'normalizedRiskLevels', 'normalizedfunctionLevels',
