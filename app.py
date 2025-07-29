@@ -149,42 +149,188 @@ for i, nome in enumerate(parametri_nome):
 
 
 # --- Fuzzy logic ---
-def fuzzy_membership(val, low_range, high_range):
-    if val is None:
-        return 0
-    x = np.linspace(low_range[0], high_range[2], 1000)
-    low_mf = fuzz.trimf(x, low_range)
-    high_mf = fuzz.trimf(x, high_range)
-    low = fuzz.interp_membership(x, low_mf, val)
-    high = fuzz.interp_membership(x, high_mf, val)
-    return max(low, high)
+normalized_age = ctrl.Antecedent(np.arange(0, 1.1, 0.1), 'normalizedAge')
+normalized_risk_levels = ctrl.Antecedent(np.arange(0, 1.1, 0.1), 'normalizedRiskLevels')
+normalized_function_levels = ctrl.Antecedent(np.arange(0, 1.1, 0.1), 'normalizedfunctionLevels')
+normalized_state_levels = ctrl.Antecedent(np.arange(0, 1.1, 0.1), 'normalizedStateLevels')
+normalized_life_res_levels = ctrl.Antecedent(np.arange(0, 1.1, 0.1), 'normalizedLifeResLevels')
+normalized_obs_levels = ctrl.Antecedent(np.arange(0, 1.1, 0.1), 'normalizedObsLevels')
+normalized_utilization_levels = ctrl.Antecedent(np.arange(0, 1.1, 0.1), 'normalizedUtilizationLevels')
+normalized_uptime = ctrl.Antecedent(np.arange(0, 1.1, 0.1), 'normalizedUptime')
+normalized_fault_rate_levels = ctrl.Antecedent(np.arange(0, 1.1, 0.1), 'normalizedfaultRateLevels')
+normalized_eols = ctrl.Antecedent(np.arange(0, 1.1, 0.1), 'normalizedEoLS')
 
-# Regole per ciascun parametro (possono essere personalizzate)
-fuzzy_ranges = [
-    ([0, 0, 10], [8, 20, 30]),      # Età
-    ([0, 0, 1000], [800, 3000, 5000]),
-    ([0, 0, 2], [1, 5, 10]),
-    ([0, 0, 2], [1, 5, 10]),
-    ([0, 0, 100], [50, 300, 1000]),
-    ([0, 0, 30], [20, 60, 100]),
-    ([0, 0, 30], [20, 60, 100]),
-    ([0, 0, 0.3], [0.2, 0.6, 1]),
-    ([0, 0, 0.3], [0.2, 0.6, 1]),
-    ([0, 0, 100], [50, 150, 500]),
-    ([0, 0, 0.3], [0.2, 0.6, 1]),
-    ([0, 0, 5], [3, 8, 20]),
-    ([0, 0, 3], [2, 6, 10]),
+
+# Add output variable (Consequent)
+criticity = ctrl.Consequent(np.arange(0, 10.1, 0.1), 'Criticity')
+
+# Define membership functions for normalizedAge
+
+normalized_age['New'] = fuzz.trapmf(normalized_age.universe, [0, 0.2, 0.3, 0.4])
+normalized_age['Middle'] = fuzz.trimf(normalized_age.universe, [0.3, 0.5, 0.7])
+normalized_age['Old'] = fuzz.trapmf(normalized_age.universe, [0.6, 0.8, 0.9, 1])
+
+# Define membership functions for normalizedRiskLevels
+normalized_risk_levels['NotSignificant'] = fuzz.trapmf(normalized_risk_levels.universe, [0, 0, 0.1, 0.2])
+normalized_risk_levels['NonPermanent'] = fuzz.trimf(normalized_risk_levels.universe, [0.15, 0.2, 0.25])
+normalized_risk_levels['ErrataTherapy'] = fuzz.trimf(normalized_risk_levels.universe, [0.25, 0.35, 0.45])
+normalized_risk_levels['Permanent'] = fuzz.trapmf(normalized_risk_levels.universe, [0.45, 0.55, 0.65, 0.75])
+normalized_risk_levels['Death'] = fuzz.trapmf(normalized_risk_levels.universe, [0.75, 0.80, 0.90, 1])
+
+# Define membership functions for normalizedfunctionLevels
+normalized_function_levels['LowIntensity'] = fuzz.trapmf(normalized_function_levels.universe, [0, 0, 0.1, 0.2])
+normalized_function_levels['MidLowIntensity'] = fuzz.trimf(normalized_function_levels.universe, [0.15, 0.2, 0.25])
+normalized_function_levels['MidIntensity'] = fuzz.trimf(normalized_function_levels.universe, [0.25, 0.35, 0.45])
+normalized_function_levels['MidHighIntensity'] = fuzz.trapmf(normalized_function_levels.universe, [0.45, 0.55, 0.65, 0.75])
+normalized_function_levels['HighIntensity'] = fuzz.trimf(normalized_function_levels.universe, [0.7, 0.8, 0.9])
+normalized_function_levels['VeryHighIntensity'] = fuzz.trapmf(normalized_function_levels.universe, [0.85, 1, 1, 1])
+
+# Define membership functions for normalizedStateLevels
+normalized_state_levels['Buono'] = fuzz.trapmf(normalized_state_levels.universe, [0, 0, 0.1, 0.2])
+normalized_state_levels['Sufficiente'] = fuzz.trimf(normalized_state_levels.universe, [0.15, 0.2, 0.25])
+normalized_state_levels['Deteriorato'] = fuzz.trimf(normalized_state_levels.universe, [0.25, 0.35, 0.45])
+normalized_state_levels['Degradato'] = fuzz.trapmf(normalized_state_levels.universe, [0.45, 0.55, 0.75, 1])
+
+# Define membership functions for normalizedLifeResLevels
+normalized_life_res_levels['BrandNew'] = fuzz.trimf(normalized_life_res_levels.universe, [0, 0, 0.2])
+normalized_life_res_levels['Recent'] = fuzz.trimf(normalized_life_res_levels.universe, [0.15, 0.3, 0.45])
+normalized_life_res_levels['FairlyNew'] = fuzz.trimf(normalized_life_res_levels.universe, [0.4, 0.55, 0.7])
+normalized_life_res_levels['UsedButGoodCondition'] = fuzz.trimf(normalized_life_res_levels.universe, [0.6, 0.8, 1])
+
+# Define membership functions for normalizedUtilizationLevels
+normalized_utilization_levels['Stock'] = fuzz.trimf(normalized_utilization_levels.universe, [0, 0, 0.2])
+normalized_utilization_levels['Unused'] = fuzz.trimf(normalized_utilization_levels.universe, [0.15, 0.3, 0.45])
+normalized_utilization_levels['RarelyUsed'] = fuzz.trimf(normalized_utilization_levels.universe, [0.4, 0.55, 0.7])
+normalized_utilization_levels['ContinuousUse'] = fuzz.trimf(normalized_utilization_levels.universe, [0.6, 0.8, 1])
+
+# Define membership functions for normalizedObsLevels
+normalized_obs_levels['StateOfTheArt'] = fuzz.trimf(normalized_obs_levels.universe, [0, 0, 0.2])
+normalized_obs_levels['UsableWithRemainingLifeLessThan0'] = fuzz.trimf(normalized_obs_levels.universe, [0.15, 0.3, 0.45])
+normalized_obs_levels['UsableWithRemainingLifeGreaterOrEqual0'] = fuzz.trimf(normalized_obs_levels.universe, [0.4, 0.55, 0.7])
+normalized_obs_levels['Obsolete'] = fuzz.trimf(normalized_obs_levels.universe, [0.6, 0.8, 1])
+
+# Define membership functions for normalizedUptime
+
+normalized_uptime['Max'] = fuzz.trapmf(normalized_uptime.universe, [0.6, 0.8, 1, 1])
+normalized_uptime['Middle'] = fuzz.trimf(normalized_uptime.universe, [0.3, 0.5, 0.7])
+normalized_uptime['Min'] = fuzz.trapmf(normalized_uptime.universe, [0, 0, 0.2, 0.4])
+
+# Define membership functions for normalizedfaultRateLevels
+normalized_fault_rate_levels['NeverExceeded'] = fuzz.trapmf(normalized_fault_rate_levels.universe, [0, 0, 0.25, 0.5])
+normalized_fault_rate_levels['ExceededLifetimeNotRecent'] = fuzz.trimf(normalized_fault_rate_levels.universe, [0.25, 0.5, 0.75])
+normalized_fault_rate_levels['ExceededRecentlyNotLifetime'] = fuzz.trimf(normalized_fault_rate_levels.universe, [0.5, 0.75, 1])
+normalized_fault_rate_levels['ExceededLifetimeAndRecent'] = fuzz.trapmf(normalized_fault_rate_levels.universe, [0.75, 1, 1, 1])
+
+# Define membership functions for normalizedEoLS
+normalized_eols['Absent'] = fuzz.trimf(normalized_eols.universe, [0, 0, 0.125])
+normalized_eols['PresentEoLBeforeToday'] = fuzz.trapmf(normalized_eols.universe, [0.25, 0.375, 0.625, 0.75])
+normalized_eols['PresentEoSAfterToday'] = fuzz.trapmf(normalized_eols.universe, [0.5, 0.625, 0.875, 1])
+normalized_eols['PresentEoSBeforeToday'] = fuzz.trimf(normalized_eols.universe, [0.75, 0.875, 1])
+
+# Define membership functions for Criticity
+criticity['VeryLow'] = fuzz.trapmf(criticity.universe, [0, 0, 1, 2]) # Adjusted range to match 0-10 scale
+criticity['Low'] = fuzz.trapmf(criticity.universe, [1.5, 2.5, 3.5, 4.5]) # Adjusted range
+criticity['Medium'] = fuzz.trimf(criticity.universe, [4, 5, 6]) # Adjusted range
+criticity['High'] = fuzz.trapmf(criticity.universe, [5.5, 6.5, 7.5, 8.5]) # Adjusted range
+criticity['VeryHigh'] = fuzz.trapmf(criticity.universe, [8, 9, 10, 10]) # Adjusted range
+
+# Define fuzzy rules
+rules = [
+    ctrl.Rule(normalized_age['New'], criticity['VeryLow']),
+    ctrl.Rule(normalized_age['New'], criticity['Low']), # This rule seems to contradict the previous one
+    ctrl.Rule(normalized_age['Middle'], criticity['Medium']),
+    ctrl.Rule(normalized_age['Old'], criticity['High']),
+    ctrl.Rule(normalized_age['Old'], criticity['VeryHigh']), # This rule seems to contradict the previous one
+
+    ctrl.Rule(normalized_risk_levels['NotSignificant'], criticity['VeryLow']),
+    ctrl.Rule(normalized_risk_levels['NonPermanent'], criticity['Low']),
+    ctrl.Rule(normalized_risk_levels['ErrataTherapy'], criticity['Medium']),
+    ctrl.Rule(normalized_risk_levels['Permanent'], criticity['High']),
+    ctrl.Rule(normalized_risk_levels['Death'], criticity['VeryHigh']),
+
+    ctrl.Rule(normalized_function_levels['LowIntensity'], criticity['VeryLow']),
+    ctrl.Rule(normalized_function_levels['MidLowIntensity'], criticity['Low']),
+    ctrl.Rule(normalized_function_levels['MidIntensity'], criticity['Medium']),
+    ctrl.Rule(normalized_function_levels['MidHighIntensity'], criticity['High']),
+    ctrl.Rule(normalized_function_levels['HighIntensity'], criticity['VeryHigh']),
+    ctrl.Rule(normalized_function_levels['VeryHighIntensity'], criticity['VeryHigh']),
+
+    ctrl.Rule(normalized_state_levels['Buono'], criticity['VeryLow']),
+    ctrl.Rule(normalized_state_levels['Sufficiente'], criticity['Medium']),
+    ctrl.Rule(normalized_state_levels['Deteriorato'], criticity['High']),
+    ctrl.Rule(normalized_state_levels['Degradato'], criticity['VeryHigh']),
+
+    ctrl.Rule(normalized_life_res_levels['BrandNew'], criticity['VeryLow']),
+    ctrl.Rule(normalized_life_res_levels['Recent'], criticity['Low']),
+    ctrl.Rule(normalized_life_res_levels['FairlyNew'], criticity['Medium']),
+    ctrl.Rule(normalized_life_res_levels['UsedButGoodCondition'], criticity['High']),
+
+    ctrl.Rule(normalized_utilization_levels['Stock'], criticity['VeryLow']),
+    ctrl.Rule(normalized_utilization_levels['Unused'], criticity['Low']),
+    ctrl.Rule(normalized_utilization_levels['RarelyUsed'], criticity['Medium']),
+    ctrl.Rule(normalized_utilization_levels['ContinuousUse'], criticity['High']),
+
+    ctrl.Rule(normalized_obs_levels['StateOfTheArt'], criticity['VeryLow']),
+    ctrl.Rule(normalized_obs_levels['UsableWithRemainingLifeLessThan0'], criticity['Low']),
+    ctrl.Rule(normalized_obs_levels['UsableWithRemainingLifeGreaterOrEqual0'], criticity['Medium']),
+    ctrl.Rule(normalized_obs_levels['Obsolete'], criticity['High']),
+
+    ctrl.Rule(normalized_uptime['Min'], criticity['VeryHigh']),
+    ctrl.Rule(normalized_uptime['Middle'], criticity['Medium']),
+    ctrl.Rule(normalized_uptime['Max'], criticity['VeryLow']),
+
+    ctrl.Rule(normalized_fault_rate_levels['NeverExceeded'], criticity['VeryLow']),
+    ctrl.Rule(normalized_fault_rate_levels['ExceededLifetimeNotRecent'], criticity['Medium']),
+    ctrl.Rule(normalized_fault_rate_levels['ExceededRecentlyNotLifetime'], criticity['Medium']),
+    ctrl.Rule(normalized_fault_rate_levels['ExceededLifetimeAndRecent'], criticity['VeryHigh']),
+
+    ctrl.Rule(normalized_eols['Absent'], criticity['VeryLow']),
+    ctrl.Rule(normalized_eols['PresentEoLBeforeToday'], criticity['High']),
+    ctrl.Rule(normalized_eols['PresentEoSAfterToday'], criticity['High']),
+    ctrl.Rule(normalized_eols['PresentEoSBeforeToday'], criticity['VeryHigh'])
 ]
 
-for val, ranges in zip(inputs, fuzzy_ranges):
-    mem = fuzzy_membership(val, ranges[0], ranges[1])
-    membership_values.append(mem)
+# Create the control system (this is the equivalent of the fuzzy system in Matlab)
+criticity_ctrl = ctrl.ControlSystem(rules)
 
-obsolescenza = (
-    sum(membership_values) / len([v for v in membership_values if v > 0])
-    if any(membership_values)
-    else None
-)
+# Assuming normalized values are calculated and available, similar to your Matlab code
+# Replace this with your actual normalization code if needed.
+normalizedAge = data['Eta']
+normalizedRiskLevels = data['RiskLevels']
+normalizedfunctionLevels = data['functionLevels']
+normalizedStateLevels = data['StateLevels']
+normalizedLifeResLevels = data['LifeResLevels']
+normalizedObsLevels = data['ObsLevels']
+normalizedUtilizationLevels = data['UtilizationLevels']
+normalizedUptime = data['Uptime']
+normalizedfaultRateLevels = data['faultRateLevels']
+normalizedEoLS = data['EoLS']
+
+
+# Create a simulation object for the fuzzy control system
+criticity_simulation = ctrl.ControlSystemSimulation(criticity_ctrl)
+
+# Initialize a list to store the calculated criticities
+criticities = []
+
+# Calculate criticity for each device
+    # Set input values for the current device
+    criticity_simulation.input['normalizedAge'] =parametri_nome[1]
+    criticity_simulation.input['normalizedRiskLevels'] = parametri_nome[2]
+    criticity_simulation.input['normalizedfunctionLevels'] = parametri_nome[3]
+    criticity_simulation.input['normalizedStateLevels'] = parametri_nome[4]
+    criticity_simulation.input['normalizedLifeResLevels'] = parametri_nome[5]
+    criticity_simulation.input['normalizedObsLevels'] = parametri_nome[6]
+    criticity_simulation.input['normalizedUtilizationLevels'] = parametri_nome[7]
+    criticity_simulation.input['normalizedUptime'] = parametri_nome[8]
+    criticity_simulation.input['normalizedfaultRateLevels'] = parametri_nome[9]
+    criticity_simulation.input['normalizedEoLS'] = parametri_nome[10]
+
+    # Compute the fuzzy output (Criticity)
+    criticity_simulation.compute()
+
+    # Store the result (scaled by 10 as in your Matlab code)
+    obsolescenza = criticity_simulation.output['Criticity'] * 10
 
 if obsolescenza is not None:
     st.write("**Obsolescence score:**", f"{obsolescenza:.2f}")
