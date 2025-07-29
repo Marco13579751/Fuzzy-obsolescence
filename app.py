@@ -143,7 +143,7 @@ inputs = []
 membership_values = []
 
 for i, nome in enumerate(parametri_nome):
-    val = st.number_input(f"{nome}", min_value=0.0, step=0.1, format="%.2f", key=f"param_{i+1}")
+    val = st.number_input(f"{nome}", min_value=0.0, max_value=1.0, step=0.1, format="%.2f", key=f"param_{i+1}")
     inputs.append(val if val != 0.0 else None)
 
 
