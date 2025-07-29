@@ -316,7 +316,7 @@ criticity_simulation.input['normalizedEoLS'] = parametri_nome[10]
 criticity_simulation.compute()
 
 # Store the result (scaled by 10 as in your Matlab code)
-obsolescenza = criticity_simulation.output['Criticity'] * 10
+obsolescenza = criticity_simulation.output * 10
 
 if obsolescenza is not None:
     st.write("**Obsolescence score:**", f"{obsolescenza:.2f}")
