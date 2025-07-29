@@ -129,7 +129,11 @@ st.subheader("📥 Inserimento dati dispositivo")
 eta = st.number_input("Age of device (anni)", min_value=0, max_value=30, value=10, key="eta")
 utilizzo = st.number_input("Annualy hours of usage", min_value=0, max_value=5000, value=1000, key="utilizzo")
 
-
+# --- Campi opzionali (lasciabili vuoti) ---
+extra_inputs = []
+for i in range(3, 14):
+    val = st.text_input(f"Parametro {i} (può essere lasciato vuoto)", value="", key=f"param_{i}")
+    extra_inputs.append(val if val != "" else None)
 
 # --- Fuzzy logic ---
 eta_range = np.arange(0, 31, 1)
@@ -171,6 +175,7 @@ valutazioni = db.collection("ospedali").document(user_email).collection("valutaz
 for doc in valutazioni:
     d = doc.to_dict()
     st.write(f"- Age: {d['eta']} | Annual usage: {d['utilizzo']} | Obsolescence: {d['obsolescenza']}")
+
 
 
 
