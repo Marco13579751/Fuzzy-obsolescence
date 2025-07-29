@@ -126,8 +126,8 @@ if st.session_state["user"] == "andreolimarco01@gmail.com":
 # --- Input utente con number_input (13 campi) ---
 st.subheader("📥 Inserimento dati dispositivo")
 
-eta = st.number_input("Age of device (anni)", min_value=0, max_value=30, value="", key="eta")
-utilizzo = st.number_input("Annualy hours of usage", min_value=0, max_value=5000, value="", key="utilizzo")
+eta = st.number_input("Age of device (anni)", min_value=0, max_value=30, key="eta")
+utilizzo = st.number_input("Annualy hours of usage", min_value=0, max_value=5000,  key="utilizzo")
 
 # --- Campi opzionali (lasciabili vuoti) ---
 extra_inputs = []
