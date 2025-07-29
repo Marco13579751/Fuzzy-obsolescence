@@ -120,35 +120,73 @@ if st.session_state["user"] == "andreolimarco01@gmail.com":
                 st.success(f"{email} approvato ✅")
                 st.rerun()
 
-# --- Input utente con 13 parametri opzionali ---
+# --- Input utente con 13 parametri opzionali e nomi specifici ---
 st.subheader("📥 Inserimento dati dispositivo")
+
+parametri_nome = [
+    "Età del dispositivo (anni)",
+    "Ore di utilizzo annuali",
+    "Numero di manutenzioni/anno",
+    "Numero guasti registrati",
+    "Costo medio riparazioni (€)",
+    "Percentuale utilizzo giornaliero (%)",
+    "Livello di aggiornamento software (%)",
+    "Supporto del produttore disponibile (0-1)",
+    "Facilità reperimento pezzi (0-1)",
+    "Consumo energetico (kWh)",
+    "Compatibilità con sistemi moderni (0-1)",
+    "Numero utenti formati",
+    "Livello soddisfazione utente (0-10)"
+]
 
 inputs = []
 membership_values = []
 
-for i in range(1, 14):
-    val = st.text_input(f"Parametro {i} (può essere lasciato vuoto)", value="", key=f"param_{i}")
-    parsed = int(val) if val.strip().isdigit() else None
+for i, nome in enumerate(parametri_nome):
+    val = st.text_input(f"{nome}", value="", key=f"param_{i+1}")
+    try:
+        parsed = float(val) if val.strip() != "" else None
+    except ValueError:
+        parsed = None
     inputs.append(parsed)
 
 # --- Fuzzy logic ---
-# Definizione intervalli e membership functions semplificate per esempio
 def fuzzy_membership(val, low_range, high_range):
     if val is None:
         return 0
-    x = np.arange(low_range[0], high_range[1] + 1, 1)
+    x = np.linspace(low_range[0], high_range[2], 1000)
     low_mf = fuzz.trimf(x, low_range)
     high_mf = fuzz.trimf(x, high_range)
     low = fuzz.interp_membership(x, low_mf, val)
     high = fuzz.interp_membership(x, high_mf, val)
     return max(low, high)
 
-# Calcola le membership per ogni parametro
-for idx, val in enumerate(inputs):
-    mem = fuzzy_membership(val, [0, 0, 15], [10, 30, 30])  # es. per eta, range da regolare
+# Regole per ciascun parametro (possono essere personalizzate)
+fuzzy_ranges = [
+    ([0, 0, 10], [8, 20, 30]),      # Età
+    ([0, 0, 1000], [800, 3000, 5000]),
+    ([0, 0, 2], [1, 5, 10]),
+    ([0, 0, 2], [1, 5, 10]),
+    ([0, 0, 100], [50, 300, 1000]),
+    ([0, 0, 30], [20, 60, 100]),
+    ([0, 0, 30], [20, 60, 100]),
+    ([0, 0, 0.3], [0.2, 0.6, 1]),
+    ([0, 0, 0.3], [0.2, 0.6, 1]),
+    ([0, 0, 100], [50, 150, 500]),
+    ([0, 0, 0.3], [0.2, 0.6, 1]),
+    ([0, 0, 5], [3, 8, 20]),
+    ([0, 0, 3], [2, 6, 10]),
+]
+
+for val, ranges in zip(inputs, fuzzy_ranges):
+    mem = fuzzy_membership(val, ranges[0], ranges[1])
     membership_values.append(mem)
 
-obsolescenza = max(membership_values) if any(membership_values) else None
+obsolescenza = (
+    sum(membership_values) / len([v for v in membership_values if v > 0])
+    if any(membership_values)
+    else None
+)
 
 if obsolescenza is not None:
     st.write("**Obsolescence score:**", f"{obsolescenza:.2f}")
