@@ -74,7 +74,6 @@ if st.session_state["user"] is None:
                 if not user_info.get("emailVerified", False):
                     st.warning("📧 verify your email before sign in.")
                 else:
-                    # Verifica se utente è approvato
                     doc = db.collection("utenti_autorizzati").document(email).get()
                     if not doc.exists or not doc.to_dict().get("approved", False):
                         st.error("⛔ Utent doesn't approved. Wait for Admin approval.")
@@ -91,7 +90,6 @@ if st.session_state["user"] is None:
                 st.error(f"Errore: {result['error']['message']}")
             else:
                 send_email_verification(result["idToken"])
-                # Salva utente come non approvato
                 db.collection("utenti_autorizzati").document(email).set({"email": email, "approved": False})
                 st.success("✅ Registration completed. Check your email box for verification.")
                 st.info("After verification, wait for admin approval.")
@@ -106,7 +104,6 @@ if st.button("Logout"):
 # --- Dashboard ---
 st.title("Dashboard Obsolescence Medical Device")
 
-# 👮‍♂️ Se sei admin, gestisci approvazioni
 if st.session_state["user"] == "andreolimarco01@gmail.com":  
     st.write("✅ Admin access")
     st.subheader("🔐 Manage regstered users")
@@ -123,13 +120,15 @@ if st.session_state["user"] == "andreolimarco01@gmail.com":
                 st.success(f"{email} approvato ✅")
                 st.rerun()
 
-# --- Input utente con number_input (13 campi) ---
+# --- Input utente con campi opzionali (13 campi) ---
 st.subheader("📥 Inserimento dati dispositivo")
 
-eta = st.number_input("Age of device (anni)", min_value=0, max_value=30, key="eta")
-utilizzo = st.number_input("Annualy hours of usage", min_value=0, max_value=5000,  key="utilizzo")
+eta_input = st.text_input("Age of device (anni) [opzionale]", value="", key="eta")
+utilizzo_input = st.text_input("Annualy hours of usage [opzionale]", value="", key="utilizzo")
 
-# --- Campi opzionali (lasciabili vuoti) ---
+eta = int(eta_input) if eta_input.strip().isdigit() else None
+utilizzo = int(utilizzo_input) if utilizzo_input.strip().isdigit() else None
+
 extra_inputs = []
 for i in range(3, 14):
     val = st.text_input(f"Parametro {i} (può essere lasciato vuoto)", value="", key=f"param_{i}")
@@ -144,10 +143,10 @@ vecchio = fuzz.trimf(eta_range, [10, 30, 30])
 basso = fuzz.trimf(uso_range, [0, 0, 2000])
 alto = fuzz.trimf(uso_range, [1000, 5000, 5000])
 
-eta_g = fuzz.interp_membership(eta_range, giovane, eta)
-eta_v = fuzz.interp_membership(eta_range, vecchio, eta)
-uso_b = fuzz.interp_membership(uso_range, basso, utilizzo)
-uso_a = fuzz.interp_membership(uso_range, alto, utilizzo)
+eta_g = fuzz.interp_membership(eta_range, giovane, eta) if eta is not None else 0
+eta_v = fuzz.interp_membership(eta_range, vecchio, eta) if eta is not None else 0
+uso_b = fuzz.interp_membership(uso_range, basso, utilizzo) if utilizzo is not None else 0
+uso_a = fuzz.interp_membership(uso_range, alto, utilizzo) if utilizzo is not None else 0
 
 obsolescenza = max(eta_v, uso_a)
 
@@ -163,7 +162,7 @@ if st.button("Save valuation"):
     doc = {
         "eta": eta,
         "utilizzo": utilizzo,
-        "obsolescenza": float(f"{obsolescenza:.2f}"),
+        "obsolescenza": float(f"{obsolescenza:.2f}") if obsolescenza is not None else None,
         "parametri_extra": extra_inputs
     }
     db.collection("ospedali").document(user_email).collection("valutazioni").add(doc)
@@ -174,7 +173,7 @@ st.subheader("📋 Valutations saved")
 valutazioni = db.collection("ospedali").document(user_email).collection("valutazioni").stream()
 for doc in valutazioni:
     d = doc.to_dict()
-    st.write(f"- Age: {d['eta']} | Annual usage: {d['utilizzo']} | Obsolescence: {d['obsolescenza']}")
+    st.write(f"- Age: {d.get('eta', 'N/D')} | Annual usage: {d.get('utilizzo', 'N/D')} | Obsolescence: {d.get('obsolescenza', 'N/D')}")
 
 
 
