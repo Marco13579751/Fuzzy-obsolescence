@@ -124,19 +124,19 @@ if st.session_state["user"] == "andreolimarco01@gmail.com":
 st.subheader("📥 Inserimento dati dispositivo")
 
 parametri_nome = [
-    "Età del dispositivo (anni)",
-    "Ore di utilizzo annuali",
-    "Numero di manutenzioni/anno",
-    "Numero guasti registrati",
-    "Costo medio riparazioni (€)",
-    "Percentuale utilizzo giornaliero (%)",
-    "Livello di aggiornamento software (%)",
-    "Supporto del produttore disponibile (0-1)",
-    "Facilità reperimento pezzi (0-1)",
-    "Consumo energetico (kWh)",
-    "Compatibilità con sistemi moderni (0-1)",
-    "Numero utenti formati",
-    "Livello soddisfazione utente (0-10)"
+    "Age of the device",
+    "Risk levels",
+    "Function levels",
+    "State levels",
+    "Up time",
+    "Failure rate",
+    "Presence of CE",
+    "Presence of manual",
+    "End of life support",
+    "Device funcionality",
+    "Level of obsolescence",
+    "Residual life level",
+    "Utilization levels"
 ]
 
 inputs = []
