@@ -1,6 +1,7 @@
 import streamlit as st
 import numpy as np
 import skfuzzy as fuzz
+from skfuzzy import control as ctrl
 import firebase_admin
 from firebase_admin import credentials, firestore
 import requests
@@ -143,12 +144,9 @@ inputs = []
 membership_values = []
 
 for i, nome in enumerate(parametri_nome):
-    val = st.text_input(f"{nome}", value="", key=f"param_{i+1}")
-    try:
-        parsed = float(val) if val.strip() != "" else None
-    except ValueError:
-        parsed = None
-    inputs.append(parsed)
+    val = st.number_input(f"{nome}", min_value=0.0, step=0.1, format="%.2f", key=f"param_{i+1}")
+    inputs.append(val if val != 0.0 else None)
+
 
 # --- Fuzzy logic ---
 def fuzzy_membership(val, low_range, high_range):
