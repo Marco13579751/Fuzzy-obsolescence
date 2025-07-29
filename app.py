@@ -129,11 +129,7 @@ st.subheader("📥 Inserimento dati dispositivo")
 eta = st.number_input("Age of device (anni)", min_value=0, max_value=30, value=10, key="eta")
 utilizzo = st.number_input("Annualy hours of usage", min_value=0, max_value=5000, value=1000, key="utilizzo")
 
-# Aggiungiamo 11 ulteriori input numerici personalizzabili (per un totale di 13)
-extra_inputs = []
-for i in range(3, 14):
-    val = st.number_input(f"Parametro {i}", min_value=0, max_value=100, value=50, key=f"param_{i}")
-    extra_inputs.append(val)
+
 
 # --- Fuzzy logic ---
 eta_range = np.arange(0, 31, 1)
