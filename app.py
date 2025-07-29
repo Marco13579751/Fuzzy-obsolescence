@@ -56,14 +56,15 @@ if "id_token" not in st.session_state:
 
 # --- UI Autenticazione ---
 if st.session_state["user"] is None:
-    st.title("🔐 Login / Registration")
+    st.title("🏥 Sistema di Valutazione Obsolescenza Dispositivi Medici")
+    st.markdown("Benvenuto. Accedi o registrati per utilizzare la piattaforma.")
 
-    mode = st.radio("Select modality", ["Login", "Registration"])
-    email = st.text_input("Email")
+    mode = st.radio("Seleziona modalità", ["Login", "Registrazione"])
+    email = st.text_input("Email istituzionale")
     password = st.text_input("Password", type="password")
 
     if mode == "Login":
-        if st.button("Login"):
+        if st.button("Accedi"):
             result = firebase_signin(email, password)
             if "error" in result:
                 st.error(f"Errore: {result['error']['message']}")
@@ -72,11 +73,11 @@ if st.session_state["user"] is None:
                 user_info = user_data["users"][0]
 
                 if not user_info.get("emailVerified", False):
-                    st.warning("📧 verify your email before sign in.")
+                    st.warning("📧 Verifica la tua email prima di accedere.")
                 else:
                     doc = db.collection("utenti_autorizzati").document(email).get()
                     if not doc.exists or not doc.to_dict().get("approved", False):
-                        st.error("⛔ Utent doesn't approved. Wait for Admin approval.")
+                        st.error("⛔ Utente non approvato. Attendere l'approvazione dell'amministratore.")
                     else:
                         st.session_state["user"] = email
                         st.session_state["id_token"] = result["idToken"]
@@ -84,44 +85,46 @@ if st.session_state["user"] is None:
                         st.rerun()
 
     else:
-        if st.button("Register"):
+        if st.button("Registrati"):
             result = firebase_register(email, password)
             if "error" in result:
                 st.error(f"Errore: {result['error']['message']}")
             else:
                 send_email_verification(result["idToken"])
                 db.collection("utenti_autorizzati").document(email).set({"email": email, "approved": False})
-                st.success("✅ Registration completed. Check your email box for verification.")
-                st.info("After verification, wait for admin approval.")
+                st.success("✅ Registrazione completata. Verifica la tua email.")
+                st.info("Dopo la verifica, attendi l'approvazione da parte dell'amministratore.")
     st.stop()
 
 # --- Logout ---
-if st.button("Logout"):
-    st.session_state["user"] = None
-    st.session_state["id_token"] = None
-    st.rerun()
+with st.sidebar:
+    st.write(f"👤 Utente: {st.session_state['user']}")
+    if st.button("Logout"):
+        st.session_state["user"] = None
+        st.session_state["id_token"] = None
+        st.rerun()
 
 # --- Dashboard ---
-st.title("Dashboard Obsolescence Medical Device")
+st.title("📊 Pannello di Valutazione Dispositivi")
 
 if st.session_state["user"] == "andreolimarco01@gmail.com":  
-    st.write("✅ Admin access")
-    st.subheader("🔐 Manage regstered users")
+    st.subheader("🔐 Gestione utenti registrati")
     utenti = db.collection("utenti_autorizzati").stream()
     for u in utenti:
         dati = u.to_dict()
         email = dati.get("email", "")
         approved = dati.get("approved", False)
         col1, col2 = st.columns([3, 1])
-        col1.write(f"👤 {email} - {'✅ Approved' if approved else '❌ Not approved'}")
+        col1.write(f"👤 {email} - {'✅ Approvato' if approved else '❌ Non approvato'}")
         if not approved:
             if col2.button("Approva", key=email):
                 db.collection("utenti_autorizzati").document(email).update({"approved": True})
                 st.success(f"{email} approvato ✅")
                 st.rerun()
 
-# --- Input utente con 13 parametri opzionali e nomi specifici ---
-st.subheader("📥 Inserimento dati dispositivo")
+# --- Input utente ---
+st.subheader("📥 Inserimento dati dispositivo medico")
+st.divider()
 
 parametri_nome = [
     "Età del dispositivo (anni)",
@@ -140,10 +143,11 @@ parametri_nome = [
 ]
 
 inputs = []
-membership_values = []
+cols = st.columns(3)
 
 for i, nome in enumerate(parametri_nome):
-    val = st.text_input(f"{nome}", value="", key=f"param_{i+1}")
+    col = cols[i % 3]
+    val = col.text_input(f"{nome}", value="", key=f"param_{i+1}")
     try:
         parsed = float(val) if val.strip() != "" else None
     except ValueError:
@@ -161,9 +165,8 @@ def fuzzy_membership(val, low_range, high_range):
     high = fuzz.interp_membership(x, high_mf, val)
     return max(low, high)
 
-# Regole per ciascun parametro (possono essere personalizzate)
 fuzzy_ranges = [
-    ([0, 0, 10], [8, 20, 30]),      # Età
+    ([0, 0, 10], [8, 20, 30]),
     ([0, 0, 1000], [800, 3000, 5000]),
     ([0, 0, 2], [1, 5, 10]),
     ([0, 0, 2], [1, 5, 10]),
@@ -178,44 +181,44 @@ fuzzy_ranges = [
     ([0, 0, 3], [2, 6, 10]),
 ]
 
-for val, ranges in zip(inputs, fuzzy_ranges):
-    mem = fuzzy_membership(val, ranges[0], ranges[1])
-    membership_values.append(mem)
-
+membership_values = [fuzzy_membership(val, ranges[0], ranges[1]) for val, ranges in zip(inputs, fuzzy_ranges)]
 obsolescenza = (
     sum(membership_values) / len([v for v in membership_values if v > 0])
     if any(membership_values)
     else None
 )
 
+st.divider()
+
 if obsolescenza is not None:
-    st.write("**Obsolescence score:**", f"{obsolescenza:.2f}")
+    st.metric(label="Indice di Obsolescenza", value=f"{obsolescenza:.2f}")
     if obsolescenza > 0.6:
-        st.error("⚠️ Device partially obsolet")
+        st.error("⚠️ Il dispositivo presenta un elevato livello di obsolescenza.")
+    elif obsolescenza > 0.3:
+        st.warning("🟡 Obsolescenza moderata.")
     else:
-        st.success("✅ Device in good condition")
+        st.success("✅ Il dispositivo è in buone condizioni.")
 else:
-    st.info("🟡 Inserisci almeno un parametro per calcolare lo score")
+    st.info("🟡 Inserire almeno un parametro valido per calcolare lo score.")
 
 # --- Salvataggio in Firestore ---
 user_email = st.session_state["user"]
-if st.button("Save valuation"):
+if st.button("💾 Salva valutazione"):
     doc = {
         "parametri": inputs,
         "obsolescenza": float(f"{obsolescenza:.2f}") if obsolescenza is not None else None
     }
     db.collection("ospedali").document(user_email).collection("valutazioni").add(doc)
-    st.success("✅ Valutation saved!")
+    st.success("✅ Valutazione salvata con successo.")
 
 # --- Visualizzazione valutazioni salvate ---
-st.subheader("📋 Valutations saved")
+st.subheader("📋 Storico valutazioni")
 valutazioni = db.collection("ospedali").document(user_email).collection("valutazioni").stream()
 for doc in valutazioni:
     d = doc.to_dict()
     params = d.get("parametri", ["N/D"]*13)
     score = d.get("obsolescenza", "N/D")
-    st.write(f"- Parametri: {params} | Obsolescence: {score}")
-
+    st.write(f"- Parametri: {params} | Obsolescenza: {score}")
 
 
 
