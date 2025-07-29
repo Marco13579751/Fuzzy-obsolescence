@@ -293,20 +293,6 @@ rules = [
 # Create the control system (this is the equivalent of the fuzzy system in Matlab)
 criticity_ctrl = ctrl.ControlSystem(rules)
 
-# Assuming normalized values are calculated and available, similar to your Matlab code
-# Replace this with your actual normalization code if needed.
-normalizedAge = data['Eta']
-normalizedRiskLevels = data['RiskLevels']
-normalizedfunctionLevels = data['functionLevels']
-normalizedStateLevels = data['StateLevels']
-normalizedLifeResLevels = data['LifeResLevels']
-normalizedObsLevels = data['ObsLevels']
-normalizedUtilizationLevels = data['UtilizationLevels']
-normalizedUptime = data['Uptime']
-normalizedfaultRateLevels = data['faultRateLevels']
-normalizedEoLS = data['EoLS']
-
-
 # Create a simulation object for the fuzzy control system
 criticity_simulation = ctrl.ControlSystemSimulation(criticity_ctrl)
 
