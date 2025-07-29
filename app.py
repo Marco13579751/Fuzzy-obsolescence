@@ -123,9 +123,17 @@ if st.session_state["user"] == "andreolimarco01@gmail.com":
                 st.success(f"{email} approvato ✅")
                 st.rerun()
 
-# --- Input utente ---
-eta = st.slider("Age of device(anni)", 0, 30, 10)
-utilizzo = st.slider("Annualy hours of usage", 0, 5000, 1000)
+# --- Input utente con number_input (13 campi) ---
+st.subheader("📥 Inserimento dati dispositivo")
+
+eta = st.number_input("Age of device (anni)", min_value=0, max_value=30, value=10, key="eta")
+utilizzo = st.number_input("Annualy hours of usage", min_value=0, max_value=5000, value=1000, key="utilizzo")
+
+# Aggiungiamo 11 ulteriori input numerici personalizzabili (per un totale di 13)
+extra_inputs = []
+for i in range(3, 14):
+    val = st.number_input(f"Parametro {i}", min_value=0, max_value=100, value=50, key=f"param_{i}")
+    extra_inputs.append(val)
 
 # --- Fuzzy logic ---
 eta_range = np.arange(0, 31, 1)
@@ -155,7 +163,8 @@ if st.button("Save valuation"):
     doc = {
         "eta": eta,
         "utilizzo": utilizzo,
-        "obsolescenza": float(f"{obsolescenza:.2f}")
+        "obsolescenza": float(f"{obsolescenza:.2f}"),
+        "parametri_extra": extra_inputs
     }
     db.collection("ospedali").document(user_email).collection("valutazioni").add(doc)
     st.success("✅ Valutation saved!")
@@ -166,5 +175,6 @@ valutazioni = db.collection("ospedali").document(user_email).collection("valutaz
 for doc in valutazioni:
     d = doc.to_dict()
     st.write(f"- Age: {d['eta']} | Annual usage: {d['utilizzo']} | Obsolescence: {d['obsolescenza']}")
+
 
 
