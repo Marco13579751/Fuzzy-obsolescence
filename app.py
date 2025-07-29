@@ -6,7 +6,7 @@ from firebase_admin import credentials, firestore
 import requests
 import pandas as pd
 
-# --- Configurazione e inizializzazione Firebase ---
+# -- Configurazione e inizializzazione Firebase ---
 firebase_config = {
     "type": st.secrets["firebase"]["type"],
     "project_id": st.secrets["firebase"]["project_id"],
