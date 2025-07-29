@@ -120,50 +120,51 @@ if st.session_state["user"] == "andreolimarco01@gmail.com":
                 st.success(f"{email} approvato ✅")
                 st.rerun()
 
-# --- Input utente con campi opzionali (13 campi) ---
+# --- Input utente con 13 parametri opzionali ---
 st.subheader("📥 Inserimento dati dispositivo")
 
-eta_input = st.text_input("Age of device (anni) [opzionale]", value="", key="eta")
-utilizzo_input = st.text_input("Annualy hours of usage [opzionale]", value="", key="utilizzo")
+inputs = []
+membership_values = []
 
-eta = int(eta_input) if eta_input.strip().isdigit() else None
-utilizzo = int(utilizzo_input) if utilizzo_input.strip().isdigit() else None
-
-extra_inputs = []
-for i in range(3, 14):
+for i in range(1, 14):
     val = st.text_input(f"Parametro {i} (può essere lasciato vuoto)", value="", key=f"param_{i}")
-    extra_inputs.append(val if val != "" else None)
+    parsed = int(val) if val.strip().isdigit() else None
+    inputs.append(parsed)
 
 # --- Fuzzy logic ---
-eta_range = np.arange(0, 31, 1)
-uso_range = np.arange(0, 5001, 100)
+# Definizione intervalli e membership functions semplificate per esempio
+def fuzzy_membership(val, low_range, high_range):
+    if val is None:
+        return 0
+    x = np.arange(low_range[0], high_range[1] + 1, 1)
+    low_mf = fuzz.trimf(x, low_range)
+    high_mf = fuzz.trimf(x, high_range)
+    low = fuzz.interp_membership(x, low_mf, val)
+    high = fuzz.interp_membership(x, high_mf, val)
+    return max(low, high)
 
-giovane = fuzz.trimf(eta_range, [0, 0, 15])
-vecchio = fuzz.trimf(eta_range, [10, 30, 30])
-basso = fuzz.trimf(uso_range, [0, 0, 2000])
-alto = fuzz.trimf(uso_range, [1000, 5000, 5000])
+# Calcola le membership per ogni parametro
+for idx, val in enumerate(inputs):
+    mem = fuzzy_membership(val, [0, 0, 15], [10, 30, 30])  # es. per eta, range da regolare
+    membership_values.append(mem)
 
-eta_g = fuzz.interp_membership(eta_range, giovane, eta) if eta is not None else 0
-eta_v = fuzz.interp_membership(eta_range, vecchio, eta) if eta is not None else 0
-uso_b = fuzz.interp_membership(uso_range, basso, utilizzo) if utilizzo is not None else 0
-uso_a = fuzz.interp_membership(uso_range, alto, utilizzo) if utilizzo is not None else 0
+obsolescenza = max(membership_values) if any(membership_values) else None
 
-obsolescenza = max(eta_v, uso_a)
-
-st.write("**Obsolescence score:**", f"{obsolescenza:.2f}")
-if obsolescenza > 0.6:
-    st.error("⚠️ Device partially obsolet")
+if obsolescenza is not None:
+    st.write("**Obsolescence score:**", f"{obsolescenza:.2f}")
+    if obsolescenza > 0.6:
+        st.error("⚠️ Device partially obsolet")
+    else:
+        st.success("✅ Device in good condition")
 else:
-    st.success("✅ Device in good condition")
+    st.info("🟡 Inserisci almeno un parametro per calcolare lo score")
 
 # --- Salvataggio in Firestore ---
 user_email = st.session_state["user"]
 if st.button("Save valuation"):
     doc = {
-        "eta": eta,
-        "utilizzo": utilizzo,
-        "obsolescenza": float(f"{obsolescenza:.2f}") if obsolescenza is not None else None,
-        "parametri_extra": extra_inputs
+        "parametri": inputs,
+        "obsolescenza": float(f"{obsolescenza:.2f}") if obsolescenza is not None else None
     }
     db.collection("ospedali").document(user_email).collection("valutazioni").add(doc)
     st.success("✅ Valutation saved!")
@@ -173,7 +174,9 @@ st.subheader("📋 Valutations saved")
 valutazioni = db.collection("ospedali").document(user_email).collection("valutazioni").stream()
 for doc in valutazioni:
     d = doc.to_dict()
-    st.write(f"- Age: {d.get('eta', 'N/D')} | Annual usage: {d.get('utilizzo', 'N/D')} | Obsolescence: {d.get('obsolescenza', 'N/D')}")
+    params = d.get("parametri", ["N/D"]*13)
+    score = d.get("obsolescenza", "N/D")
+    st.write(f"- Parametri: {params} | Obsolescence: {score}")
 
 
 
