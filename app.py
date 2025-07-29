@@ -312,6 +312,9 @@ criticity_simulation.input['normalizedUptime'] = parametri_nome[8]
 criticity_simulation.input['normalizedfaultRateLevels'] = parametri_nome[9]
 criticity_simulation.input['normalizedEoLS'] = parametri_nome[10]
 
+for nome, val in zip(parametri_nome, inputs):
+    criticity_simulation.input[nome] = val if val is not None else 0.0
+    
 # Compute the fuzzy output (Criticity)
 criticity_simulation.compute()
 
