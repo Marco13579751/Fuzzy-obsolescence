@@ -314,23 +314,23 @@ criticity_simulation = ctrl.ControlSystemSimulation(criticity_ctrl)
 criticities = []
 
 # Calculate criticity for each device
-    # Set input values for the current device
-    criticity_simulation.input['normalizedAge'] =parametri_nome[1]
-    criticity_simulation.input['normalizedRiskLevels'] = parametri_nome[2]
-    criticity_simulation.input['normalizedfunctionLevels'] = parametri_nome[3]
-    criticity_simulation.input['normalizedStateLevels'] = parametri_nome[4]
-    criticity_simulation.input['normalizedLifeResLevels'] = parametri_nome[5]
-    criticity_simulation.input['normalizedObsLevels'] = parametri_nome[6]
-    criticity_simulation.input['normalizedUtilizationLevels'] = parametri_nome[7]
-    criticity_simulation.input['normalizedUptime'] = parametri_nome[8]
-    criticity_simulation.input['normalizedfaultRateLevels'] = parametri_nome[9]
-    criticity_simulation.input['normalizedEoLS'] = parametri_nome[10]
+# Set input values for the current device
+criticity_simulation.input['normalizedAge'] =parametri_nome[1]
+criticity_simulation.input['normalizedRiskLevels'] = parametri_nome[2]
+criticity_simulation.input['normalizedfunctionLevels'] = parametri_nome[3]
+criticity_simulation.input['normalizedStateLevels'] = parametri_nome[4]
+criticity_simulation.input['normalizedLifeResLevels'] = parametri_nome[5]
+criticity_simulation.input['normalizedObsLevels'] = parametri_nome[6]
+criticity_simulation.input['normalizedUtilizationLevels'] = parametri_nome[7]
+criticity_simulation.input['normalizedUptime'] = parametri_nome[8]
+criticity_simulation.input['normalizedfaultRateLevels'] = parametri_nome[9]
+criticity_simulation.input['normalizedEoLS'] = parametri_nome[10]
 
-    # Compute the fuzzy output (Criticity)
-    criticity_simulation.compute()
+# Compute the fuzzy output (Criticity)
+criticity_simulation.compute()
 
-    # Store the result (scaled by 10 as in your Matlab code)
-    obsolescenza = criticity_simulation.output['Criticity'] * 10
+# Store the result (scaled by 10 as in your Matlab code)
+obsolescenza = criticity_simulation.output['Criticity'] * 10
 
 if obsolescenza is not None:
     st.write("**Obsolescence score:**", f"{obsolescenza:.2f}")
