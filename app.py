@@ -1,7 +1,6 @@
 import streamlit as st
 import numpy as np
 import skfuzzy as fuzz
-from skfuzzy import control as ctrl
 import firebase_admin
 from firebase_admin import credentials, firestore
 import requests
