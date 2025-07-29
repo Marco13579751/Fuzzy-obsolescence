@@ -336,10 +336,17 @@ else:
 # --- Salvataggio in Firestore ---
 user_email = st.session_state["user"]
 if st.button("Save valuation"):
+    parametri_dict = {
+    nome: val if val is not None else None
+    for nome, val in zip(parametri_nome, inputs)
+    }
+
     doc = {
-        "parametri": inputs,
+        "parametri": parametri_dict,
         "obsolescenza": float(f"{obsolescenza:.2f}") if obsolescenza is not None else None
     }
+    
+ 
     db.collection("ospedali").document(user_email).collection("valutazioni").add(doc)
     st.success("✅ Valutation saved!")
 
