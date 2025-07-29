@@ -292,16 +292,16 @@ criticities = []
 
 # Calculate criticity for each device
 # Set input values for the current device
-criticity_simulation.input['normalizedAge'] =parametri_nome[1]
-criticity_simulation.input['normalizedRiskLevels'] = parametri_nome[2]
-criticity_simulation.input['normalizedfunctionLevels'] = parametri_nome[3]
-criticity_simulation.input['normalizedStateLevels'] = parametri_nome[4]
-criticity_simulation.input['normalizedLifeResLevels'] = parametri_nome[5]
-criticity_simulation.input['normalizedObsLevels'] = parametri_nome[6]
-criticity_simulation.input['normalizedUtilizationLevels'] = parametri_nome[7]
-criticity_simulation.input['normalizedUptime'] = parametri_nome[8]
-criticity_simulation.input['normalizedfaultRateLevels'] = parametri_nome[9]
-criticity_simulation.input['normalizedEoLS'] = parametri_nome[0]
+criticity_simulation.input['normalizedAge'] =parametri_nome[0]
+criticity_simulation.input['normalizedRiskLevels'] = parametri_nome[1]
+criticity_simulation.input['normalizedfunctionLevels'] = parametri_nome[2]
+criticity_simulation.input['normalizedStateLevels'] = parametri_nome[3]
+criticity_simulation.input['normalizedLifeResLevels'] = parametri_nome[4]
+criticity_simulation.input['normalizedObsLevels'] = parametri_nome[5]
+criticity_simulation.input['normalizedUtilizationLevels'] = parametri_nome[6]
+criticity_simulation.input['normalizedUptime'] = parametri_nome[7]
+criticity_simulation.input['normalizedfaultRateLevels'] = parametri_nome[8]
+criticity_simulation.input['normalizedEoLS'] = parametri_nome[9]
 
 for nome, val in zip(parametri_nome, inputs):
     criticity_simulation.input[nome] = val if val is not None else 0.0
