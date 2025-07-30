@@ -9,6 +9,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import io
 import base64
+import IPython.display as display
 
 
 # -- Configurazione e inizializzazione Firebase ---
