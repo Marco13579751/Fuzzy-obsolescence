@@ -172,11 +172,10 @@ normalized_age['Middle'] = fuzz.trimf(normalized_age.universe, [0.3, 0.5, 0.7])
 normalized_age['Old'] = fuzz.trapmf(normalized_age.universe, [0.6, 0.8, 1, 1])
 
 # Define membership functions for normalizedfaultRateLevels
-normalized_fault_rate_levels['Low'] = fuzz.trapmf(normalized_fault_rate_levels.universe, [0, 0, 0.2, 0.3])
-normalized_fault_rate_levels['Under trh'] = fuzz.trimf(normalized_fault_rate_levels.universe, [0.2, 0.4, 0.5])
-normalized_fault_rate_levels['Around trh'] = fuzz.trimf(normalized_fault_rate_levels.universe, [0.4, 0.5, 0.6])
-normalized_fault_rate_levels['Above trh'] = fuzz.trimf(normalized_fault_rate_levels.universe, [0.5, 0.6, 0.8])
-normalized_fault_rate_levels['High'] = fuzz.trapmf(normalized_fault_rate_levels.universe, [0.7, 0.8, 1, 1])
+normalized_fault_rate_levels['Under trh'] = fuzz.trapmf(normalized_fault_rate_levels.universe, [0, 0, 0.3, 0.4])
+normalized_fault_rate_levels['Around trh'] = fuzz.trimf(normalized_fault_rate_levels.universe, [0.3, 0.5, 0.7])
+normalized_fault_rate_levels['Above trh'] = fuzz.trapmf(normalized_fault_rate_levels.universe, [0.6, 0.8, 1, 1])
+
 
 
 # Define membership functions for Criticity
@@ -193,11 +192,24 @@ rules = [
     ctrl.Rule(normalized_age['Middle'], criticity['Medium']),
     ctrl.Rule(normalized_age['Old'], criticity['VeryHigh']),
     
-    ctrl.Rule(normalized_fault_rate_levels['Low'], criticity['VeryLow']),
     ctrl.Rule(normalized_fault_rate_levels['Under trh'], criticity['Low']),
     ctrl.Rule(normalized_fault_rate_levels['Around trh'], criticity['Medium']),
     ctrl.Rule(normalized_fault_rate_levels['Above trh'], criticity['High']),
-    ctrl.Rule(normalized_fault_rate_levels['High'], criticity['VeryHigh']),
+   
+    # --- Age: NEW ---
+    ctrl.Rule(normalized_age['New'] & normalized_fault_rate_levels['Under trh'], criticity['VeryLow']),
+    ctrl.Rule(normalized_age['New'] & normalized_fault_rate_levels['Around trh'], criticity['Low']),
+    ctrl.Rule(normalized_age['New'] & normalized_fault_rate_levels['Above trh'], criticity['Medium']),
+
+    # --- Age: MIDDLE ---
+    ctrl.Rule(normalized_age['Middle'] & normalized_fault_rate_levels['Under trh'], criticity['Low']),
+    ctrl.Rule(normalized_age['Middle'] & normalized_fault_rate_levels['Around trh'], criticity['Medium']),
+    ctrl.Rule(normalized_age['Middle'] & normalized_fault_rate_levels['Above trh'], criticity['High']),
+
+    # --- Age: OLD ---
+    ctrl.Rule(normalized_age['Old'] & normalized_fault_rate_levels['Under trh'], criticity['Medium']),
+    ctrl.Rule(normalized_age['Old'] & normalized_fault_rate_levels['Around trh'], criticity['High']),
+    ctrl.Rule(normalized_age['Old'] & normalized_fault_rate_levels['Above trh'], criticity['VeryHigh']),
 
    
 
