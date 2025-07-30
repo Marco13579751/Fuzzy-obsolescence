@@ -358,12 +358,12 @@ for nome, val in zip(parametri_nome, inputs):
 # Compute the fuzzy output (Criticity)
 criticity_simulation.compute()
 
-def show_fuzzy_output(fuzzy_variable, sim):
-    # Calcola la simulazione
+def show_fuzzy_output(fuzzy_var, sim):
     sim.compute()
     
-    # Crea il grafico e salvalo in un buffer
-    fig = fuzzy_variable.view(sim=sim, show=False)  # Impedisce l'apertura della finestra
+    # Genera la figura in un oggetto esplicito
+    fig = fuzzy_var.view(sim=sim, show=False)  # Richiede scikit-fuzzy >= 0.4
+    
     st.pyplot(fig)
 show_fuzzy_output(criticity, criticity_simulation)
 
