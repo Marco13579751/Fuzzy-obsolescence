@@ -7,6 +7,8 @@ from firebase_admin import credentials, firestore
 import requests
 import pandas as pd
 import matplotlib.pyplot as plt
+import io
+
 
 # -- Configurazione e inizializzazione Firebase ---
 firebase_config = {
