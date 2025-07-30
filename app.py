@@ -357,7 +357,16 @@ for nome, val in zip(parametri_nome, inputs):
     
 # Compute the fuzzy output (Criticity)
 criticity_simulation.compute()
-criticity.view(sim=criticity_simulation)
+
+def show_fuzzy_output(fuzzy_variable, sim):
+    # Calcola la simulazione
+    sim.compute()
+    
+    # Crea il grafico e salvalo in un buffer
+    fig = fuzzy_variable.view(sim=sim, show=False)  # Impedisce l'apertura della finestra
+    st.pyplot(fig)
+show_fuzzy_output(criticity, criticity_simulation)
+
 
 # Store the result (scaled by 10 as in your Matlab code)
 obsolescenza = criticity_simulation.output['Criticity'] * 10
