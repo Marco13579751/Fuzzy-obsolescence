@@ -301,7 +301,7 @@ obsolescenza = criticity_simulation.output['Criticity'] * 10
 
 if obsolescenza is not None:
     st.write("**Obsolescence score:**", f"{obsolescenza:.2f}")
-    if obsolescenza > 0.6:
+    if obsolescenza > 60:
         st.error("⚠️ Device partially obsolet")
     else:
         st.success("✅ Device in good condition")
