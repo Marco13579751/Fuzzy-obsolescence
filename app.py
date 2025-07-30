@@ -262,45 +262,46 @@ rules = [
 '''
 ctrl.Rule(normalized_eols['Absent'], criticity['VeryLow']),
 ctrl.Rule(normalized_eols['PresentEoLBeforeToday'], criticity['High']),
-    ctrl.Rule(normalized_eols['PresentEoSAfterToday'], criticity['High']),
-    ctrl.Rule(normalized_eols['PresentEoSBeforeToday'], criticity['VeryHigh'])
-    '''
- ''' ctrl.Rule(normalized_risk_levels['NotSignificant'], criticity['VeryLow']),
-    ctrl.Rule(normalized_risk_levels['NonPermanent'], criticity['Low']),
-    ctrl.Rule(normalized_risk_levels['ErrataTherapy'], criticity['Medium']),
-    ctrl.Rule(normalized_risk_levels['Permanent'], criticity['High']),
-    ctrl.Rule(normalized_risk_levels['Death'], criticity['VeryHigh']),
+ctrl.Rule(normalized_eols['PresentEoSAfterToday'], criticity['High']),
+ctrl.Rule(normalized_eols['PresentEoSBeforeToday'], criticity['VeryHigh'])
 
-    ctrl.Rule(normalized_function_levels['LowIntensity'], criticity['VeryLow']),
-    ctrl.Rule(normalized_function_levels['MidLowIntensity'], criticity['Low']),
-    ctrl.Rule(normalized_function_levels['MidIntensity'], criticity['Medium']),
-    ctrl.Rule(normalized_function_levels['MidHighIntensity'], criticity['High']),
-    ctrl.Rule(normalized_function_levels['HighIntensity'], criticity['VeryHigh']),
-    ctrl.Rule(normalized_function_levels['VeryHighIntensity'], criticity['VeryHigh']),
+ctrl.Rule(normalized_risk_levels['NotSignificant'], criticity['VeryLow']),
+ctrl.Rule(normalized_risk_levels['NonPermanent'], criticity['Low']),
+ctrl.Rule(normalized_risk_levels['ErrataTherapy'], criticity['Medium']),
+ctrl.Rule(normalized_risk_levels['Permanent'], criticity['High']),
+ctrl.Rule(normalized_risk_levels['Death'], criticity['VeryHigh']),
 
-    ctrl.Rule(normalized_state_levels['Buono'], criticity['VeryLow']),
-    ctrl.Rule(normalized_state_levels['Sufficiente'], criticity['Medium']),
-    ctrl.Rule(normalized_state_levels['Deteriorato'], criticity['High']),
-    ctrl.Rule(normalized_state_levels['Degradato'], criticity['VeryHigh']),
+ctrl.Rule(normalized_function_levels['LowIntensity'], criticity['VeryLow']),
+ctrl.Rule(normalized_function_levels['MidLowIntensity'], criticity['Low']),
+ctrl.Rule(normalized_function_levels['MidIntensity'], criticity['Medium']),
+ctrl.Rule(normalized_function_levels['MidHighIntensity'], criticity['High']),
+ctrl.Rule(normalized_function_levels['HighIntensity'], criticity['VeryHigh']),
+ctrl.Rule(normalized_function_levels['VeryHighIntensity'], criticity['VeryHigh']),
 
-    ctrl.Rule(normalized_life_res_levels['BrandNew'], criticity['VeryLow']),
-    ctrl.Rule(normalized_life_res_levels['Recent'], criticity['Low']),
-    ctrl.Rule(normalized_life_res_levels['FairlyNew'], criticity['Medium']),
-    ctrl.Rule(normalized_life_res_levels['UsedButGoodCondition'], criticity['High']),
+ctrl.Rule(normalized_state_levels['Buono'], criticity['VeryLow']),
+ctrl.Rule(normalized_state_levels['Sufficiente'], criticity['Medium']),
+ctrl.Rule(normalized_state_levels['Deteriorato'], criticity['High']),
+ctrl.Rule(normalized_state_levels['Degradato'], criticity['VeryHigh']),
 
-    ctrl.Rule(normalized_utilization_levels['Stock'], criticity['VeryLow']),
-    ctrl.Rule(normalized_utilization_levels['Unused'], criticity['Low']),
-    ctrl.Rule(normalized_utilization_levels['RarelyUsed'], criticity['Medium']),
-    ctrl.Rule(normalized_utilization_levels['ContinuousUse'], criticity['High']),
+ctrl.Rule(normalized_life_res_levels['BrandNew'], criticity['VeryLow']),
+ctrl.Rule(normalized_life_res_levels['Recent'], criticity['Low']),
+ctrl.Rule(normalized_life_res_levels['FairlyNew'], criticity['Medium']),
+ctrl.Rule(normalized_life_res_levels['UsedButGoodCondition'], criticity['High']),
 
-    ctrl.Rule(normalized_obs_levels['StateOfTheArt'], criticity['VeryLow']),
-    ctrl.Rule(normalized_obs_levels['UsableWithRemainingLifeLessThan0'], criticity['Low']),
-    ctrl.Rule(normalized_obs_levels['UsableWithRemainingLifeGreaterOrEqual0'], criticity['Medium']),
-    ctrl.Rule(normalized_obs_levels['Obsolete'], criticity['High']),
+ctrl.Rule(normalized_utilization_levels['Stock'], criticity['VeryLow']),
+ctrl.Rule(normalized_utilization_levels['Unused'], criticity['Low']),
+ctrl.Rule(normalized_utilization_levels['RarelyUsed'], criticity['Medium']),
+ctrl.Rule(normalized_utilization_levels['ContinuousUse'], criticity['High']),
 
-    ctrl.Rule(normalized_uptime['Min'], criticity['VeryHigh']),
-    ctrl.Rule(normalized_uptime['Middle'], criticity['Medium']),
-    ctrl.Rule(normalized_uptime['Max'], criticity['VeryLow']), '''
+ctrl.Rule(normalized_obs_levels['StateOfTheArt'], criticity['VeryLow']),
+ctrl.Rule(normalized_obs_levels['UsableWithRemainingLifeLessThan0'], criticity['Low']),
+ctrl.Rule(normalized_obs_levels['UsableWithRemainingLifeGreaterOrEqual0'], criticity['Medium']),
+ctrl.Rule(normalized_obs_levels['Obsolete'], criticity['High']),
+
+ctrl.Rule(normalized_uptime['Min'], criticity['VeryHigh']),
+ctrl.Rule(normalized_uptime['Middle'], criticity['Medium']),
+ctrl.Rule(normalized_uptime['Max'], criticity['VeryLow']), 
+'''
 
 # Create the control system (this is the equivalent of the fuzzy system in Matlab)
 criticity_ctrl = ctrl.ControlSystem(rules)
