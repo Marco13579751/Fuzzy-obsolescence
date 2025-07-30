@@ -224,10 +224,10 @@ normalized_uptime['Middle'] = fuzz.trimf(normalized_uptime.universe, [0.3, 0.5, 
 normalized_uptime['Min'] = fuzz.trapmf(normalized_uptime.universe, [0, 0, 0.2, 0.4])
 
 # Define membership functions for normalizedfaultRateLevels
-normalized_fault_rate_levels['NeverExceeded'] = fuzz.trapmf(normalized_fault_rate_levels.universe, [0, 0, 0.25, 0.5])
-normalized_fault_rate_levels['ExceededLifetimeNotRecent'] = fuzz.trimf(normalized_fault_rate_levels.universe, [0.25, 0.5, 0.75])
-normalized_fault_rate_levels['ExceededRecentlyNotLifetime'] = fuzz.trimf(normalized_fault_rate_levels.universe, [0.5, 0.75, 1])
-normalized_fault_rate_levels['ExceededLifetimeAndRecent'] = fuzz.trapmf(normalized_fault_rate_levels.universe, [0.75, 1, 1, 1])
+normalized_fault_rate_levels['Low'] = fuzz.trapmf(normalized_fault_rate_levels.universe, [0, 0, 0.25, 0.5])
+normalized_fault_rate_levels['Under trh'] = fuzz.trimf(normalized_fault_rate_levels.universe, [0.25, 0.5, 0.75])
+normalized_fault_rate_levels['Above trh'] = fuzz.trimf(normalized_fault_rate_levels.universe, [0.5, 0.75, 1])
+normalized_fault_rate_levels['High'] = fuzz.trapmf(normalized_fault_rate_levels.universe, [0.75, 1, 1, 1])
 
 # Define membership functions for normalizedEoLS
 normalized_eols['Absent'] = fuzz.trimf(normalized_eols.universe, [0, 0, 0.125])
@@ -252,10 +252,10 @@ rules = [
     
    
     
-    ctrl.Rule(normalized_fault_rate_levels['NeverExceeded'], criticity['VeryLow']),
-    ctrl.Rule(normalized_fault_rate_levels['ExceededLifetimeNotRecent'], criticity['Medium']),
-    ctrl.Rule(normalized_fault_rate_levels['ExceededRecentlyNotLifetime'], criticity['Medium']),
-    ctrl.Rule(normalized_fault_rate_levels['ExceededLifetimeAndRecent'], criticity['VeryHigh']),
+    ctrl.Rule(normalized_fault_rate_levels['Low'], criticity['VeryLow']),
+    ctrl.Rule(normalized_fault_rate_levels['Under trh'], criticity['Medium']),
+    ctrl.Rule(normalized_fault_rate_levels['Above trh'], criticity['Medium']),
+    ctrl.Rule(normalized_fault_rate_levels['High'], criticity['VeryHigh']),
     
 
 ]
