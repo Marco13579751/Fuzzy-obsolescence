@@ -238,14 +238,19 @@ def plot_membership_functions(antecedent, title):
 plot_membership_functions(normalized_age, 'Age')
 plot_membership_functions(normalized_fault_rate_levels, 'Failure rate')
 term = 'Under trh'
-plt.plot(
-    normalized_fault_rate_levels.universe,
-    normalized_fault_rate_levels[term].mf,
-    label=term
-)
-plt.title(term)
-plt.grid(True)
-plt.show()
+x = normalized_fault_rate_levels.universe
+y = normalized_fault_rate_levels[term].mf
+
+fig, ax = plt.subplots(figsize=(5, 2.5))
+ax.plot(x, y, label=term, color='blue')
+ax.set_title(f"Membership function: {term}", fontsize=10)
+ax.set_xlabel("Valore", fontsize=8)
+ax.set_ylabel("Appartenenza", fontsize=8)
+ax.grid(True, linestyle="--", alpha=0.3)
+ax.legend(fontsize=8)
+
+st.pyplot(fig)
+plt.close(fig)
 
 
 # Create a simulation object for the fuzzy control system
