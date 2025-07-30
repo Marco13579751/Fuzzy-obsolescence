@@ -300,6 +300,11 @@ rules = [
 # Create the control system (this is the equivalent of the fuzzy system in Matlab)
 criticity_ctrl = ctrl.ControlSystem(rules)
 
+import matplotlib.pyplot as plt
+import io
+import base64
+import streamlit as st
+
 def plot_membership_functions(antecedent, title):
     fig, ax = plt.subplots(figsize=(6, 3), facecolor='w')
     for term in antecedent.terms:
@@ -308,17 +313,21 @@ def plot_membership_functions(antecedent, title):
     ax.legend()
     ax.grid(True)
 
-    # Save plot to a bytes object and encode as base64
-    data = io.BytesIO()
-    plt.savefig(data)
-    image = F"data:image/png;base64,{base64.b64encode(data.getvalue()).decode()}"
-    alt = f"Membership Functions for {title}"
-    display.display(display.Markdown(F"""![{alt}]({image})"""))
+    # Mostra il grafico in Streamlit
+    st.pyplot(fig)
+
+    # Se vuoi anche la versione in base64, opzionale
+    # data = io.BytesIO()
+    # plt.savefig(data, format="png")
+    # image = f"data:image/png;base64,{base64.b64encode(data.getvalue()).decode()}"
+    # st.markdown(f"![{title}]({image})", unsafe_allow_html=True)
+
     plt.close(fig)
 
-
+# Esempio di chiamata
 plot_membership_functions(normalized_age, 'Age')
 plot_membership_functions(normalized_risk_levels, 'Risk Levels')
+
 
 # Create a simulation object for the fuzzy control system
 criticity_simulation = ctrl.ControlSystemSimulation(criticity_ctrl)
