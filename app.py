@@ -6,6 +6,7 @@ import firebase_admin
 from firebase_admin import credentials, firestore
 import requests
 import pandas as pd
+import matplotlib.pyplot as plt
 
 # -- Configurazione e inizializzazione Firebase ---
 firebase_config = {
@@ -294,6 +295,26 @@ rules = [
 
 # Create the control system (this is the equivalent of the fuzzy system in Matlab)
 criticity_ctrl = ctrl.ControlSystem(rules)
+
+def plot_membership_functions(antecedent, title):
+    fig, ax = plt.subplots(figsize=(6, 3), facecolor='w')
+    for term in antecedent.terms:
+        ax.plot(antecedent.universe, antecedent[term].mf, label=term)
+    ax.set_title(title, fontsize=10)
+    ax.legend()
+    ax.grid(True)
+
+    # Save plot to a bytes object and encode as base64
+    data = io.BytesIO()
+    plt.savefig(data)
+    image = F"data:image/png;base64,{base64.b64encode(data.getvalue()).decode()}"
+    alt = f"Membership Functions for {title}"
+    display.display(display.Markdown(F"""![{alt}]({image})"""))
+    plt.close(fig)
+
+
+plot_membership_functions(normalized_age, 'Age')
+plot_membership_functions(normalized_risk_levels, 'Risk Levels')
 
 # Create a simulation object for the fuzzy control system
 criticity_simulation = ctrl.ControlSystemSimulation(criticity_ctrl)
