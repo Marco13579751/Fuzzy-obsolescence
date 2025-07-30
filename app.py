@@ -188,20 +188,26 @@ criticity['VeryHigh'] = fuzz.trapmf(criticity.universe, [8, 9, 10, 10]) # Adjust
 
 # Define fuzzy rules
 rules = [
-    ctrl.Rule(normalized_age['New'], criticity['VeryLow']),
-    ctrl.Rule(normalized_age['Middle'], criticity['Medium']),
-    ctrl.Rule(normalized_age['Old'], criticity['VeryHigh']), 
-    
-   
-    
-    ctrl.Rule(normalized_fault_rate_levels['Low'], criticity['VeryLow']),
-    ctrl.Rule(normalized_fault_rate_levels['Under trh'], criticity['Low']),
-    ctrl.Rule(normalized_fault_rate_levels['Around trh'], criticity['Medium']),
-    ctrl.Rule(normalized_fault_rate_levels['Above trh'], criticity['High']),
-    ctrl.Rule(normalized_fault_rate_levels['High'], criticity['VeryHigh']),
 
-
+    # --- Age: NEW ---
     ctrl.Rule(normalized_age['New'] & normalized_fault_rate_levels['Low'], criticity['VeryLow']),
+    ctrl.Rule(normalized_age['New'] & normalized_fault_rate_levels['Under trh'], criticity['Low']),
+    ctrl.Rule(normalized_age['New'] & normalized_fault_rate_levels['Around trh'], criticity['Medium']),
+    ctrl.Rule(normalized_age['New'] & normalized_fault_rate_levels['Above trh'], criticity['Medium']),
+    ctrl.Rule(normalized_age['New'] & normalized_fault_rate_levels['High'], criticity['High']),
+
+    # --- Age: MIDDLE ---
+    ctrl.Rule(normalized_age['Middle'] & normalized_fault_rate_levels['Low'], criticity['Low']),
+    ctrl.Rule(normalized_age['Middle'] & normalized_fault_rate_levels['Under trh'], criticity['Low']),
+    ctrl.Rule(normalized_age['Middle'] & normalized_fault_rate_levels['Around trh'], criticity['Medium']),
+    ctrl.Rule(normalized_age['Middle'] & normalized_fault_rate_levels['Above trh'], criticity['High']),
+    ctrl.Rule(normalized_age['Middle'] & normalized_fault_rate_levels['High'], criticity['High']),
+
+    # --- Age: OLD ---
+    ctrl.Rule(normalized_age['Old'] & normalized_fault_rate_levels['Low'], criticity['Medium']),
+    ctrl.Rule(normalized_age['Old'] & normalized_fault_rate_levels['Under trh'], criticity['High']),
+    ctrl.Rule(normalized_age['Old'] & normalized_fault_rate_levels['Around trh'], criticity['High']),
+    ctrl.Rule(normalized_age['Old'] & normalized_fault_rate_levels['Above trh'], criticity['VeryHigh']),
     ctrl.Rule(normalized_age['Old'] & normalized_fault_rate_levels['High'], criticity['VeryHigh']),
 
 ]
