@@ -174,7 +174,7 @@ normalized_age['Old'] = fuzz.trapmf(normalized_age.universe, [0.6, 0.8, 1, 1])
 # Define membership functions for normalizedfaultRateLevels
 normalized_fault_rate_levels['Low'] = fuzz.trapmf(normalized_fault_rate_levels.universe, [0, 0, 0.2, 0.4])
 normalized_fault_rate_levels['Under trh'] = fuzz.trimf(normalized_fault_rate_levels.universe, [0.3, 0.4, 0.5])
-normalized_fault_rate_levels['Uround trh'] = fuzz.trimf(normalized_fault_rate_levels.universe, [0.4, 0.5, 0.6])
+normalized_fault_rate_levels['Around trh'] = fuzz.trimf(normalized_fault_rate_levels.universe, [0.4, 0.5, 0.6])
 normalized_fault_rate_levels['Above trh'] = fuzz.trimf(normalized_fault_rate_levels.universe, [0.5, 0.6, 0.7])
 normalized_fault_rate_levels['High'] = fuzz.trapmf(normalized_fault_rate_levels.universe, [0.6, 0.8, 1, 1])
 
