@@ -237,6 +237,15 @@ def plot_membership_functions(antecedent, title):
 # Esempio di chiamata
 plot_membership_functions(normalized_age, 'Age')
 plot_membership_functions(normalized_fault_rate_levels, 'Failure rate')
+term = 'Under trh'
+plt.plot(
+    normalized_fault_rate_levels.universe,
+    normalized_fault_rate_levels[term].mf,
+    label=term
+)
+plt.title(term)
+plt.grid(True)
+plt.show()
 
 
 # Create a simulation object for the fuzzy control system
