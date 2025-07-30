@@ -201,9 +201,8 @@ rules = [
     ctrl.Rule(normalized_fault_rate_levels['High'], criticity['VeryHigh']),
 
 
-    ctrl.Rule(normalized_age['New'] & normalized_fault_rate_levels['Low'], criticity['VeryLow'])
-    ctrl.Rule(normalized_age['Old'] & normalized_fault_rate_levels['High'], criticity['VeryHigh'])
-    
+    ctrl.Rule(normalized_age['New'] & normalized_fault_rate_levels['Low'], criticity['VeryLow']),
+    ctrl.Rule(normalized_age['Old'] & normalized_fault_rate_levels['High'], criticity['VeryHigh']),
 
 ]
 
