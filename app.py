@@ -174,7 +174,8 @@ normalized_age['Old'] = fuzz.trapmf(normalized_age.universe, [0.6, 0.8, 1, 1])
 # Define membership functions for normalizedfaultRateLevels
 normalized_fault_rate_levels['Low'] = fuzz.trapmf(normalized_fault_rate_levels.universe, [0, 0, 0.2, 0.4])
 normalized_fault_rate_levels['Under trh'] = fuzz.trimf(normalized_fault_rate_levels.universe, [0.3, 0.4, 0.5])
-normalized_fault_rate_levels['Above trh'] = fuzz.trimf(normalized_fault_rate_levels.universe, [0.4, 0.5, 0.6])
+normalized_fault_rate_levels['Uround trh'] = fuzz.trimf(normalized_fault_rate_levels.universe, [0.4, 0.5, 0.6])
+normalized_fault_rate_levels['Above trh'] = fuzz.trimf(normalized_fault_rate_levels.universe, [0.5, 0.6, 0.7])
 normalized_fault_rate_levels['High'] = fuzz.trapmf(normalized_fault_rate_levels.universe, [0.6, 0.8, 1, 1])
 
 
@@ -188,16 +189,15 @@ criticity['VeryHigh'] = fuzz.trapmf(criticity.universe, [8, 9, 10, 10]) # Adjust
 # Define fuzzy rules
 rules = [
     ctrl.Rule(normalized_age['New'], criticity['VeryLow']),
-    ctrl.Rule(normalized_age['New'], criticity['Low']), # This rule seems to contradict the previous one
     ctrl.Rule(normalized_age['Middle'], criticity['Medium']),
-    ctrl.Rule(normalized_age['Old'], criticity['High']),
-    ctrl.Rule(normalized_age['Old'], criticity['VeryHigh']), # This rule seems to contradict the previous one
+    ctrl.Rule(normalized_age['Old'], criticity['VeryHigh']), 
     
    
     
     ctrl.Rule(normalized_fault_rate_levels['Low'], criticity['VeryLow']),
-    ctrl.Rule(normalized_fault_rate_levels['Under trh'], criticity['Medium']),
-    ctrl.Rule(normalized_fault_rate_levels['Above trh'], criticity['Medium']),
+    ctrl.Rule(normalized_fault_rate_levels['Under trh'], criticity['Low']),
+     ctrl.Rule(normalized_fault_rate_levels['Around trh'], criticity['Medium']),
+    ctrl.Rule(normalized_fault_rate_levels['Above trh'], criticity['High']),
     ctrl.Rule(normalized_fault_rate_levels['High'], criticity['VeryHigh']),
     
 
