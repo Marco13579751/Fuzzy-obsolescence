@@ -346,9 +346,12 @@ for doc in valutazioni:
 
 st.subheader("📊 Test di input automatici")
 
-# --- Generazione test cases
-test_cases_age_fixed = [{'normalizedAge': 1.0, 'normalizedfaultRateLevels': round(x, 1)} for x in np.arange(0.1, 1.01, 0.1)]
-test_cases_fault_fixed = [{'normalizedAge': round(x, 1), 'normalizedfaultRateLevels': 1.0} for x in np.arange(0.1, 1.01, 0.1)]
+# --- Generazione di tutte le combinazioni
+all_combinations = [
+    {'normalizedAge': round(age, 1), 'normalizedfaultRateLevels': round(fr, 1)}
+    for age in np.arange(0.0, 1.01, 0.1)
+    for fr in np.arange(0.0, 1.01, 0.1)
+]
 
 # --- Funzione per calcolare Criticity
 def compute_criticities(cases, sim):
@@ -364,34 +367,31 @@ def compute_criticities(cases, sim):
         })
     return pd.DataFrame(results)
 
-# --- Calcolo dei risultati
-
-# Costruzione del sistema fuzzy
+# --- Costruzione del sistema fuzzy
 critic_ctrl = ctrl.ControlSystem(rules)
 sim = ctrl.ControlSystemSimulation(critic_ctrl)
 
-df_age_fixed = compute_criticities(test_cases_age_fixed, sim)
-df_fault_fixed = compute_criticities(test_cases_fault_fixed, sim)
+# --- Calcolo risultati
+df_all = compute_criticities(all_combinations, sim)
 
-# --- Mostra le tabelle
-st.subheader("📋 Criticity con Age=1.0 e FailureRate variabile")
-st.dataframe(df_age_fixed)
+# --- Mostra tabella completa
+st.subheader("📋 Tutte le combinazioni Age / FailureRate con relativa Criticità")
+st.dataframe(df_all)
 
-st.subheader("📋 Criticity con FailureRate=1.0 e Age variabile")
-st.dataframe(df_fault_fixed)
+# --- Heatmap pivotata per visualizzazione 2D
+pivot = df_all.pivot(index='Age', columns='FailureRate', values='Criticity')
+st.subheader("🔥 Heatmap Criticità")
+st.dataframe(pivot)
 
-# --- Grafico di confronto
-fig, ax = plt.subplots(figsize=(6, 4))
-ax.plot(df_age_fixed['FailureRate'], df_age_fixed['Criticity'], marker='o', label="Age = 1.0")
-ax.plot(df_fault_fixed['Age'], df_fault_fixed['Criticity'], marker='s', label="FailureRate = 1.0")
-
-ax.set_title("Andamento della Criticità", fontsize=10)
-ax.set_xlabel("Valore variabile (Age o FailureRate)", fontsize=9)
-ax.set_ylabel("Criticity", fontsize=9)
-ax.grid(True, linestyle="--", alpha=0.4)
-ax.legend(fontsize=8)
+# --- Grafico 3D
+fig = plt.figure(figsize=(8, 6))
+ax = fig.add_subplot(111, projection='3d')
+ax.plot_trisurf(df_all['Age'], df_all['FailureRate'], df_all['Criticity'], cmap='viridis', edgecolor='none')
+ax.set_xlabel('Age')
+ax.set_ylabel('Failure Rate')
+ax.set_zlabel('Criticity')
+ax.set_title('Criticity in funzione di Age e Failure Rate')
 st.pyplot(fig)
-
 '''
 ctrl.Rule(normalized_eols['Absent'], criticity['VeryLow']),
 ctrl.Rule(normalized_eols['PresentEoLBeforeToday'], criticity['High']),
