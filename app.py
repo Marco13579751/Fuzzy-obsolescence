@@ -271,35 +271,22 @@ criticities = []
 for nome, val in zip(parametri_nome_prova_con_2_parametri, inputs):
     criticity_simulation.input[nome] = val if val is not None else 0.0
     
-# Compute the fuzzy output (Criticity)
-def show_fuzzy_output(fuzzy_var, sim):
-    sim.compute()
-    output_value = sim.output[fuzzy_var.label]
-
+def show_fuzzy_input(antecedent, crisp_value):
+    x = antecedent.universe
     fig, ax = plt.subplots(figsize=(5, 2.5))
-    colors = plt.cm.viridis(np.linspace(0, 1, len(fuzzy_var.terms)))
+    colors = plt.cm.viridis(np.linspace(0, 1, len(antecedent.terms)))
 
-    x = fuzzy_var.universe
+    for i, term in enumerate(antecedent.terms):
+        y = antecedent[term].mf
+        ax.plot(x, y, label=term.capitalize(), color=colors[i], linewidth=1)
 
-    for idx, term in enumerate(fuzzy_var.terms):
-        mf = fuzzy_var[term].mf
-        y = mf
+        activation = fuzz.interp_membership(x, y, crisp_value)
+        ax.fill_between(x, 0, np.fmin(y, activation), alpha=0.4, color=colors[i])
 
-        # Plot della curva completa
-        ax.plot(x, y, label=term.capitalize(), linewidth=1, color=colors[idx])
+    ax.axvline(x=crisp_value, color='red', linestyle='--', linewidth=1,
+               label=f'Valore = {crisp_value:.2f}')
 
-        # Calcolo grado di attivazione del termine
-        activation = fuzz.interp_membership(x, y, output_value)
-
-        # Riempiamo solo fino al grado di attivazione
-        ax.fill_between(x, 0, np.fmin(activation, y), alpha=0.4, color=colors[idx])
-
-    # Linea verticale sul valore defuzzificato
-    ax.axvline(x=output_value, color='red', linestyle='--', linewidth=1,
-               label=f'Uscita = {output_value:.2f}')
-
-    # Stile coerente
-    ax.set_title(f"Output fuzzy: {fuzzy_var.label.capitalize()}", fontsize=9, weight='bold', pad=10)
+    ax.set_title(f"Input fuzzy: {antecedent.label}", fontsize=9, weight='bold')
     ax.set_xlabel("Valore", fontsize=6)
     ax.set_ylabel("Appartenenza", fontsize=6)
     ax.tick_params(labelsize=6)
@@ -307,9 +294,42 @@ def show_fuzzy_output(fuzzy_var, sim):
     ax.legend(loc="upper center", bbox_to_anchor=(0.5, -0.25),
               ncol=3, fontsize=8, frameon=False)
     fig.tight_layout()
-
     st.pyplot(fig)
     plt.close(fig)
+
+
+def show_fuzzy_output(fuzzy_var, sim):
+    sim.compute()
+    output_value = sim.output[fuzzy_var.label]
+
+    fig, ax = plt.subplots(figsize=(5, 2.5))
+    colors = plt.cm.viridis(np.linspace(0, 1, len(fuzzy_var.terms)))
+    x = fuzzy_var.universe
+
+    for idx, term in enumerate(fuzzy_var.terms):
+        mf = fuzzy_var[term].mf
+        y = mf
+        ax.plot(x, y, label=term.capitalize(), linewidth=1, color=colors[idx])
+        activation = fuzz.interp_membership(x, y, output_value)
+        ax.fill_between(x, 0, np.fmin(activation, y), alpha=0.4, color=colors[idx])
+
+    ax.axvline(x=output_value, color='red', linestyle='--', linewidth=1,
+               label=f'Uscita = {output_value:.2f}')
+
+    ax.set_title(f"Output fuzzy: {fuzzy_var.label}", fontsize=9, weight='bold')
+    ax.set_xlabel("Valore", fontsize=6)
+    ax.set_ylabel("Appartenenza", fontsize=6)
+    ax.tick_params(labelsize=6)
+    ax.grid(True, linestyle="--", alpha=0.3)
+    ax.legend(loc="upper center", bbox_to_anchor=(0.5, -0.25),
+              ncol=3, fontsize=8, frameon=False)
+    fig.tight_layout()
+    st.pyplot(fig)
+    plt.close(fig)
+
+
+show_fuzzy_input(normalized_age, inputs[0])
+show_fuzzy_input(normalized_fault_rate_levels, inputs[1])
 show_fuzzy_output(criticity, criticity_simulation)
 
 
