@@ -259,9 +259,9 @@ rules = [
     
 
 ]
-    '''
-    ctrl.Rule(normalized_eols['Absent'], criticity['VeryLow']),
-    ctrl.Rule(normalized_eols['PresentEoLBeforeToday'], criticity['High']),
+'''
+ctrl.Rule(normalized_eols['Absent'], criticity['VeryLow']),
+ctrl.Rule(normalized_eols['PresentEoLBeforeToday'], criticity['High']),
     ctrl.Rule(normalized_eols['PresentEoSAfterToday'], criticity['High']),
     ctrl.Rule(normalized_eols['PresentEoSBeforeToday'], criticity['VeryHigh'])
     '''
