@@ -334,6 +334,37 @@ for doc in valutazioni:
     score = d.get("obsolescenza", "N/D")
     st.write(f"- Parametri: {params} | Obsolescence: {score}")
 
+st.subheader("📊 Test di input automatici")
+
+# Esempi di input da testare
+test_cases = [
+    {'normalizedAge': 0.0, 'normalizedfaultRateLevels': 0.0},
+    {'normalizedAge': 0.0, 'normalizedfaultRateLevels': 1.0},
+    {'normalizedAge': 1.0, 'normalizedfaultRateLevels': 0.0},
+    {'normalizedAge': 1.0, 'normalizedfaultRateLevels': 1.0},
+    {'normalizedAge': 0.5, 'normalizedfaultRateLevels': 0.5},
+    {'normalizedAge': 0.2, 'normalizedfaultRateLevels': 0.7},
+    {'normalizedAge': 0.9, 'normalizedfaultRateLevels': 0.3},
+]
+
+# Lista dei risultati
+risultati = []
+
+for test in test_cases:
+    sim = ctrl.ControlSystemSimulation(criticity_ctrl)
+    for nome_param, val in test.items():
+        sim.input[nome_param] = val
+    sim.compute()
+    risultati.append({
+        'Age': test['normalizedAge'],
+        'FailureRate': test['normalizedfaultRateLevels'],
+        'Criticity': round(sim.output['Criticity'], 2)
+    })
+
+# Mostra tabella
+st.dataframe(risultati)
+
+
 '''
 ctrl.Rule(normalized_eols['Absent'], criticity['VeryLow']),
 ctrl.Rule(normalized_eols['PresentEoLBeforeToday'], criticity['High']),
