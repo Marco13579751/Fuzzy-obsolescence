@@ -135,13 +135,14 @@ parametri_nome = [
     'normalizedUtilizationLevels', 'normalizedUptime',
     'normalizedfaultRateLevels', 'normalizedEoLS'
 ]
+parametri_nome_prova_con_2_parametri=['normalizedAge','normalizedfaultRateLevels']
 
 inputs = []
 
 # Mostra i box in righe da 3 colonne
 colonne = st.columns(3)
 
-for i, nome in enumerate(parametri_nome):
+for i, nome in enumerate(parametri_nome_prova_con_2_parametri):
     col = colonne[i % 3]  # scegli la colonna ciclicamente
     with col:
         val = st.number_input(
@@ -248,7 +249,7 @@ rules = [
     ctrl.Rule(normalized_age['Middle'], criticity['Medium']),
     ctrl.Rule(normalized_age['Old'], criticity['High']),
     ctrl.Rule(normalized_age['Old'], criticity['VeryHigh']), # This rule seems to contradict the previous one
-
+    '''
     ctrl.Rule(normalized_risk_levels['NotSignificant'], criticity['VeryLow']),
     ctrl.Rule(normalized_risk_levels['NonPermanent'], criticity['Low']),
     ctrl.Rule(normalized_risk_levels['ErrataTherapy'], criticity['Medium']),
@@ -285,16 +286,18 @@ rules = [
     ctrl.Rule(normalized_uptime['Min'], criticity['VeryHigh']),
     ctrl.Rule(normalized_uptime['Middle'], criticity['Medium']),
     ctrl.Rule(normalized_uptime['Max'], criticity['VeryLow']),
-
+    '''
     ctrl.Rule(normalized_fault_rate_levels['NeverExceeded'], criticity['VeryLow']),
     ctrl.Rule(normalized_fault_rate_levels['ExceededLifetimeNotRecent'], criticity['Medium']),
     ctrl.Rule(normalized_fault_rate_levels['ExceededRecentlyNotLifetime'], criticity['Medium']),
     ctrl.Rule(normalized_fault_rate_levels['ExceededLifetimeAndRecent'], criticity['VeryHigh']),
-
+    
+    '''
     ctrl.Rule(normalized_eols['Absent'], criticity['VeryLow']),
     ctrl.Rule(normalized_eols['PresentEoLBeforeToday'], criticity['High']),
     ctrl.Rule(normalized_eols['PresentEoSAfterToday'], criticity['High']),
     ctrl.Rule(normalized_eols['PresentEoSBeforeToday'], criticity['VeryHigh'])
+    '''
 ]
 
 # Create the control system (this is the equivalent of the fuzzy system in Matlab)
