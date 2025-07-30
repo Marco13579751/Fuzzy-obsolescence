@@ -362,23 +362,22 @@ def show_fuzzy_output(fuzzy_var, sim):
     sim.compute()
     output_value = sim.output[fuzzy_var.label]
 
-    fig, ax = plt.subplots(figsize=(5, 2.5))  # Dimensione compatta
+    fig, ax = plt.subplots(figsize=(5, 2.5))
     colors = plt.cm.viridis(np.linspace(0, 1, len(fuzzy_var.terms)))
 
     for idx, term in enumerate(fuzzy_var.terms):
-        ax.plot(
-            fuzzy_var.universe,
-            fuzzy_var[term].mf,
-            label=term.capitalize(),
-            linewidth=1,
-            color=colors[idx]
-        )
+        mf = fuzzy_var[term].mf
+        x = fuzzy_var.universe
+        y = mf
 
-    # Linea verticale rossa sul valore calcolato
+        ax.plot(x, y, label=term.capitalize(), linewidth=1, color=colors[idx])
+        ax.fill_between(x, 0, y, alpha=0.2, color=colors[idx])  # Area riempita
+
+    # Linea verticale rossa per il valore di uscita
     ax.axvline(x=output_value, color='red', linestyle='--', linewidth=1,
                label=f'Uscita = {output_value:.2f}')
 
-    # Stile coerente con il tuo
+    # Stile coerente
     ax.set_title(f"Output fuzzy: {fuzzy_var.label.capitalize()}", fontsize=9, weight='bold', pad=10)
     ax.set_xlabel("Valore", fontsize=6)
     ax.set_ylabel("Appartenenza", fontsize=6)
