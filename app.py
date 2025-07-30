@@ -365,8 +365,10 @@ def compute_criticities(cases, sim):
     return pd.DataFrame(results)
 
 # --- Calcolo dei risultati
-df_age_fixed = compute_criticities(test_cases_age_fixed, sim)
-df_fault_fixed = compute_criticities(test_cases_fault_fixed, sim)
+
+
+df_age_fixed = compute_criticities(test_cases_age_fixed, criticity_simulation)
+df_fault_fixed = compute_criticities(test_cases_fault_fixed, criticity_simulation)
 
 # --- Mostra le tabelle
 st.subheader("📋 Criticity con Age=1.0 e FailureRate variabile")
