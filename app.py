@@ -312,7 +312,7 @@ def plot_membership_functions(antecedent, title):
             antecedent.universe,
             antecedent[term].mf,
             label=term.capitalize(),
-            linewidth=2,
+            linewidth=1,
             color=colors[idx]
         )
 
