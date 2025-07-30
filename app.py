@@ -358,7 +358,7 @@ criticity_simulation.input['normalizedAge'] =parametri_nome[0]
 criticity_simulation.input['normalizedfaultRateLevels'] = parametri_nome[1]
 #criticity_simulation.input['normalizedEoLS'] = parametri_nome[9]
 
-for nome, val in zip(parametri_nome, inputs):
+for nome, val in zip(parametri_nome_prova_con_2_parametri, inputs):
     criticity_simulation.input[nome] = val if val is not None else 0.0
     
 # Compute the fuzzy output (Criticity)
@@ -424,7 +424,7 @@ user_email = st.session_state["user"]
 if st.button("Save valuation"):
     parametri_dict = {
     nome: val if val is not None else None
-    for nome, val in zip(parametri_nome, inputs)
+    for nome, val in zip(parametri_nome_, inputs)
     }
 
     doc = {
