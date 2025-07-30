@@ -360,12 +360,38 @@ criticity_simulation.compute()
 
 def show_fuzzy_output(fuzzy_var, sim):
     sim.compute()
-    
-    # Genera la figura in un oggetto esplicito
-    fig = fuzzy_var.view(sim=sim, show=False)  # Richiede scikit-fuzzy >= 0.4
-    
+    output_value = sim.output[fuzzy_var.label]
+
+    fig, ax = plt.subplots(figsize=(5, 2.5))  # Dimensione compatta
+    colors = plt.cm.viridis(np.linspace(0, 1, len(fuzzy_var.terms)))
+
+    for idx, term in enumerate(fuzzy_var.terms):
+        ax.plot(
+            fuzzy_var.universe,
+            fuzzy_var[term].mf,
+            label=term.capitalize(),
+            linewidth=1,
+            color=colors[idx]
+        )
+
+    # Linea verticale rossa sul valore calcolato
+    ax.axvline(x=output_value, color='red', linestyle='--', linewidth=1,
+               label=f'Uscita = {output_value:.2f}')
+
+    # Stile coerente con il tuo
+    ax.set_title(f"Output fuzzy: {fuzzy_var.label.capitalize()}", fontsize=9, weight='bold', pad=10)
+    ax.set_xlabel("Valore", fontsize=6)
+    ax.set_ylabel("Appartenenza", fontsize=6)
+    ax.tick_params(labelsize=6)
+    ax.grid(True, linestyle="--", alpha=0.3)
+    ax.legend(loc="upper center", bbox_to_anchor=(0.5, -0.25),
+              ncol=3, fontsize=8, frameon=False)
+    fig.tight_layout()
+
     st.pyplot(fig)
+    plt.close(fig)
 show_fuzzy_output(criticity, criticity_simulation)
+
 
 
 # Store the result (scaled by 10 as in your Matlab code)
