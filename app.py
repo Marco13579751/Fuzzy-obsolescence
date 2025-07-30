@@ -169,12 +169,12 @@ criticity = ctrl.Consequent(np.arange(0, 10.1, 0.1), 'Criticity')
 
 normalized_age['New'] = fuzz.trapmf(normalized_age.universe, [0, 0, 0.3, 0.4])
 normalized_age['Middle'] = fuzz.trimf(normalized_age.universe, [0.3, 0.5, 0.7])
-normalized_age['Old'] = fuzz.trapmf(normalized_age.universe, [0.6, 0.8, 1, 1])
+normalized_age['Old'] = fuzz.trapmf(normalized_age.universe, [0.6, 0.7, 1, 1])
 
 # Define membership functions for normalizedfaultRateLevels
 normalized_fault_rate_levels['Under trh'] = fuzz.trapmf(normalized_fault_rate_levels.universe, [0, 0, 0.3, 0.4])
 normalized_fault_rate_levels['Around trh'] = fuzz.trimf(normalized_fault_rate_levels.universe, [0.3, 0.5, 0.7])
-normalized_fault_rate_levels['Above trh'] = fuzz.trapmf(normalized_fault_rate_levels.universe, [0.6, 0.8, 1, 1])
+normalized_fault_rate_levels['Above trh'] = fuzz.trapmf(normalized_fault_rate_levels.universe, [0.6, 0.7, 1, 1])
 
 
 
