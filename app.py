@@ -316,11 +316,11 @@ def plot_membership_functions(antecedent, title):
             color=colors[idx]
         )
 
-    ax.set_title(title, fontsize=12, weight='bold', pad=10)
-    ax.set_xlabel("Valore", fontsize=10)
-    ax.set_ylabel("Appartenenza", fontsize=10)
-    ax.tick_params(labelsize=8)
-    ax.grid(True, linestyle="--", alpha=0.5)
+    ax.set_title(title, fontsize=9, weight='bold', pad=10)
+    ax.set_xlabel("Valore", fontsize=6)
+    ax.set_ylabel("Appartenenza", fontsize=6)
+    ax.tick_params(labelsize=6)
+    ax.grid(True, linestyle="--", alpha=0.3)
     ax.legend(loc="upper center", bbox_to_anchor=(0.5, -0.25),
               ncol=3, fontsize=8, frameon=False)
     fig.tight_layout()
