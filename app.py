@@ -365,15 +365,22 @@ def show_fuzzy_output(fuzzy_var, sim):
     fig, ax = plt.subplots(figsize=(5, 2.5))
     colors = plt.cm.viridis(np.linspace(0, 1, len(fuzzy_var.terms)))
 
+    x = fuzzy_var.universe
+
     for idx, term in enumerate(fuzzy_var.terms):
         mf = fuzzy_var[term].mf
-        x = fuzzy_var.universe
         y = mf
 
+        # Plot della curva completa
         ax.plot(x, y, label=term.capitalize(), linewidth=1, color=colors[idx])
-        ax.fill_between(x, 0, y, alpha=0.2, color=colors[idx])  # Area riempita
 
-    # Linea verticale rossa per il valore di uscita
+        # Calcolo grado di attivazione del termine
+        activation = fuzz.interp_membership(x, y, output_value)
+
+        # Riempiamo solo fino al grado di attivazione
+        ax.fill_between(x, 0, np.fmin(activation, y), alpha=0.4, color=colors[idx])
+
+    # Linea verticale sul valore defuzzificato
     ax.axvline(x=output_value, color='red', linestyle='--', linewidth=1,
                label=f'Uscita = {output_value:.2f}')
 
