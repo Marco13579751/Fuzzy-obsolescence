@@ -336,7 +336,7 @@ def plot_membership_functions(antecedent, title):
 
 # Esempio di chiamata
 plot_membership_functions(normalized_age, 'Age')
-plot_membership_functions(normalized_risk_levels, 'Risk Levels')
+plot_membership_functions(normalized_fault_rate_levels, 'Failure rate')
 
 
 # Create a simulation object for the fuzzy control system
