@@ -300,28 +300,32 @@ rules = [
 # Create the control system (this is the equivalent of the fuzzy system in Matlab)
 criticity_ctrl = ctrl.ControlSystem(rules)
 
-import matplotlib.pyplot as plt
-import io
-import base64
-import streamlit as st
+
+plt.style.use("seaborn-v0_8-muted")  # oppure 'ggplot', 'seaborn-darkgrid', ecc.
 
 def plot_membership_functions(antecedent, title):
-    fig, ax = plt.subplots(figsize=(6, 3), facecolor='w')
-    for term in antecedent.terms:
-        ax.plot(antecedent.universe, antecedent[term].mf, label=term)
-    ax.set_title(title, fontsize=10)
-    ax.legend()
-    ax.grid(True)
+    fig, ax = plt.subplots(figsize=(5, 2.5))  # Ridotto
+    colors = plt.cm.viridis(np.linspace(0, 1, len(antecedent.terms)))
 
-    # Mostra il grafico in Streamlit
+    for idx, term in enumerate(antecedent.terms):
+        ax.plot(
+            antecedent.universe,
+            antecedent[term].mf,
+            label=term.capitalize(),
+            linewidth=2,
+            color=colors[idx]
+        )
+
+    ax.set_title(title, fontsize=12, weight='bold', pad=10)
+    ax.set_xlabel("Valore", fontsize=10)
+    ax.set_ylabel("Appartenenza", fontsize=10)
+    ax.tick_params(labelsize=8)
+    ax.grid(True, linestyle="--", alpha=0.5)
+    ax.legend(loc="upper center", bbox_to_anchor=(0.5, -0.25),
+              ncol=3, fontsize=8, frameon=False)
+    fig.tight_layout()
+
     st.pyplot(fig)
-
-    # Se vuoi anche la versione in base64, opzionale
-    # data = io.BytesIO()
-    # plt.savefig(data, format="png")
-    # image = f"data:image/png;base64,{base64.b64encode(data.getvalue()).decode()}"
-    # st.markdown(f"![{title}]({image})", unsafe_allow_html=True)
-
     plt.close(fig)
 
 # Esempio di chiamata
