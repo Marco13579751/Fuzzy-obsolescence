@@ -350,8 +350,6 @@ for nome, val in zip(parametri_nome_prova_con_2_parametri, inputs):
     criticity_simulation.input[nome] = val if val is not None else 0.0
     
 # Compute the fuzzy output (Criticity)
-criticity_simulation.compute()
-
 def show_fuzzy_output(fuzzy_var, sim):
     sim.compute()
     output_value = sim.output[fuzzy_var.label]
