@@ -246,9 +246,7 @@ def plot_membership_functions(antecedent, title):
     st.pyplot(fig)
     plt.close(fig)
 
-# Esempio di chiamata
-plot_membership_functions(normalized_age, 'Age')
-plot_membership_functions(normalized_fault_rate_levels, 'Failure rate')
+
 
 
 # Create a simulation object for the fuzzy control system
@@ -317,6 +315,9 @@ if obsolescenza is not None:
 else:
     st.info("🟡 Inserisci almeno un parametro per calcolare lo score")
 
+
+plot_membership_functions(normalized_age, 'Age')
+plot_membership_functions(normalized_fault_rate_levels, 'Failure rate')
 # --- Salvataggio in Firestore ---
 user_email = st.session_state["user"]
 if st.button("Save valuation"):
