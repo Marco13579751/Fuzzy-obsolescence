@@ -357,6 +357,7 @@ for nome, val in zip(parametri_nome, inputs):
     
 # Compute the fuzzy output (Criticity)
 criticity_simulation.compute()
+criticity.view(sim=criticity_simulation)
 
 # Store the result (scaled by 10 as in your Matlab code)
 obsolescenza = criticity_simulation.output['Criticity'] * 10
