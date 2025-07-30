@@ -5,7 +5,7 @@ scipy
 firebase-admin
 pyrebase4
 networkx
-
+matplotlib
 
 
 
