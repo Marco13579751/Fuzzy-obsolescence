@@ -173,9 +173,9 @@ criticity = ctrl.Consequent(np.arange(0, 10.1, 0.1), 'Criticity')
 
 # Define membership functions for normalizedAge
 
-normalized_age['New'] = fuzz.trapmf(normalized_age.universe, [0, 0.2, 0.3, 0.4])
+normalized_age['New'] = fuzz.trapmf(normalized_age.universe, [0, 0, 0.3, 0.4])
 normalized_age['Middle'] = fuzz.trimf(normalized_age.universe, [0.3, 0.5, 0.7])
-normalized_age['Old'] = fuzz.trapmf(normalized_age.universe, [0.6, 0.8, 0.9, 1])
+normalized_age['Old'] = fuzz.trapmf(normalized_age.universe, [0.6, 0.8, 1, 1])
 
 # Define membership functions for normalizedRiskLevels
 normalized_risk_levels['NotSignificant'] = fuzz.trapmf(normalized_risk_levels.universe, [0, 0, 0.1, 0.2])
