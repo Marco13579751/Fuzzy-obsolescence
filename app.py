@@ -346,34 +346,46 @@ for doc in valutazioni:
 
 st.subheader("📊 Test di input automatici")
 
-# Esempi di input da testare
-test_cases = [
-    {'normalizedAge': 0.0, 'normalizedfaultRateLevels': 0.0},
-    {'normalizedAge': 0.0, 'normalizedfaultRateLevels': 1.0},
-    {'normalizedAge': 1.0, 'normalizedfaultRateLevels': 0.0},
-    {'normalizedAge': 1.0, 'normalizedfaultRateLevels': 1.0},
-    {'normalizedAge': 0.5, 'normalizedfaultRateLevels': 0.5},
-    {'normalizedAge': 0.2, 'normalizedfaultRateLevels': 0.7},
-    {'normalizedAge': 0.9, 'normalizedfaultRateLevels': 0.3},
-]
+# --- Generazione test cases
+test_cases_age_fixed = [{'normalizedAge': 1.0, 'normalizedfaultRateLevels': round(x, 1)} for x in np.arange(0.1, 1.01, 0.1)]
+test_cases_fault_fixed = [{'normalizedAge': round(x, 1), 'normalizedfaultRateLevels': 1.0} for x in np.arange(0.1, 1.01, 0.1)]
 
-# Lista dei risultati
-risultati = []
+# --- Funzione per calcolare Criticity
+def compute_criticities(cases, sim):
+    results = []
+    for case in cases:
+        sim.input['normalizedAge'] = case['normalizedAge']
+        sim.input['normalizedfaultRateLevels'] = case['normalizedfaultRateLevels']
+        sim.compute()
+        results.append({
+            'Age': case['normalizedAge'],
+            'FailureRate': case['normalizedfaultRateLevels'],
+            'Criticity': round(sim.output['Criticity'], 2)
+        })
+    return pd.DataFrame(results)
 
-for test in test_cases:
-    sim = ctrl.ControlSystemSimulation(criticity_ctrl)
-    for nome_param, val in test.items():
-        sim.input[nome_param] = val
-    sim.compute()
-    risultati.append({
-        'Age': test['normalizedAge'],
-        'FailureRate': test['normalizedfaultRateLevels'],
-        'Criticity': round(sim.output['Criticity'], 2)
-    })
+# --- Calcolo dei risultati
+df_age_fixed = compute_criticities(test_cases_age_fixed, sim)
+df_fault_fixed = compute_criticities(test_cases_fault_fixed, sim)
 
-# Mostra tabella
-st.dataframe(risultati)
+# --- Mostra le tabelle
+st.subheader("📋 Criticity con Age=1.0 e FailureRate variabile")
+st.dataframe(df_age_fixed)
 
+st.subheader("📋 Criticity con FailureRate=1.0 e Age variabile")
+st.dataframe(df_fault_fixed)
+
+# --- Grafico di confronto
+fig, ax = plt.subplots(figsize=(6, 4))
+ax.plot(df_age_fixed['FailureRate'], df_age_fixed['Criticity'], marker='o', label="Age = 1.0")
+ax.plot(df_fault_fixed['Age'], df_fault_fixed['Criticity'], marker='s', label="FailureRate = 1.0")
+
+ax.set_title("Andamento della Criticità", fontsize=10)
+ax.set_xlabel("Valore variabile (Age o FailureRate)", fontsize=9)
+ax.set_ylabel("Criticity", fontsize=9)
+ax.grid(True, linestyle="--", alpha=0.4)
+ax.legend(fontsize=8)
+st.pyplot(fig)
 
 '''
 ctrl.Rule(normalized_eols['Absent'], criticity['VeryLow']),
