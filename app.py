@@ -189,6 +189,17 @@ criticity['VeryHigh'] = fuzz.trapmf(criticity.universe, [8, 9, 10, 10]) # Adjust
 # Define fuzzy rules
 rules = [
 
+    ctrl.Rule(normalized_age['New'], criticity['VeryLow']),
+    ctrl.Rule(normalized_age['New'], criticity['Low']), # This rule seems to contradict the previous one
+    ctrl.Rule(normalized_age['Middle'], criticity['Medium']),
+    ctrl.Rule(normalized_age['Old'], criticity['High']),
+    ctrl.Rule(normalized_age['Old'], criticity['VeryHigh']),
+    
+    ctrl.Rule(normalized_fault_rate_levels['NeverExceeded'], criticity['VeryLow']),
+    ctrl.Rule(normalized_fault_rate_levels['ExceededLifetimeNotRecent'], criticity['Medium']),
+    ctrl.Rule(normalized_fault_rate_levels['ExceededRecentlyNotLifetime'], criticity['Medium']),
+    ctrl.Rule(normalized_fault_rate_levels['ExceededLifetimeAndRecent'], criticity['VeryHigh']),
+
     # --- Age: NEW ---
     ctrl.Rule(normalized_age['New'] & normalized_fault_rate_levels['Low'], criticity['VeryLow']),
     ctrl.Rule(normalized_age['New'] & normalized_fault_rate_levels['Under trh'], criticity['Low']),
