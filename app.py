@@ -249,8 +249,8 @@ rules = [
     ctrl.Rule(normalized_age['Middle'], criticity['Medium']),
     ctrl.Rule(normalized_age['Old'], criticity['High']),
     ctrl.Rule(normalized_age['Old'], criticity['VeryHigh']), # This rule seems to contradict the previous one
-    '''
-    ctrl.Rule(normalized_risk_levels['NotSignificant'], criticity['VeryLow']),
+    
+    ''' ctrl.Rule(normalized_risk_levels['NotSignificant'], criticity['VeryLow']),
     ctrl.Rule(normalized_risk_levels['NonPermanent'], criticity['Low']),
     ctrl.Rule(normalized_risk_levels['ErrataTherapy'], criticity['Medium']),
     ctrl.Rule(normalized_risk_levels['Permanent'], criticity['High']),
@@ -285,8 +285,8 @@ rules = [
 
     ctrl.Rule(normalized_uptime['Min'], criticity['VeryHigh']),
     ctrl.Rule(normalized_uptime['Middle'], criticity['Medium']),
-    ctrl.Rule(normalized_uptime['Max'], criticity['VeryLow']),
-    '''
+    ctrl.Rule(normalized_uptime['Max'], criticity['VeryLow']), '''
+    
     ctrl.Rule(normalized_fault_rate_levels['NeverExceeded'], criticity['VeryLow']),
     ctrl.Rule(normalized_fault_rate_levels['ExceededLifetimeNotRecent'], criticity['Medium']),
     ctrl.Rule(normalized_fault_rate_levels['ExceededRecentlyNotLifetime'], criticity['Medium']),
