@@ -237,28 +237,6 @@ def plot_membership_functions(antecedent, title):
 # Esempio di chiamata
 plot_membership_functions(normalized_age, 'Age')
 plot_membership_functions(normalized_fault_rate_levels, 'Failure rate')
-term = 'Under trh'
-mf_func = normalized_fault_rate_levels[term].mf
-
-# Prendiamo universo
-x = normalized_fault_rate_levels.universe
-y = mf_func
-
-fig, ax = plt.subplots(figsize=(5, 2.5))
-ax.plot(x, y, label=term, color='blue')
-
-# Mostra solo i punti dove y cambia (cioè dove non è 0)
-mask = y > 0
-ax.scatter(x[mask], y[mask], color='red', label='Vertici')
-
-ax.set_title(f"Controllo funzione: {term}", fontsize=10)
-ax.set_xlabel("Valore")
-ax.set_ylabel("Appartenenza")
-ax.grid(True)
-ax.legend()
-
-st.pyplot(fig)
-plt.close(fig)
 
 
 # Create a simulation object for the fuzzy control system
