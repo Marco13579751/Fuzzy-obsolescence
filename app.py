@@ -206,6 +206,16 @@ rule2.weight = 0.5
 rule3 = ctrl.Rule(normalized_age['Old'], criticity['VeryHigh'])
 rule3.weight = 0.5
 
+rule4 = ctrl.Rule(normalized_fault_rate_levels['Under trh'], criticity['VeryLow'])
+rule4.weight = 0.5
+
+rule5 = ctrl.Rule(normalized_fault_rate_levels['Around trh'], criticity['Medium'])
+rule5.weight = 0.5
+
+rule6 = ctrl.Rule(normalized_fault_rate_levels['Above trh'], criticity['VeryHigh'])
+rule6.weight = 0.5
+
+
 rules = [
     rule1,
     rule2,
@@ -214,12 +224,10 @@ rules = [
     #ctrl.Rule(normalized_age['Middle'], criticity['Medium'],weight=0.5),
     #ctrl.Rule(normalized_age['Old'], criticity['VeryHigh'],weight=0.5),
     
-    ctrl.Rule(normalized_fault_rate_levels['Under trh'], criticity['VeryLow'],weight=0.5),
-    ctrl.Rule(normalized_fault_rate_levels['Around trh'], criticity['Medium'],weight=0.5),
-    ctrl.Rule(normalized_fault_rate_levels['Above trh'], criticity['VeryHigh'],weight=0.5),
+    rule4,
+    rule5,
+    rule6,
 
-
-   
     # --- Age: NEW ---
     ctrl.Rule(normalized_age['New'] & normalized_fault_rate_levels['Under trh'], criticity['VeryLow']),
     ctrl.Rule(normalized_age['New'] & normalized_fault_rate_levels['Around trh'], criticity['Low']),
