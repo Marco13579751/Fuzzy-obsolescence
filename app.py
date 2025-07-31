@@ -161,7 +161,7 @@ normalized_age = ctrl.Antecedent(np.arange(0, 1.1, 0.01), 'normalizedAge')
 normalized_fault_rate_levels = ctrl.Antecedent(np.arange(0, 1.1, 0.01), 'normalizedfaultRateLevels')
 
 
-st.write("Versione scikit-fuzzy:", skfuzzy.__version__)
+
 # Add output variable (Consequent)
 criticity = ctrl.Consequent(np.arange(0, 10.1, 0.01), 'Criticity')
 
