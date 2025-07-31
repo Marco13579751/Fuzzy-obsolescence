@@ -374,14 +374,24 @@ if st.button("Save valuation"):
     db.collection("ospedali").document(user_email).collection("valutazioni").add(doc)
     st.success("✅ Valutation saved!")
 
-# --- Visualizzazione valutazioni salvate ---
 st.subheader("📋 Valutations saved")
 valutazioni = db.collection("ospedali").document(user_email).collection("valutazioni").stream()
+
 for doc in valutazioni:
     d = doc.to_dict()
     params = d.get("parametri", ["N/D"]*13)
     score = d.get("obsolescenza", "N/D")
-    st.write(f"- Parametri: {params} | Obsolescence: {score}")
+
+    # Format dei parametri (se è un dizionario)
+    if isinstance(params, dict):
+        formatted_params = ", ".join(
+            f"{k}: {v:.2f}" for k, v in params.items()
+        )
+    else:
+        formatted_params = str(params)  # fallback
+
+    st.write(f"- Parametri: {formatted_params} | Obsolescence: {score:.2f}")
+
 
 st.subheader("📊 Test di input automatici")
 
