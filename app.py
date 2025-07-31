@@ -184,11 +184,12 @@ normalized_fault_rate_levels['Above trh'] = fuzz.trapmf(normalized_fault_rate_le
 
 
 # Define membership functions for Criticity
-criticity['VeryLow'] = fuzz.trapmf(criticity.universe, [0, 0, 1, 2]) # Adjusted range to match 0-10 scale
-criticity['Low'] = fuzz.trapmf(criticity.universe, [1.5, 2.5, 3.5, 4.5]) # Adjusted range
-criticity['Medium'] = fuzz.trimf(criticity.universe, [4, 5, 6]) # Adjusted range
-criticity['High'] = fuzz.trapmf(criticity.universe, [5.5, 6.5, 7.5, 8.5]) # Adjusted range
-criticity['VeryHigh'] = fuzz.trapmf(criticity.universe, [8, 9, 10, 10]) # Adjusted range
+criticity['VeryLow'] = fuzz.gaussmf(criticity.universe, 1, 0.7)
+criticity['Low'] = fuzz.gaussmf(criticity.universe, 3, 0.7)
+criticity['Medium'] = fuzz.gaussmf(criticity.universe, 5, 0.7)
+criticity['High'] = fuzz.gaussmf(criticity.universe, 7, 0.7)
+criticity['VeryHigh'] = fuzz.gaussmf(criticity.universe, 9, 0.7)
+
 
 # Define fuzzy rules
 rules = [
