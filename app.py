@@ -194,7 +194,7 @@ rules = [
     
     ctrl.Rule(normalized_fault_rate_levels['Under trh'], criticity['Low']),
     ctrl.Rule(normalized_fault_rate_levels['Around trh'], criticity['Medium']),
-    ctrl.Rule(normalized_fault_rate_levels['Above trh'], criticity['High']),
+    ctrl.Rule(normalized_fault_rate_levels['Above trh'], criticity['VeryHigh']),
    
     # --- Age: NEW ---
     ctrl.Rule(normalized_age['New'] & normalized_fault_rate_levels['Under trh'], criticity['VeryLow']),
