@@ -167,13 +167,13 @@ criticity = ctrl.Consequent(np.arange(0, 10.1, 0.1), 'Criticity')
 
 # Define membership functions for normalizedAge
 
-#normalized_age['New'] = fuzz.trapmf(normalized_age.universe, [0, 0, 0.4, 0.6])
-#normalized_age['Middle'] = fuzz.trimf(normalized_age.universe, [0.5, 0.6, 0.7])
-#normalized_age['Old'] = fuzz.trapmf(normalized_age.universe, [0.6, 0.7, 1, 1])
+normalized_age['New'] = fuzz.trapmf(normalized_age.universe, [0, 0, 0.4, 0.6])
+normalized_age['Middle'] = fuzz.trimf(normalized_age.universe, [0.5, 0.6, 0.7])
+normalized_age['Old'] = fuzz.trapmf(normalized_age.universe, [0.6, 0.7, 1, 1])
 
-normalized_age['New'] = fuzz.gaussmf(normalized_age.universe, mean=0.2, sigma=0.1)
-normalized_age['Middle'] = fuzz.gaussmf(normalized_age.universe, mean=0.5, sigma=0.1)
-normalized_age['Old'] = fuzz.gaussmf(normalized_age.universe, mean=0.8, sigma=0.1)
+#normalized_age['New'] = fuzz.gaussmf(normalized_age.universe, mean=0.2, sigma=0.1)
+#normalized_age['Middle'] = fuzz.gaussmf(normalized_age.universe, mean=0.5, sigma=0.1)
+#normalized_age['Old'] = fuzz.gaussmf(normalized_age.universe, mean=0.8, sigma=0.1)
 
 # Define membership functions for normalizedfaultRateLevels
 normalized_fault_rate_levels['Under trh'] = fuzz.trapmf(normalized_fault_rate_levels.universe, [0, 0, 0.3, 0.4])
@@ -430,109 +430,109 @@ ax.set_ylabel('Failure Rate')
 ax.set_zlabel('Criticity')
 ax.set_title('Criticity in funzione di Age e Failure Rate')
 st.pyplot(fig)
-'''
-ctrl.Rule(normalized_eols['Absent'], criticity['VeryLow']),
-ctrl.Rule(normalized_eols['PresentEoLBeforeToday'], criticity['High']),
-ctrl.Rule(normalized_eols['PresentEoSAfterToday'], criticity['High']),
-ctrl.Rule(normalized_eols['PresentEoSBeforeToday'], criticity['VeryHigh'])
 
-ctrl.Rule(normalized_risk_levels['NotSignificant'], criticity['VeryLow']),
-ctrl.Rule(normalized_risk_levels['NonPermanent'], criticity['Low']),
-ctrl.Rule(normalized_risk_levels['ErrataTherapy'], criticity['Medium']),
-ctrl.Rule(normalized_risk_levels['Permanent'], criticity['High']),
-ctrl.Rule(normalized_risk_levels['Death'], criticity['VeryHigh']),
+#ctrl.Rule(normalized_eols['Absent'], criticity['VeryLow']),
+#ctrl.Rule(normalized_eols['PresentEoLBeforeToday'], criticity['High']),
+#ctrl.Rule(normalized_eols['PresentEoSAfterToday'], criticity['High']),
+#ctrl.Rule(normalized_eols['PresentEoSBeforeToday'], criticity['VeryHigh'])
 
-ctrl.Rule(normalized_function_levels['LowIntensity'], criticity['VeryLow']),
-ctrl.Rule(normalized_function_levels['MidLowIntensity'], criticity['Low']),
-ctrl.Rule(normalized_function_levels['MidIntensity'], criticity['Medium']),
-ctrl.Rule(normalized_function_levels['MidHighIntensity'], criticity['High']),
-ctrl.Rule(normalized_function_levels['HighIntensity'], criticity['VeryHigh']),
-ctrl.Rule(normalized_function_levels['VeryHighIntensity'], criticity['VeryHigh']),
+#ctrl.Rule(normalized_risk_levels['NotSignificant'], criticity['VeryLow']),
+#ctrl.Rule(normalized_risk_levels['NonPermanent'], criticity['Low']),
+#ctrl.Rule(normalized_risk_levels['ErrataTherapy'], criticity['Medium']),
+#ctrl.Rule(normalized_risk_levels['Permanent'], criticity['High']),
+#ctrl.Rule(normalized_risk_levels['Death'], criticity['VeryHigh']),
 
-ctrl.Rule(normalized_state_levels['Buono'], criticity['VeryLow']),
-ctrl.Rule(normalized_state_levels['Sufficiente'], criticity['Medium']),
-ctrl.Rule(normalized_state_levels['Deteriorato'], criticity['High']),
-ctrl.Rule(normalized_state_levels['Degradato'], criticity['VeryHigh']),
+#ctrl.Rule(normalized_function_levels['LowIntensity'], criticity['VeryLow']),
+#ctrl.Rule(normalized_function_levels['MidLowIntensity'], criticity['Low']),
+#ctrl.Rule(normalized_function_levels['MidIntensity'], criticity['Medium']),
+#ctrl.Rule(normalized_function_levels['MidHighIntensity'], criticity['High']),
+#ctrl.Rule(normalized_function_levels['HighIntensity'], criticity['VeryHigh']),
+#ctrl.Rule(normalized_function_levels['VeryHighIntensity'], criticity['VeryHigh']),
 
-ctrl.Rule(normalized_life_res_levels['BrandNew'], criticity['VeryLow']),
-ctrl.Rule(normalized_life_res_levels['Recent'], criticity['Low']),
-ctrl.Rule(normalized_life_res_levels['FairlyNew'], criticity['Medium']),
-ctrl.Rule(normalized_life_res_levels['UsedButGoodCondition'], criticity['High']),
+#ctrl.Rule(normalized_state_levels['Buono'], criticity['VeryLow']),
+#ctrl.Rule(normalized_state_levels['Sufficiente'], criticity['Medium']),
+#ctrl.Rule(normalized_state_levels['Deteriorato'], criticity['High']),
+#ctrl.Rule(normalized_state_levels['Degradato'], criticity['VeryHigh']),
 
-ctrl.Rule(normalized_utilization_levels['Stock'], criticity['VeryLow']),
-ctrl.Rule(normalized_utilization_levels['Unused'], criticity['Low']),
-ctrl.Rule(normalized_utilization_levels['RarelyUsed'], criticity['Medium']),
-ctrl.Rule(normalized_utilization_levels['ContinuousUse'], criticity['High']),
+#ctrl.Rule(normalized_life_res_levels['BrandNew'], criticity['VeryLow']),
+#ctrl.Rule(normalized_life_res_levels['Recent'], criticity['Low']),
+#ctrl.Rule(normalized_life_res_levels['FairlyNew'], criticity['Medium']),
+#ctrl.Rule(normalized_life_res_levels['UsedButGoodCondition'], criticity['High']),
 
-ctrl.Rule(normalized_obs_levels['StateOfTheArt'], criticity['VeryLow']),
-ctrl.Rule(normalized_obs_levels['UsableWithRemainingLifeLessThan0'], criticity['Low']),
-ctrl.Rule(normalized_obs_levels['UsableWithRemainingLifeGreaterOrEqual0'], criticity['Medium']),
-ctrl.Rule(normalized_obs_levels['Obsolete'], criticity['High']),
+#ctrl.Rule(normalized_utilization_levels['Stock'], criticity['VeryLow']),
+#ctrl.Rule(normalized_utilization_levels['Unused'], criticity['Low']),
+#ctrl.Rule(normalized_utilization_levels['RarelyUsed'], criticity['Medium']),
+#ctrl.Rule(normalized_utilization_levels['ContinuousUse'], criticity['High']),
 
-ctrl.Rule(normalized_uptime['Min'], criticity['VeryHigh']),
-ctrl.Rule(normalized_uptime['Middle'], criticity['Medium']),
-ctrl.Rule(normalized_uptime['Max'], criticity['VeryLow']),
+#ctrl.Rule(normalized_obs_levels['StateOfTheArt'], criticity['VeryLow']),
+#ctrl.Rule(normalized_obs_levels['UsableWithRemainingLifeLessThan0'], criticity['Low']),
+#ctrl.Rule(normalized_obs_levels['UsableWithRemainingLifeGreaterOrEqual0'], criticity['Medium']),
+#ctrl.Rule(normalized_obs_levels['Obsolete'], criticity['High']),
 
-normalized_risk_levels = ctrl.Antecedent(np.arange(0, 1.1, 0.1), 'normalizedRiskLevels')
-normalized_function_levels = ctrl.Antecedent(np.arange(0, 1.1, 0.1), 'normalizedfunctionLevels')
-normalized_state_levels = ctrl.Antecedent(np.arange(0, 1.1, 0.1), 'normalizedStateLevels')
-normalized_life_res_levels = ctrl.Antecedent(np.arange(0, 1.1, 0.1), 'normalizedLifeResLevels')
-normalized_obs_levels = ctrl.Antecedent(np.arange(0, 1.1, 0.1), 'normalizedObsLevels')
-normalized_utilization_levels = ctrl.Antecedent(np.arange(0, 1.1, 0.1), 'normalizedUtilizationLevels')
-normalized_uptime = ctrl.Antecedent(np.arange(0, 1.1, 0.1), 'normalizedUptime')
-normalized_eols = ctrl.Antecedent(np.arange(0, 1.1, 0.1), 'normalizedEoLS')
+#ctrl.Rule(normalized_uptime['Min'], criticity['VeryHigh']),
+#ctrl.Rule(normalized_uptime['Middle'], criticity['Medium']),
+#ctrl.Rule(normalized_uptime['Max'], criticity['VeryLow']),
+
+#normalized_risk_levels = ctrl.Antecedent(np.arange(0, 1.1, 0.1), 'normalizedRiskLevels')
+#normalized_function_levels = ctrl.Antecedent(np.arange(0, 1.1, 0.1), 'normalizedfunctionLevels')
+#normalized_state_levels = ctrl.Antecedent(np.arange(0, 1.1, 0.1), 'normalizedStateLevels')
+#normalized_life_res_levels = ctrl.Antecedent(np.arange(0, 1.1, 0.1), 'normalizedLifeResLevels')
+#normalized_obs_levels = ctrl.Antecedent(np.arange(0, 1.1, 0.1), 'normalizedObsLevels')
+#normalized_utilization_levels = ctrl.Antecedent(np.arange(0, 1.1, 0.1), 'normalizedUtilizationLevels')
+#normalized_uptime = ctrl.Antecedent(np.arange(0, 1.1, 0.1), 'normalizedUptime')
+#normalized_eols = ctrl.Antecedent(np.arange(0, 1.1, 0.1), 'normalizedEoLS')
 
 # Define membership functions for normalizedEoLS
-normalized_eols['Absent'] = fuzz.trimf(normalized_eols.universe, [0, 0, 0.125])
-normalized_eols['PresentEoLBeforeToday'] = fuzz.trapmf(normalized_eols.universe, [0.25, 0.375, 0.625, 0.75])
-normalized_eols['PresentEoSAfterToday'] = fuzz.trapmf(normalized_eols.universe, [0.5, 0.625, 0.875, 1])
-normalized_eols['PresentEoSBeforeToday'] = fuzz.trimf(normalized_eols.universe, [0.75, 0.875, 1])
+#normalized_eols['Absent'] = fuzz.trimf(normalized_eols.universe, [0, 0, 0.125])
+#normalized_eols['PresentEoLBeforeToday'] = fuzz.trapmf(normalized_eols.universe, [0.25, 0.375, 0.625, 0.75])
+#normalized_eols['PresentEoSAfterToday'] = fuzz.trapmf(normalized_eols.universe, [0.5, 0.625, 0.875, 1])
+#normalized_eols['PresentEoSBeforeToday'] = fuzz.trimf(normalized_eols.universe, [0.75, 0.875, 1])
 
 # Define membership functions for normalizedRiskLevels
-normalized_risk_levels['NotSignificant'] = fuzz.trapmf(normalized_risk_levels.universe, [0, 0, 0.1, 0.2])
-normalized_risk_levels['NonPermanent'] = fuzz.trimf(normalized_risk_levels.universe, [0.15, 0.2, 0.25])
-normalized_risk_levels['ErrataTherapy'] = fuzz.trimf(normalized_risk_levels.universe, [0.25, 0.35, 0.45])
-normalized_risk_levels['Permanent'] = fuzz.trapmf(normalized_risk_levels.universe, [0.45, 0.55, 0.65, 0.75])
-normalized_risk_levels['Death'] = fuzz.trapmf(normalized_risk_levels.universe, [0.75, 0.80, 0.90, 1])
+#normalized_risk_levels['NotSignificant'] = fuzz.trapmf(normalized_risk_levels.universe, [0, 0, 0.1, 0.2])
+#normalized_risk_levels['NonPermanent'] = fuzz.trimf(normalized_risk_levels.universe, [0.15, 0.2, 0.25])
+#normalized_risk_levels['ErrataTherapy'] = fuzz.trimf(normalized_risk_levels.universe, [0.25, 0.35, 0.45])
+#normalized_risk_levels['Permanent'] = fuzz.trapmf(normalized_risk_levels.universe, [0.45, 0.55, 0.65, 0.75])
+#normalized_risk_levels['Death'] = fuzz.trapmf(normalized_risk_levels.universe, [0.75, 0.80, 0.90, 1])
 
 # Define membership functions for normalizedfunctionLevels
-normalized_function_levels['LowIntensity'] = fuzz.trapmf(normalized_function_levels.universe, [0, 0, 0.1, 0.2])
-normalized_function_levels['MidLowIntensity'] = fuzz.trimf(normalized_function_levels.universe, [0.15, 0.2, 0.25])
-normalized_function_levels['MidIntensity'] = fuzz.trimf(normalized_function_levels.universe, [0.25, 0.35, 0.45])
-normalized_function_levels['MidHighIntensity'] = fuzz.trapmf(normalized_function_levels.universe, [0.45, 0.55, 0.65, 0.75])
-normalized_function_levels['HighIntensity'] = fuzz.trimf(normalized_function_levels.universe, [0.7, 0.8, 0.9])
-normalized_function_levels['VeryHighIntensity'] = fuzz.trapmf(normalized_function_levels.universe, [0.85, 1, 1, 1])
+#normalized_function_levels['LowIntensity'] = fuzz.trapmf(normalized_function_levels.universe, [0, 0, 0.1, 0.2])
+#normalized_function_levels['MidLowIntensity'] = fuzz.trimf(normalized_function_levels.universe, [0.15, 0.2, 0.25])
+#normalized_function_levels['MidIntensity'] = fuzz.trimf(normalized_function_levels.universe, [0.25, 0.35, 0.45])
+#normalized_function_levels['MidHighIntensity'] = fuzz.trapmf(normalized_function_levels.universe, [0.45, 0.55, 0.65, 0.75])
+#normalized_function_levels['HighIntensity'] = fuzz.trimf(normalized_function_levels.universe, [0.7, 0.8, 0.9])
+#normalized_function_levels['VeryHighIntensity'] = fuzz.trapmf(normalized_function_levels.universe, [0.85, 1, 1, 1])
 
 # Define membership functions for normalizedStateLevels
-normalized_state_levels['Buono'] = fuzz.trapmf(normalized_state_levels.universe, [0, 0, 0.1, 0.2])
-normalized_state_levels['Sufficiente'] = fuzz.trimf(normalized_state_levels.universe, [0.15, 0.2, 0.25])
-normalized_state_levels['Deteriorato'] = fuzz.trimf(normalized_state_levels.universe, [0.25, 0.35, 0.45])
-normalized_state_levels['Degradato'] = fuzz.trapmf(normalized_state_levels.universe, [0.45, 0.55, 0.75, 1])
+#normalized_state_levels['Buono'] = fuzz.trapmf(normalized_state_levels.universe, [0, 0, 0.1, 0.2])
+#normalized_state_levels['Sufficiente'] = fuzz.trimf(normalized_state_levels.universe, [0.15, 0.2, 0.25])
+#normalized_state_levels['Deteriorato'] = fuzz.trimf(normalized_state_levels.universe, [0.25, 0.35, 0.45])
+#normalized_state_levels['Degradato'] = fuzz.trapmf(normalized_state_levels.universe, [0.45, 0.55, 0.75, 1])
 
 # Define membership functions for normalizedLifeResLevels
-normalized_life_res_levels['BrandNew'] = fuzz.trimf(normalized_life_res_levels.universe, [0, 0, 0.2])
-normalized_life_res_levels['Recent'] = fuzz.trimf(normalized_life_res_levels.universe, [0.15, 0.3, 0.45])
-normalized_life_res_levels['FairlyNew'] = fuzz.trimf(normalized_life_res_levels.universe, [0.4, 0.55, 0.7])
-normalized_life_res_levels['UsedButGoodCondition'] = fuzz.trimf(normalized_life_res_levels.universe, [0.6, 0.8, 1])
+#normalized_life_res_levels['BrandNew'] = fuzz.trimf(normalized_life_res_levels.universe, [0, 0, 0.2])
+#normalized_life_res_levels['Recent'] = fuzz.trimf(normalized_life_res_levels.universe, [0.15, 0.3, 0.45])
+#normalized_life_res_levels['FairlyNew'] = fuzz.trimf(normalized_life_res_levels.universe, [0.4, 0.55, 0.7])
+#normalized_life_res_levels['UsedButGoodCondition'] = fuzz.trimf(normalized_life_res_levels.universe, [0.6, 0.8, 1])
 
 # Define membership functions for normalizedUtilizationLevels
-normalized_utilization_levels['Stock'] = fuzz.trimf(normalized_utilization_levels.universe, [0, 0, 0.2])
-normalized_utilization_levels['Unused'] = fuzz.trimf(normalized_utilization_levels.universe, [0.15, 0.3, 0.45])
-normalized_utilization_levels['RarelyUsed'] = fuzz.trimf(normalized_utilization_levels.universe, [0.4, 0.55, 0.7])
-normalized_utilization_levels['ContinuousUse'] = fuzz.trimf(normalized_utilization_levels.universe, [0.6, 0.8, 1])
+#normalized_utilization_levels['Stock'] = fuzz.trimf(normalized_utilization_levels.universe, [0, 0, 0.2])
+#normalized_utilization_levels['Unused'] = fuzz.trimf(normalized_utilization_levels.universe, [0.15, 0.3, 0.45])
+#normalized_utilization_levels['RarelyUsed'] = fuzz.trimf(normalized_utilization_levels.universe, [0.4, 0.55, 0.7])
+#normalized_utilization_levels['ContinuousUse'] = fuzz.trimf(normalized_utilization_levels.universe, [0.6, 0.8, 1])
 
 # Define membership functions for normalizedObsLevels
-normalized_obs_levels['StateOfTheArt'] = fuzz.trimf(normalized_obs_levels.universe, [0, 0, 0.2])
-normalized_obs_levels['UsableWithRemainingLifeLessThan0'] = fuzz.trimf(normalized_obs_levels.universe, [0.15, 0.3, 0.45])
-normalized_obs_levels['UsableWithRemainingLifeGreaterOrEqual0'] = fuzz.trimf(normalized_obs_levels.universe, [0.4, 0.55, 0.7])
-normalized_obs_levels['Obsolete'] = fuzz.trimf(normalized_obs_levels.universe, [0.6, 0.8, 1])
+#normalized_obs_levels['StateOfTheArt'] = fuzz.trimf(normalized_obs_levels.universe, [0, 0, 0.2])
+#normalized_obs_levels['UsableWithRemainingLifeLessThan0'] = fuzz.trimf(normalized_obs_levels.universe, [0.15, 0.3, 0.45])
+#normalized_obs_levels['UsableWithRemainingLifeGreaterOrEqual0'] = fuzz.trimf(normalized_obs_levels.universe, [0.4, 0.55, 0.7])
+#normalized_obs_levels['Obsolete'] = fuzz.trimf(normalized_obs_levels.universe, [0.6, 0.8, 1])
 
 # Define membership functions for normalizedUptime
 
-normalized_uptime['Max'] = fuzz.trapmf(normalized_uptime.universe, [0.6, 0.8, 1, 1])
-normalized_uptime['Middle'] = fuzz.trimf(normalized_uptime.universe, [0.3, 0.5, 0.7])
-normalized_uptime['Min'] = fuzz.trapmf(normalized_uptime.universe, [0, 0, 0.2, 0.4])
-'''
+#normalized_uptime['Max'] = fuzz.trapmf(normalized_uptime.universe, [0.6, 0.8, 1, 1])
+#normalized_uptime['Middle'] = fuzz.trimf(normalized_uptime.universe, [0.3, 0.5, 0.7])
+#normalized_uptime['Min'] = fuzz.trapmf(normalized_uptime.universe, [0, 0, 0.2, 0.4])
+
 
 
 
