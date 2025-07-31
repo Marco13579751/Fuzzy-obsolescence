@@ -251,41 +251,6 @@ def plot_membership_functions(antecedent, title):
     st.pyplot(fig)
     plt.close(fig)
 
-def gaussmf(x, mean, sigma):
-    return np.exp(-((x - mean) ** 2) / (2 * sigma ** 2))
-
-x_age = np.linspace(0, 1, 100)
-young = gaussmf(x_age, 0.2, 0.1)
-middle = gaussmf(x_age, 0.5, 0.1)
-old = gaussmf(x_age, 0.8, 0.1)
-
-# plot “raw”, adattando il tuo stile
-def plot_raw_membership(x, terms, title):
-    fig, ax = plt.subplots(figsize=(5, 2.5))
-    for name, curve in terms.items():
-        ax.plot(
-            x,
-            curve,
-            label=name.capitalize(),
-            linewidth=1
-        )
-    ax.set_title(title, fontsize=9, weight='bold', pad=10)
-    ax.set_xlabel("Valore", fontsize=6)
-    ax.set_ylabel("Appartenenza", fontsize=6)
-    ax.tick_params(labelsize=6)
-    ax.grid(True, linestyle="--", alpha=0.3)
-    ax.legend(loc="upper center", bbox_to_anchor=(0.5, -0.25),
-              ncol=3, fontsize=8, frameon=False)
-    fig.tight_layout()
-    st.pyplot(fig)
-    plt.close(fig)
-
-plot_raw_membership(
-    x_age,
-    {"young": young, "middle": middle, "old": old},
-    "Gaussian Membership Functions"
-)
-
 
 
 
@@ -356,7 +321,40 @@ else:
     st.info("🟡 Inserisci almeno un parametro per calcolare lo score")
 
 
-plot_membership_functions(normalized_age, 'Age')
+def gaussmf(x, mean, sigma):
+    return np.exp(-((x - mean) ** 2) / (2 * sigma ** 2))
+
+x_age = np.linspace(0, 1, 100)
+young = gaussmf(x_age, 0.2, 0.1)
+middle = gaussmf(x_age, 0.5, 0.1)
+old = gaussmf(x_age, 0.8, 0.1)
+
+# plot “raw”, adattando il tuo stile
+def plot_raw_membership(x, terms, title):
+    fig, ax = plt.subplots(figsize=(5, 2.5))
+    for name, curve in terms.items():
+        ax.plot(
+            x,
+            curve,
+            label=name.capitalize(),
+            linewidth=1
+        )
+    ax.set_title(title, fontsize=9, weight='bold', pad=10)
+    ax.set_xlabel("Valore", fontsize=6)
+    ax.set_ylabel("Appartenenza", fontsize=6)
+    ax.tick_params(labelsize=6)
+    ax.grid(True, linestyle="--", alpha=0.3)
+    ax.legend(loc="upper center", bbox_to_anchor=(0.5, -0.25),
+              ncol=3, fontsize=8, frameon=False)
+    fig.tight_layout()
+    st.pyplot(fig)
+    plt.close(fig)
+
+plot_raw_membership(
+    x_age,
+    {"young": young, "middle": middle, "old": old},
+    "Gaussian Membership Functions"
+)
 plot_membership_functions(normalized_fault_rate_levels, 'Failure rate')
 # --- Salvataggio in Firestore ---
 user_email = st.session_state["user"]
