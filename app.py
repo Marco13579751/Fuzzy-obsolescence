@@ -377,8 +377,6 @@ if st.button("Save valuation"):
 st.subheader("📋 Valutations saved")
 valutazioni = db.collection("ospedali").document(user_email).collection("valutazioni").stream()
 
-st.subheader("📋 Valutations saved")
-valutazioni = db.collection("ospedali").document(user_email).collection("valutazioni").stream()
 
 def safe_format(v):
     try:
