@@ -168,7 +168,7 @@ criticity = ctrl.Consequent(np.arange(0, 10.1, 0.1), 'Criticity')
 # Define membership functions for normalizedAge
 
 normalized_age['New'] = fuzz.trapmf(normalized_age.universe, [0, 0, 0.4, 0.5])
-normalized_age['Middle'] = fuzz.trimf(normalized_age.universe, [0.4, 0.6, 0.7])
+normalized_age['Middle'] = fuzz.trimf(normalized_age.universe, [0.4, 0.6, 0.8])
 normalized_age['Old'] = fuzz.trapmf(normalized_age.universe, [0.6, 0.7, 1, 1])
 
 #normalized_age['New'] = fuzz.gaussmf(normalized_age.universe, mean=0.2, sigma=0.1)
