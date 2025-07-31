@@ -362,7 +362,7 @@ user_email = st.session_state["user"]
 if st.button("Save valuation"):
     parametri_dict = {
     nome: val if val is not None else None
-    for nome, val in zip(parametri_nome_, inputs)
+    for nome, val in zip(parametri_nome_prova_con_2_parametri, inputs)
     }
 
     doc = {
