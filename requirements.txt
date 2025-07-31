@@ -7,5 +7,6 @@ pyrebase4
 networkx
 matplotlib
 IPython
+scikit-fuzzy>=0.4.2
 
 
