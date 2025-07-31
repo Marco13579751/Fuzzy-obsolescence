@@ -197,36 +197,18 @@ criticity['VeryHigh'] = fuzz.gaussmf(criticity.universe, 9, 0.7)
 
 
 # Define fuzzy rules
-rule1 = ctrl.Rule(normalized_age['New'], criticity['VeryLow'])
-rule1.weight = 0.5
 
-rule2 = ctrl.Rule(normalized_age['Middle'], criticity['Medium'])
-rule2.weight = 0.5
-
-rule3 = ctrl.Rule(normalized_age['Old'], criticity['VeryHigh'])
-rule3.weight = 0.5
-
-rule4 = ctrl.Rule(normalized_fault_rate_levels['Under trh'], criticity['VeryLow'])
-rule4.weight = 0.5
-
-rule5 = ctrl.Rule(normalized_fault_rate_levels['Around trh'], criticity['Medium'])
-rule5.weight = 0.5
-
-rule6 = ctrl.Rule(normalized_fault_rate_levels['Above trh'], criticity['VeryHigh'])
-rule6.weight = 0.5
 
 
 rules = [
-    rule1,
-    rule2,
-    rule3,
-    #ctrl.Rule(normalized_age['New'], criticity['VeryLow'],weight=0.5),
-    #ctrl.Rule(normalized_age['Middle'], criticity['Medium'],weight=0.5),
-    #ctrl.Rule(normalized_age['Old'], criticity['VeryHigh'],weight=0.5),
-    
-    rule4,
-    rule5,
-    rule6,
+    rule1 = ctrl.Rule(normalized_age['New'], criticity['VeryLow'])
+    rule2 = ctrl.Rule(normalized_age['Middle'], criticity['Medium'])
+    rule3 = ctrl.Rule(normalized_age['Old'], criticity['VeryHigh'])
+
+    rule4 = ctrl.Rule(normalized_fault_rate_levels['Under trh'], criticity['VeryLow'])
+    rule5 = ctrl.Rule(normalized_fault_rate_levels['Around trh'], criticity['Medium'])
+    rule6 = ctrl.Rule(normalized_fault_rate_levels['Above trh'], criticity['VeryHigh'])
+
 
     # --- Age: NEW ---
     ctrl.Rule(normalized_age['New'] & normalized_fault_rate_levels['Under trh'], criticity['VeryLow']),
