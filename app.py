@@ -353,7 +353,7 @@ def plot_raw_membership(x, terms, title):
 plot_raw_membership(
     x_age,
     {"young": young, "middle": middle, "old": old},
-    "Gaussian Membership Functions"
+    "Age"
 )
 plot_membership_functions(normalized_fault_rate_levels, 'Failure rate')
 # --- Salvataggio in Firestore ---
