@@ -377,20 +377,34 @@ if st.button("Save valuation"):
 st.subheader("📋 Valutations saved")
 valutazioni = db.collection("ospedali").document(user_email).collection("valutazioni").stream()
 
+st.subheader("📋 Valutations saved")
+valutazioni = db.collection("ospedali").document(user_email).collection("valutazioni").stream()
+
+def safe_format(v):
+    try:
+        return f"{float(v):.2f}"
+    except (ValueError, TypeError):
+        return str(v)
+
 for doc in valutazioni:
     d = doc.to_dict()
     params = d.get("parametri", ["N/D"]*13)
     score = d.get("obsolescenza", "N/D")
 
-    # Format dei parametri (se è un dizionario)
     if isinstance(params, dict):
         formatted_params = ", ".join(
-            f"{k}: {v:.2f}" for k, v in params.items()
+            f"{k}: {safe_format(v)}" for k, v in params.items()
         )
     else:
-        formatted_params = str(params)  # fallback
+        formatted_params = str(params)
 
-    st.write(f"- Parametri: {formatted_params} | Obsolescence: {score:.2f}")
+    try:
+        formatted_score = f"{float(score):.2f}"
+    except (ValueError, TypeError):
+        formatted_score = str(score)
+
+    st.write(f"- Parametri: {formatted_params} | Obsolescence: {formatted_score}")
+
 
 
 st.subheader("📊 Test di input automatici")
