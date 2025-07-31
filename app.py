@@ -251,6 +251,23 @@ def plot_membership_functions(antecedent, title):
     st.pyplot(fig)
     plt.close(fig)
 
+x_age = np.linspace(0, 1, 100)
+young = gaussmf(x_age, 0.2, 0.1)
+middle = gaussmf(x_age, 0.5, 0.1)
+old = gaussmf(x_age, 0.8, 0.1)
+
+fig, ax = plt.subplots()
+ax.plot(x_age, young, label='Young')
+ax.plot(x_age, middle, label='Middle')
+ax.plot(x_age, old, label='Old')
+ax.set_title("Gaussian Membership Functions")
+ax.set_xlabel("Normalized Age")
+ax.set_ylabel("Membership")
+ax.legend()
+
+st.pyplot(fig)
+
+
 
 
 
