@@ -150,9 +150,7 @@ for i, nome in enumerate(parametri_nome_prova_con_2_parametri):
             data_acquisto = st.date_input("Data di acquisto")
             oggi = datetime.date.today()
             eta_giorni = (oggi - data_acquisto).days
-            eta_anni = eta_giorni / 365.25
-            val = min(1.0, eta_anni / 20.0)   # normalizzazione
-            st.write(f"Età: {eta_anni:.2f} anni → {val:.2f}")
+            st.write(f"Age: {eta_anni:.2f})
         else:
             val = st.number_input(
                 f"{nome}",
