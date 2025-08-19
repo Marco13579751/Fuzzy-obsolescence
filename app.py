@@ -140,21 +140,26 @@ parametri_nome_prova_con_2_parametri=['normalizedAge','normalizedfaultRateLevels
 inputs = []
 
 # Mostra i box in righe da 3 colonne
-colonne = st.columns(3)
-
 for i, nome in enumerate(parametri_nome_prova_con_2_parametri):
-    col = colonne[i % 3]  # scegli la colonna ciclicamente
+    col = colonne[i % 3]
     with col:
-        val = st.number_input(
-            f"{nome}",
-            min_value=0.0,
-            max_value=1.0,
-            step=0.1,
-            format="%.2f",
-            key=f"param_{i+1}"
-        )
+        if nome == "normalizedAge":
+            data_acquisto = st.date_input("Data di acquisto")
+            oggi = datetime.date.today()
+            eta_giorni = (oggi - data_acquisto).days
+            eta_anni = eta_giorni / 365.25
+            val = min(1.0, eta_anni / 20.0)   # normalizzazione
+            st.write(f"Età: {eta_anni:.2f} anni → {val:.2f}")
+        else:
+            val = st.number_input(
+                f"{nome}",
+                min_value=0.0,
+                max_value=1.0,
+                step=0.01,
+                format="%.2f",
+                key=f"param_{i+1}"
+            )
         inputs.append(val if val != 0.0 else None)
-
 
 # --- Fuzzy logic ---
 normalized_age = ctrl.Antecedent(np.arange(0, 1.1, 0.01), 'normalizedAge')
