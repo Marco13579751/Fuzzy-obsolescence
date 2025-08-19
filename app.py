@@ -153,8 +153,7 @@ for i, nome in enumerate(parametri_nome_prova_con_2_parametri):
             eta=eta_giorni/365
             val=eta
             st.write(f"Age: {eta:.2f}")
-        else:
-            nome == "normalizedfaultRateLevels":
+         elif nome == "normalizedfaultRateLevels":
             # menu a tendina per failure rate (senza normalizzazione)
             val = st.selectbox(
                 "Failure Rate",
