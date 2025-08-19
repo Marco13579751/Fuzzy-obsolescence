@@ -151,6 +151,7 @@ for i, nome in enumerate(parametri_nome_prova_con_2_parametri):
             oggi = datetime.date.today()
             eta_giorni = (oggi - data_acquisto).days
             eta=eta_giorni/365
+            val=eta
             st.write(f"Age: {eta:.2f}")
         else:
             val = st.number_input(
