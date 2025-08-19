@@ -247,13 +247,13 @@ rules = [
 
     #cost high w age
     ctrl.Rule(cost_levels['high'] & normalized_age['New'], criticity['VeryLow']),
-    ctrl.Rule(cost_levels['high'] & normalized_age['Middle'], criticity['Low']),
-    ctrl.Rule(cost_levels['high'] & normalized_age['Old'], criticity['Medium']),
+    ctrl.Rule(cost_levels['high'] & normalized_age['Middle'], criticity['Medium']),
+    ctrl.Rule(cost_levels['high'] & normalized_age['Old'], criticity['VeryHigh']),
 
     #cost medium w age
-    ctrl.Rule(cost_levels['medium'] & normalized_age['New'], criticity['VeryLow']),
-    ctrl.Rule(cost_levels['medium'] & normalized_age['Middle'], criticity['Low']),
-    ctrl.Rule(cost_levels['medium'] & normalized_age['Old'], criticity['Medium']),
+    ctrl.Rule(cost_levels['medium'] & normalized_age['New'], criticity['Low']),
+    ctrl.Rule(cost_levels['medium'] & normalized_age['Middle'], criticity['Medium']),
+    ctrl.Rule(cost_levels['medium'] & normalized_age['Old'], criticity['VeryHigh']),
 
     #cost low w age
     ctrl.Rule(cost_levels['low'] & normalized_age['New'], criticity['VeryLow']),
@@ -262,8 +262,8 @@ rules = [
 
     # cost high w failure rate
     ctrl.Rule(cost_levels['high'] & normalized_fault_rate_levels['Under trh'], criticity['Low']),
-    ctrl.Rule(cost_levels['high'] & normalized_fault_rate_levels['Around trh'], criticity['Medium']),
-    ctrl.Rule(cost_levels['high'] & normalized_fault_rate_levels['Above trh'], criticity['High']),
+    ctrl.Rule(cost_levels['high'] & normalized_fault_rate_levels['Around trh'], criticity['High']),
+    ctrl.Rule(cost_levels['high'] & normalized_fault_rate_levels['Above trh'], criticity['VeryHigh']),
 
     # cost medium w failure rate
     ctrl.Rule(cost_levels['medium'] & normalized_fault_rate_levels['Under trh'], criticity['VeryLow']),
