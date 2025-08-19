@@ -140,6 +140,8 @@ parametri_nome_prova_con_2_parametri=['normalizedAge','normalizedfaultRateLevels
 inputs = []
 
 # Mostra i box in righe da 3 colonne
+colonne = st.columns(3)
+
 for i, nome in enumerate(parametri_nome_prova_con_2_parametri):
     col = colonne[i % 3]
     with col:
