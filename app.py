@@ -147,7 +147,7 @@ for i, nome in enumerate(parametri_nome_prova_con_2_parametri):
     col = colonne[i % 3]
     with col:
         if nome == "normalizedAge":
-            data_acquisto = st.date_input("Data di acquisto")
+            data_acquisto = st.date_input("Date of purchase")
             oggi = datetime.date.today()
             eta_giorni = (oggi - data_acquisto).days
             eta = eta_giorni / 365
@@ -157,7 +157,7 @@ for i, nome in enumerate(parametri_nome_prova_con_2_parametri):
         elif nome == "normalizedfaultRateLevels":
             # menu a tendina per failure rate (senza normalizzazione)
             val = st.selectbox(
-                "Failure Rate",
+                "Equipment function",
                 options=[1, 2, 3, 4],
                 key=f"failure_rate_{i}"
             )
