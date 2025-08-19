@@ -174,8 +174,8 @@ for i, nome in enumerate(parametri_nome_prova_con_2_parametri):
 
 
 # --- Fuzzy logic ---
-normalized_age = ctrl.Antecedent(np.arange(0, 1.1, 0.01), 'normalizedAge')
-normalized_fault_rate_levels = ctrl.Antecedent(np.arange(0, 1.1, 0.01), 'normalizedfaultRateLevels')
+normalized_age = ctrl.Antecedent(np.arange(0, 11, 0.01), 'normalizedAge')
+normalized_fault_rate_levels = ctrl.Antecedent(np.arange(0, 4, 1), 'normalizedfaultRateLevels')
 cost_levels=ctrl.Antecedent(np.arange(0,1001,1),'cost')
 
 
@@ -189,9 +189,9 @@ criticity = ctrl.Consequent(np.arange(0, 10.1, 0.01), 'Criticity')
 #normalized_age['Middle'] = fuzz.trimf(normalized_age.universe, [0.3, 0.5, 0.7])
 #normalized_age['Old'] = fuzz.trimf(normalized_age.universe, [0.5, 1, 1])
 
-normalized_age['New'] = fuzz.gaussmf(normalized_age.universe, 0.2, 0.1)
-normalized_age['Middle'] = fuzz.gaussmf(normalized_age.universe, 0.5, 0.1)
-normalized_age['Old'] = fuzz.gaussmf(normalized_age.universe, 0.8, 0.1)
+normalized_age['New'] = fuzz.gaussmf(normalized_age.universe, 2, 0.1)
+normalized_age['Middle'] = fuzz.gaussmf(normalized_age.universe, 5, 0.1)
+normalized_age['Old'] = fuzz.gaussmf(normalized_age.universe, 8, 0.1)
 
 
 
@@ -200,9 +200,9 @@ normalized_age['Old'] = fuzz.gaussmf(normalized_age.universe, 0.8, 0.1)
 #normalized_age['Old'] = fuzz.gaussmf(normalized_age.universe, mean=0.8, sigma=0.1)
 
 # Define membership functions for normalizedfaultRateLevels
-normalized_fault_rate_levels['Under trh'] = fuzz.gaussmf(normalized_fault_rate_levels.universe, 0.2, 0.1)
-normalized_fault_rate_levels['Around trh'] = fuzz.gaussmf(normalized_fault_rate_levels.universe, 0.5, 0.1)
-normalized_fault_rate_levels['Above trh'] = fuzz.gaussmf(normalized_fault_rate_levels.universe, 0.8, 0.1)
+normalized_fault_rate_levels['Under trh'] = fuzz.gaussmf(normalized_fault_rate_levels.universe, 1, 0.1)
+normalized_fault_rate_levels['Around trh'] = fuzz.gaussmf(normalized_fault_rate_levels.universe, 2, 0.1)
+normalized_fault_rate_levels['Above trh'] = fuzz.gaussmf(normalized_fault_rate_levels.universe, 3, 0.1)
 
 cost_levels['low']=fuzz.trapmf(cost_levels.universe, [0,0,200,400])
 cost_levels['medium']=fuzz.trapmf(cost_levels.universe, [200,400,600,800])
