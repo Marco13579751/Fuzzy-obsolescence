@@ -150,17 +150,20 @@ for i, nome in enumerate(parametri_nome_prova_con_2_parametri):
             data_acquisto = st.date_input("Data di acquisto")
             oggi = datetime.date.today()
             eta_giorni = (oggi - data_acquisto).days
-            eta=eta_giorni/365
-            val=eta
+            eta = eta_giorni / 365
+            val = eta
             st.write(f"Age: {eta:.2f}")
-         elif nome == "normalizedfaultRateLevels":
+
+        elif nome == "normalizedfaultRateLevels":
             # menu a tendina per failure rate (senza normalizzazione)
             val = st.selectbox(
                 "Failure Rate",
                 options=[1, 2, 3, 4],
                 key=f"failure_rate_{i}"
             )
+
         inputs.append(val if val != 0.0 else None)
+
 
 # --- Fuzzy logic ---
 normalized_age = ctrl.Antecedent(np.arange(0, 1.1, 0.01), 'normalizedAge')
