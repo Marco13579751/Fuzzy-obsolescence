@@ -165,7 +165,7 @@ for i, nome in enumerate(parametri_nome_prova_con_2_parametri):
             val = st.number_input(
                 "Cost",
                 min_value=0.0,
-                step=1.0,
+                step=1,
                 format="%.2f",
                 key=f"cost_{i}"
             )
@@ -176,7 +176,7 @@ for i, nome in enumerate(parametri_nome_prova_con_2_parametri):
 # --- Fuzzy logic ---
 normalized_age = ctrl.Antecedent(np.arange(0, 1.1, 0.01), 'normalizedAge')
 normalized_fault_rate_levels = ctrl.Antecedent(np.arange(0, 1.1, 0.01), 'normalizedfaultRateLevels')
-cost_levels=ctrl.Antecedent(np.arange(0,1.1,0.01),'cost')
+cost_levels=ctrl.Antecedent(np.arange(0,1001,1),'cost')
 
 
 
