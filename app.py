@@ -136,7 +136,7 @@ parametri_nome = [
     'normalizedUtilizationLevels', 'normalizedUptime',
     'normalizedfaultRateLevels', 'normalizedEoLS'
 ]
-parametri_nome_prova_con_2_parametri=['normalizedAge','normalizedfaultRateLevels']
+parametri_nome_prova_con_2_parametri=['normalizedAge','normalizedfaultRateLevels','cost']
 
 inputs = []
 
@@ -161,6 +161,14 @@ for i, nome in enumerate(parametri_nome_prova_con_2_parametri):
                 options=[1, 2, 3, 4],
                 key=f"failure_rate_{i}"
             )
+        elif nome=="cost" :
+            val = st.number_input(
+                "Cost",
+                min_value=0.0,
+                step=1.0,
+                format="%.2f",
+                key=f"cost_{i}"
+            )
 
         inputs.append(val if val != 0.0 else None)
 
@@ -168,6 +176,7 @@ for i, nome in enumerate(parametri_nome_prova_con_2_parametri):
 # --- Fuzzy logic ---
 normalized_age = ctrl.Antecedent(np.arange(0, 1.1, 0.01), 'normalizedAge')
 normalized_fault_rate_levels = ctrl.Antecedent(np.arange(0, 1.1, 0.01), 'normalizedfaultRateLevels')
+cost=ctrl.Antecedent(np.range(0,1000,1),'cost')
 
 
 
@@ -195,7 +204,9 @@ normalized_fault_rate_levels['Under trh'] = fuzz.gaussmf(normalized_fault_rate_l
 normalized_fault_rate_levels['Around trh'] = fuzz.gaussmf(normalized_fault_rate_levels.universe, 0.5, 0.1)
 normalized_fault_rate_levels['Above trh'] = fuzz.gaussmf(normalized_fault_rate_levels.universe, 0.8, 0.1)
 
-
+cost_levels['low']=fuzz.trapmf(cost_levels.universe, [0,0,200,400])
+cost_levels['medium']=fuzz.trapmf(cost_levels.universe, [200,400,600,800])
+cost_levels['high']=fuzz.trapmf(cost_levels.universe, [600,800,1000,1000])
 
 # Define membership functions for Criticity
 criticity['VeryLow'] = fuzz.gaussmf(criticity.universe, 1, 0.7)
@@ -233,6 +244,22 @@ rules = [
     ctrl.Rule(normalized_age['Old'] & normalized_fault_rate_levels['Under trh'], criticity['Medium']),
     ctrl.Rule(normalized_age['Old'] & normalized_fault_rate_levels['Around trh'], criticity['High']),
     ctrl.Rule(normalized_age['Old'] & normalized_fault_rate_levels['Above trh'], criticity['VeryHigh']),
+
+    #cost high w age
+    ctrl.Rule(cost_levels['high'] & normalized_age['New'], criticity['VeryLow']),
+    ctrl.Rule(cost_levels['high'] & normalized_age['Middle'], criticity['Low']),
+    ctrl.Rule(cost_levels['high'] & normalized_age['Old'], criticity['Medium']),
+
+    #cost medium w age
+    ctrl.Rule(cost_levels['medium'] & normalized_age['New'], criticity['VeryLow']),
+    ctrl.Rule(cost_levels['medium'] & normalized_age['Middle'], criticity['Low']),
+    ctrl.Rule(cost_levels['medium'] & normalized_age['Old'], criticity['Medium']),
+
+    #cost low w age
+    ctrl.Rule(cost_levels['low'] & normalized_age['New'], criticity['VeryLow']),
+    ctrl.Rule(cost_levels['low'] & normalized_age['Middle'], criticity['Low']),
+    ctrl.Rule(cost_levels['low'] & normalized_age['Old'], criticity['Medium']),
+    
 
    
 
