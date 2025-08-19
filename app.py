@@ -470,8 +470,8 @@ st.subheader("📊 Test di input automatici")
 # --- Generazione di tutte le combinazioni
 all_combinations = [
     {'normalizedAge': round(age, 1), 'normalizedfaultRateLevels': round(fr, 1)}
-    for age in np.arange(0.0, 1.01, 0.1)
-    for fr in np.arange(0.0, 1.01, 0.1)
+    for age in np.arange(0,11,1)
+    for fr in np.arange(0, 4, 1)
 ]
 
 # --- Funzione per calcolare Criticity
