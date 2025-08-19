@@ -154,9 +154,9 @@ for i, nome in enumerate(parametri_nome_prova_con_2_parametri):
             val=eta
             st.write(f"Age: {eta:.2f}")
         else:
-           nome == "normalizedfaultRateLevels":
-            # menu a tendina per failure rate
-            scelta = st.selectbox(
+            nome == "normalizedfaultRateLevels":
+            # menu a tendina per failure rate (senza normalizzazione)
+            val = st.selectbox(
                 "Failure Rate",
                 options=[1, 2, 3, 4],
                 key=f"failure_rate_{i}"
