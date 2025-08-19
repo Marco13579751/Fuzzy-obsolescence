@@ -154,13 +154,12 @@ for i, nome in enumerate(parametri_nome_prova_con_2_parametri):
             val=eta
             st.write(f"Age: {eta:.2f}")
         else:
-            val = st.number_input(
-                f"{nome}",
-                min_value=0.0,
-                max_value=1.0,
-                step=0.01,
-                format="%.2f",
-                key=f"param_{i+1}"
+           nome == "normalizedfaultRateLevels":
+            # menu a tendina per failure rate
+            scelta = st.selectbox(
+                "Failure Rate",
+                options=[1, 2, 3, 4],
+                key=f"failure_rate_{i}"
             )
         inputs.append(val if val != 0.0 else None)
 
