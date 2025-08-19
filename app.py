@@ -175,7 +175,7 @@ for i, nome in enumerate(parametri_nome_prova_con_2_parametri):
 
 # --- Fuzzy logic ---
 normalized_age = ctrl.Antecedent(np.arange(0, 11, 0.1), 'normalizedAge')
-normalized_fault_rate_levels = ctrl.Antecedent(np.arange(0, 4, 1), 'normalizedfaultRateLevels')
+normalized_fault_rate_levels = ctrl.Antecedent(np.arange(0, 4, 0.01), 'normalizedfaultRateLevels')
 cost_levels=ctrl.Antecedent(np.arange(0,1001,1),'cost')
 
 
