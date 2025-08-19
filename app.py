@@ -174,7 +174,7 @@ for i, nome in enumerate(parametri_nome_prova_con_2_parametri):
 
 
 # --- Fuzzy logic ---
-normalized_age = ctrl.Antecedent(np.arange(0, 11, 0.01), 'normalizedAge')
+normalized_age = ctrl.Antecedent(np.arange(0, 11, 1), 'normalizedAge')
 normalized_fault_rate_levels = ctrl.Antecedent(np.arange(0, 4, 1), 'normalizedfaultRateLevels')
 cost_levels=ctrl.Antecedent(np.arange(0,1001,1),'cost')
 
@@ -189,9 +189,9 @@ criticity = ctrl.Consequent(np.arange(0, 10.1, 0.01), 'Criticity')
 #normalized_age['Middle'] = fuzz.trimf(normalized_age.universe, [0.3, 0.5, 0.7])
 #normalized_age['Old'] = fuzz.trimf(normalized_age.universe, [0.5, 1, 1])
 
-normalized_age['New'] = fuzz.gaussmf(normalized_age.universe, 2, 0.1)
-normalized_age['Middle'] = fuzz.gaussmf(normalized_age.universe, 5, 0.1)
-normalized_age['Old'] = fuzz.gaussmf(normalized_age.universe, 8, 0.1)
+normalized_age['New'] = fuzz.gaussmf(normalized_age.universe, 2, 1)
+normalized_age['Middle'] = fuzz.gaussmf(normalized_age.universe, 5, 1)
+normalized_age['Old'] = fuzz.gaussmf(normalized_age.universe, 8, 1)
 
 
 
