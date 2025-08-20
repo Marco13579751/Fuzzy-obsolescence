@@ -209,8 +209,8 @@ normalized_fault_rate_levels['Above trh'] = fuzz.gaussmf(normalized_fault_rate_l
 #cost_levels['high']=fuzz.trapmf(cost_levels.universe, [600,800,1000,1000])
 
 cost_levels['low']=fuzz.gaussmf(cost_levels.universe, 300,100)
-cost_levels['medium']=fuzz.gaussmf(cost_levels.universe, 500,200)
-cost_levels['high']=fuzz.gaussmf(cost_levels.universe, 700,150)
+cost_levels['medium']=fuzz.gaussmf(cost_levels.universe, 500,100)
+cost_levels['high']=fuzz.gaussmf(cost_levels.universe, 700,100)
 
 # Define membership functions for Criticity
 criticity['VeryLow'] = fuzz.gaussmf(criticity.universe, 1, 0.7)
