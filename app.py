@@ -245,19 +245,19 @@ rules = [
     ctrl.Rule(normalized_age['Middle'] & normalized_fault_rate_levels['Above trh'], criticity['High']),
 
     # --- Age: OLD ---
-    ctrl.Rule(normalized_age['Old'] & normalized_fault_rate_levels['Under trh'], criticity['Medium']),
+    ctrl.Rule(normalized_age['Old'] & normalized_fault_rate_levels['Under trh'], criticity['Low']),
     ctrl.Rule(normalized_age['Old'] & normalized_fault_rate_levels['Around trh'], criticity['High']),
     ctrl.Rule(normalized_age['Old'] & normalized_fault_rate_levels['Above trh'], criticity['VeryHigh']),
 
     #cost high w age
-    ctrl.Rule(cost_levels['high'] & normalized_age['New'], criticity['VeryLow']),
+    ctrl.Rule(cost_levels['high'] & normalized_age['New'], criticity['Low']),
     ctrl.Rule(cost_levels['high'] & normalized_age['Middle'], criticity['Medium']),
     ctrl.Rule(cost_levels['high'] & normalized_age['Old'], criticity['VeryHigh']),
 
     #cost medium w age
-    ctrl.Rule(cost_levels['medium'] & normalized_age['New'], criticity['Low']),
+    ctrl.Rule(cost_levels['medium'] & normalized_age['New'], criticity['VeryLow']),
     ctrl.Rule(cost_levels['medium'] & normalized_age['Middle'], criticity['Medium']),
-    ctrl.Rule(cost_levels['medium'] & normalized_age['Old'], criticity['VeryHigh']),
+    ctrl.Rule(cost_levels['medium'] & normalized_age['Old'], criticity['High']),
 
     #cost low w age
     ctrl.Rule(cost_levels['low'] & normalized_age['New'], criticity['VeryLow']),
@@ -271,8 +271,8 @@ rules = [
 
     # cost medium w failure rate
     ctrl.Rule(cost_levels['medium'] & normalized_fault_rate_levels['Under trh'], criticity['VeryLow']),
-    ctrl.Rule(cost_levels['medium'] & normalized_fault_rate_levels['Around trh'], criticity['Low']),
-    ctrl.Rule(cost_levels['medium'] & normalized_fault_rate_levels['Above trh'], criticity['Medium']),
+    ctrl.Rule(cost_levels['medium'] & normalized_fault_rate_levels['Around trh'], criticity['Medium']),
+    ctrl.Rule(cost_levels['medium'] & normalized_fault_rate_levels['Above trh'], criticity['High']),
 
     # cost low w failure rate
     ctrl.Rule(cost_levels['low'] & normalized_fault_rate_levels['Under trh'], criticity['VeryLow']),
@@ -421,6 +421,8 @@ old = gaussmf(x_age, 0.8, 0.1)
 #)
 plot_membership_functions(normalized_age, 'Age')
 plot_membership_functions(normalized_fault_rate_levels, 'Failure rate')
+plot_membership_functions(cost_levels, 'Cost')
+
 # --- Salvataggio in Firestore ---
 user_email = st.session_state["user"]
 if st.button("Save valuation"):
