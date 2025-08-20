@@ -185,32 +185,31 @@ criticity = ctrl.Consequent(np.arange(0, 10.1, 0.01), 'Criticity')
 
 # Define membership functions for normalizedAge
 
-#normalized_age['New'] = fuzz.trimf(normalized_age.universe, [0, 0, 0.6])
-#normalized_age['Middle'] = fuzz.trimf(normalized_age.universe, [0.3, 0.5, 0.7])
-#normalized_age['Old'] = fuzz.trimf(normalized_age.universe, [0.5, 1, 1])
+normalized_age['New'] = fuzz.trapmf(normalized_age.universe, [0, 0, 2, 4])
+normalized_age['Middle'] = fuzz.trimf(normalized_age.universe, [3, 5, 7])
+normalized_age['Old'] = fuzz.trapmf(normalized_age.universe, [6, 8, 10, 10])
 
-normalized_age['New'] = fuzz.gaussmf(normalized_age.universe, 2, 1)
-normalized_age['Middle'] = fuzz.gaussmf(normalized_age.universe, 5, 1)
-normalized_age['Old'] = fuzz.gaussmf(normalized_age.universe, 8, 1)
-
-
-
-#normalized_age['New'] = fuzz.gaussmf(normalized_age.universe, mean=0.2, sigma=0.1)
-#normalized_age['Middle'] = fuzz.gaussmf(normalized_age.universe, mean=0.5, sigma=0.1)
-#normalized_age['Old'] = fuzz.gaussmf(normalized_age.universe, mean=0.8, sigma=0.1)
+#normalized_age['New'] = fuzz.gaussmf(normalized_age.universe, 2, 1)
+#normalized_age['Middle'] = fuzz.gaussmf(normalized_age.universe, 5, 1)
+#normalized_age['Old'] = fuzz.gaussmf(normalized_age.universe, 8, 1)
 
 # Define membership functions for normalizedfaultRateLevels
 normalized_fault_rate_levels['Under trh'] = fuzz.gaussmf(normalized_fault_rate_levels.universe, 1, 0.1)
 normalized_fault_rate_levels['Around trh'] = fuzz.gaussmf(normalized_fault_rate_levels.universe, 2, 0.1)
 normalized_fault_rate_levels['Above trh'] = fuzz.gaussmf(normalized_fault_rate_levels.universe, 3, 0.1)
 
-#cost_levels['low']=fuzz.trapmf(cost_levels.universe, [0,0,200,400])
-#cost_levels['medium']=fuzz.trapmf(cost_levels.universe, [200,400,600,800])
-#cost_levels['high']=fuzz.trapmf(cost_levels.universe, [600,800,1000,1000])
+#normalized_fault_rate_levels['Under trh'] = fuzz.trapmf(normalized_fault_rate_levels.universe, 1, 0.1)
+#normalized_fault_rate_levels['Around trh'] = fuzz.trimf(normalized_fault_rate_levels.universe, [])
+#normalized_fault_rate_levels['Above trh'] = fuzz.trapmf(normalized_fault_rate_levels.universe, 3, 0.1)
 
-cost_levels['low']=fuzz.gaussmf(cost_levels.universe, 300,70)
-cost_levels['medium']=fuzz.gaussmf(cost_levels.universe, 500,70)
-cost_levels['high']=fuzz.gaussmf(cost_levels.universe, 700,70)
+# Define membership functions for Costlevels
+cost_levels['low']=fuzz.trapmf(cost_levels.universe, [0,0,300,400])
+cost_levels['medium']=fuzz.trimf(cost_levels.universe, [300,500,700])
+cost_levels['high']=fuzz.trapmf(cost_levels.universe, [600,700,1000,1000])
+
+#cost_levels['low']=fuzz.gaussmf(cost_levels.universe, 300,70)
+#cost_levels['medium']=fuzz.gaussmf(cost_levels.universe, 500,70)
+#cost_levels['high']=fuzz.gaussmf(cost_levels.universe, 700,70)
 
 # Define membership functions for Criticity
 criticity['VeryLow'] = fuzz.gaussmf(criticity.universe, 1, 0.7)
