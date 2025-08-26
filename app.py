@@ -11,7 +11,7 @@ import io
 import base64
 import IPython.display as display
 import datetime
-g
+
 
 # -- Configurazione e inizializzazione Firebase ---
 firebase_config = {
