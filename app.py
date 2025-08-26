@@ -179,7 +179,7 @@ for i, nome in enumerate(parametri_nome_prova_con_2_parametri):
             )
         elif nome=="failure_rate" :
             val = st.number_input(
-                "Uptime",
+                "Failure rate",
                 min_value=0.0,
                 step=1.0,
                 format="%.2f",
