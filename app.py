@@ -421,6 +421,9 @@ for nome, val in zip(parametri_nome_prova_con_2_parametri, inputs):
 # Compute the fuzzy output (Criticity)
 def show_fuzzy_output(fuzzy_var, sim):
     sim.compute()
+    print("DEBUG - fuzzy_var.label =", fuzzy_var.label)
+    print("DEBUG - sim.output keys =", sim.output.keys())
+
     output_value = sim.output[fuzzy_var.label]
 
     fig, ax = plt.subplots(figsize=(5, 2.5))
