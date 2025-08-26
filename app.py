@@ -140,6 +140,11 @@ parametri_nome_prova_con_2_parametri=['normalizedAge','normalizedfaultRateLevels
 
 inputs = []
 
+if st.button("🔄 Clear cache & refresh"):
+    st.cache_data.clear()
+    st.cache_resource.clear()
+    st.rerun()
+    
 # Mostra i box in righe da 3 colonne
 colonne = st.columns(3)
 
