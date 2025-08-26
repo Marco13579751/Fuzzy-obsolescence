@@ -271,19 +271,19 @@ criticity['VeryHigh'] = fuzz.gaussmf(criticity.universe, 9, 0.7)
 
 rule_r=[
     #fr high w age
-    ctrl.Rule(failure_rate['high'] & normalized_age['New'], reliability['Medium']),
-    ctrl.Rule(failure_rate['high'] & normalized_age['Middle'], reliability['Medium']),
-    ctrl.Rule(failure_rate['high'] & normalized_age['Old'], reliability['High']),
+    ctrl.Rule(failure_rate['High'] & normalized_age['New'], reliability['Medium']),
+    ctrl.Rule(failure_rate['High'] & normalized_age['Middle'], reliability['Medium']),
+    ctrl.Rule(failure_rate['High'] & normalized_age['Old'], reliability['High']),
 
     #fr medium w age
-    ctrl.Rule(failure_rate['medium'] & normalized_age['New'], reliability['Low']),
-    ctrl.Rule(failure_rate['medium'] & normalized_age['Middle'], reliability['Medium']),
-    ctrl.Rule(failure_rate['medium'] & normalized_age['Old'], reliability['High']),
+    ctrl.Rule(failure_rate['Medium'] & normalized_age['New'], reliability['Low']),
+    ctrl.Rule(failure_rate['Medium'] & normalized_age['Middle'], reliability['Medium']),
+    ctrl.Rule(failure_rate['Medium'] & normalized_age['Old'], reliability['High']),
 
     #fr low w age
-    ctrl.Rule(failure_rate['low'] & normalized_age['New'], reliability['Low']),
-    ctrl.Rule(failure_rate['low'] & normalized_age['Middle'], reliability['Low']),
-    ctrl.Rule(failure_rate['low'] & normalized_age['Old'], reliability['Medium']),
+    ctrl.Rule(failure_rate['Low'] & normalized_age['New'], reliability['Low']),
+    ctrl.Rule(failure_rate['Low'] & normalized_age['Middle'], reliability['Low']),
+    ctrl.Rule(failure_rate['Low'] & normalized_age['Old'], reliability['Medium']),
 ]
 
 rule_m=[
