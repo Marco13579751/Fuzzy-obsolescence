@@ -221,7 +221,7 @@ normalized_age['Middle'] = fuzz.trimf(normalized_age.universe, [3, 5, 7])
 normalized_age['Old'] = fuzz.trapmf(normalized_age.universe, [5, 8, 10, 10])
 
 failure_rate['Low'] = fuzz.trimf(failure_rate.universe, [0, 0.20,0.40])
-failure_rate['Middle'] = fuzz.trimf(failure_rate.universe, [0.20,0.50,0.80])
+failure_rate['Medium'] = fuzz.trimf(failure_rate.universe, [0.20,0.50,0.80])
 failure_rate['High'] = fuzz.trimf(failure_rate.universe, [0.60, 0.80, 1])
 
 #normalized_age['New'] = fuzz.gaussmf(normalized_age.universe, 2, 1)
