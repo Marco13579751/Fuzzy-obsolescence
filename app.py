@@ -228,9 +228,9 @@ normalized_fault_rate_levels['Under trh'] = fuzz.gaussmf(normalized_fault_rate_l
 normalized_fault_rate_levels['Around trh'] = fuzz.gaussmf(normalized_fault_rate_levels.universe, 2, 0.1)
 normalized_fault_rate_levels['Above trh'] = fuzz.gaussmf(normalized_fault_rate_levels.universe, 3, 0.1)
 
-up_time['Low'] = fuzz.trapmf(normalized_fault_rate_levels.universe, [0,0,8,16])
-up_time['Middle'] = fuzz.trimf(normalized_fault_rate_levels.universe, [8,18,28])
-up_time['High'] = fuzz.trapmf(normalized_fault_rate_levels.universe, [20,28,36,36])
+up_time['Low'] = fuzz.trapmf(up_time.universe, [0,0,8,16])
+up_time['Middle'] = fuzz.trimf(up_time.universe, [8,18,28])
+up_time['High'] = fuzz.trapmf(up_time.universe, [20,28,36,36])
 
 #normalized_fault_rate_levels['Under trh'] = fuzz.trapmf(normalized_fault_rate_levels.universe, 1, 0.1)
 #normalized_fault_rate_levels['Around trh'] = fuzz.trimf(normalized_fault_rate_levels.universe, [])
