@@ -136,7 +136,7 @@ parametri_nome = [
     'normalizedUtilizationLevels', 'normalizedUptime',
     'normalizedfaultRateLevels', 'normalizedEoLS'
 ]
-parametri_nome_prova_con_2_parametri=['normalizedAge','normalizedfaultRateLevels','cost']
+parametri_nome_prova_con_2_parametri=['normalizedAge','normalizedfaultRateLevels','cost','failure_rate','up_time']
 
 inputs = []
 
@@ -169,25 +169,55 @@ for i, nome in enumerate(parametri_nome_prova_con_2_parametri):
                 format="%.2f",
                 key=f"cost_{i}"
             )
+        elif: nome=="up_time" :
+            val = st.number_input(
+                "Uptime",
+                min_value=0.0,
+                step=1.0,
+                format="%.2f",
+                key=f"up_time_{i}"
+            )
+         elif: nome=="failure_rate" :
+            val = st.number_input(
+                "Uptime",
+                min_value=0.0,
+                step=1.0,
+                format="%.2f",
+                key=f"failure_{i}"
+            )
+            
 
         inputs.append(val if val != 0.0 else None)
 
 
+
 # --- Fuzzy logic ---
 normalized_age = ctrl.Antecedent(np.arange(0, 11, 0.1), 'normalizedAge')
+failure_rate=ctrl.Antecedent(np.arange(0, 1, 0.01), 'failure_rate')
+
 normalized_fault_rate_levels = ctrl.Antecedent(np.arange(0, 4, 0.01), 'normalizedfaultRateLevels')
+up_time=ctrl.Antecedent(np.arange(0,36,0.01),'up_time')
+
 cost_levels=ctrl.Antecedent(np.arange(0,1001,1),'cost')
-
-
+    
+#Categorie madre
+reliability=ctrl.Consequent(np.arange(0,10.1, 0.01), 'Reliability')
+mission=ctrl.Consequent(np.arange(0,10.1, 0.01), 'Mission')
 
 # Add output variable (Consequent)
 criticity = ctrl.Consequent(np.arange(0, 10.1, 0.01), 'Criticity')
+
+
 
 # Define membership functions for normalizedAge
 
 normalized_age['New'] = fuzz.trapmf(normalized_age.universe, [0, 0, 2, 5])
 normalized_age['Middle'] = fuzz.trimf(normalized_age.universe, [3, 5, 7])
 normalized_age['Old'] = fuzz.trapmf(normalized_age.universe, [5, 8, 10, 10])
+
+failure_rate['Low'] = fuzz.trimf(normalized_age.universe, [0, 0.20,0.40])
+failure_rate['Middle'] = fuzz.trimf(normalized_age.universe, [0.20,0.50,0.80])
+failure_rate['High'] = fuzz.trimf(normalized_age.universe, [0.60, 0.80, 1])
 
 #normalized_age['New'] = fuzz.gaussmf(normalized_age.universe, 2, 1)
 #normalized_age['Middle'] = fuzz.gaussmf(normalized_age.universe, 5, 1)
@@ -197,6 +227,10 @@ normalized_age['Old'] = fuzz.trapmf(normalized_age.universe, [5, 8, 10, 10])
 normalized_fault_rate_levels['Under trh'] = fuzz.gaussmf(normalized_fault_rate_levels.universe, 1, 0.1)
 normalized_fault_rate_levels['Around trh'] = fuzz.gaussmf(normalized_fault_rate_levels.universe, 2, 0.1)
 normalized_fault_rate_levels['Above trh'] = fuzz.gaussmf(normalized_fault_rate_levels.universe, 3, 0.1)
+
+up_time['Low'] = fuzz.trapmf(normalized_fault_rate_levels.universe, [0,0,8,16])
+up_time['Middle'] = fuzz.trimf(normalized_fault_rate_levels.universe, [8,18,28])
+up_time['High'] = fuzz.trapmf(normalized_fault_rate_levels.universe, [20,28,36,36])
 
 #normalized_fault_rate_levels['Under trh'] = fuzz.trapmf(normalized_fault_rate_levels.universe, 1, 0.1)
 #normalized_fault_rate_levels['Around trh'] = fuzz.trimf(normalized_fault_rate_levels.universe, [])
@@ -211,6 +245,15 @@ cost_levels['high']=fuzz.trapmf(cost_levels.universe, [500,800,1000,1000])
 #cost_levels['medium']=fuzz.gaussmf(cost_levels.universe, 500,70)
 #cost_levels['high']=fuzz.gaussmf(cost_levels.universe, 700,70)
 
+#Membership madre
+reliability['Low']=fuzz.trapmf(reliability.universe, [0,0,2,5])
+reliability['Medium']=fuzz.trimf(reliability.universe, [3,5,7])
+reliability['High']=fuzz.trapmf(reliability.universe, [5,8,1,1])
+
+mission['Low']=fuzz.trapmf(mission.universe, [0,0,2,5])
+mission['Medium']=fuzz.trimf(mission.universe, [3,5,7])
+mission['High']=fuzz.trapmf(mission.universe, [5,8,1,1])
+
 # Define membership functions for Criticity
 criticity['VeryLow'] = fuzz.gaussmf(criticity.universe, 1, 0.7)
 criticity['Low'] = fuzz.gaussmf(criticity.universe, 3, 0.7)
@@ -221,7 +264,42 @@ criticity['VeryHigh'] = fuzz.gaussmf(criticity.universe, 9, 0.7)
 
 # Define fuzzy rules
 
+rule_r=[
+    #fr high w age
+    ctrl.Rule(failure_rate['high'] & normalized_age['New'], reliability['Medium']),
+    ctrl.Rule(failure_rate['high'] & normalized_age['Middle'], reliability['Medium']),
+    ctrl.Rule(failure_rate['high'] & normalized_age['Old'], reliability['High']),
 
+    #fr medium w age
+    ctrl.Rule(failure_rate['medium'] & normalized_age['New'], reliability['Low']),
+    ctrl.Rule(failure_rate['medium'] & normalized_age['Middle'], reliability['Medium']),
+    ctrl.Rule(failure_rate['medium'] & normalized_age['Old'], reliability['High']),
+
+    #fr low w age
+    ctrl.Rule(failure_rate['low'] & normalized_age['New'], reliability['Low']),
+    ctrl.Rule(failure_rate['low'] & normalized_age['Middle'], reliability['Low']),
+    ctrl.Rule(failure_rate['low'] & normalized_age['Old'], reliability['Medium']),
+]
+
+rule_m=[
+     # eq function high w uptime
+    ctrl.Rule(normalized_fault_rate_levels['Above trh'] & up_time['Low'], mission['Low']),
+    ctrl.Rule(normalized_fault_rate_levels['Above trh'] & up_time['Middle'], mission['High']),
+    ctrl.Rule(normalized_fault_rate_levels['Above trh'] & up_time['High'], mission['VeryHigh']),
+
+    # eq function medium w uptime
+    ctrl.Rule(normalized_fault_rate_levels['Around trh'] & up_time['Low'], mission['VeryLow']),
+    ctrl.Rule(normalized_fault_rate_levels['Around trh'] & up_time['Middle'], mission['Medium']),
+    ctrl.Rule(normalized_fault_rate_levels['Around trh'] & up_time['High'], mission['High']),
+
+    # eq function low w uptime
+    ctrl.Rule(normalized_fault_rate_levels['Under trh'] & up_time['Low'], mission['VeryLow']),
+    ctrl.Rule(normalized_fault_rate_levels['Under trh'] & up_time['Middle'], mission['Low']),
+    ctrl.Rule(normalized_fault_rate_levels['Under trh'] & up_time['High'], mission['Medium']),
+    
+]
+
+    
 
 rules = [
     #ctrl.Rule(normalized_age['New'], criticity['VeryLow']),
@@ -284,7 +362,8 @@ rules = [
 ]
 
 # Create the control system (this is the equivalent of the fuzzy system in Matlab)
-criticity_ctrl = ctrl.ControlSystem(rules)
+mission_ctrl=ctrl.ControlSystem(rule_m)
+reliability_ctrl=ctrl.ControlSystem(rule_r)
 
 
 plt.style.use("seaborn-v0_8-muted")  # oppure 'ggplot', 'seaborn-darkgrid', ecc.
@@ -318,7 +397,10 @@ def plot_membership_functions(antecedent, title):
 
 
 # Create a simulation object for the fuzzy control system
-criticity_simulation = ctrl.ControlSystemSimulation(criticity_ctrl)
+mission_simulation=ctrl.ControlSystemSimulation(mission_ctrl)
+reliability_simulation=ctr.ControlSystemSimulation(reliability_ctrl)
+
+
 
 # Initialize a list to store the calculated criticities
 criticities = []
@@ -366,6 +448,8 @@ def show_fuzzy_output(fuzzy_var, sim):
 
     st.pyplot(fig)
     plt.close(fig)
+show_fuzzy_output(reliability, reliability_simulation)
+show_fuzzy_output(mission, mission_simulation)
 show_fuzzy_output(criticity, criticity_simulation)
 
 
@@ -421,6 +505,9 @@ old = gaussmf(x_age, 0.8, 0.1)
 plot_membership_functions(normalized_age, 'Age')
 plot_membership_functions(normalized_fault_rate_levels, 'Failure rate')
 plot_membership_functions(cost_levels, 'Cost')
+plot_membership_functions(failure_rate, 'Failure rate')
+plot_membership_functions(up_time, 'Uptime')
+
 
 # --- Salvataggio in Firestore ---
 user_email = st.session_state["user"]
