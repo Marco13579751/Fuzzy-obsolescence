@@ -403,7 +403,7 @@ def plot_membership_functions(antecedent, title):
 
 # Create a simulation object for the fuzzy control system
 mission_simulation=ctrl.ControlSystemSimulation(mission_ctrl)
-reliability_simulation=ctr.ControlSystemSimulation(reliability_ctrl)
+reliability_simulation=ctrl.ControlSystemSimulation(reliability_ctrl)
 
 
 
@@ -455,7 +455,7 @@ def show_fuzzy_output(fuzzy_var, sim):
     plt.close(fig)
 show_fuzzy_output(reliability, reliability_simulation)
 show_fuzzy_output(mission, mission_simulation)
-show_fuzzy_output(criticity, criticity_simulation)
+#show_fuzzy_output(criticity, criticity_simulation)
 
 
 
