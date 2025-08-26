@@ -206,8 +206,8 @@ up_time=ctrl.Antecedent(np.arange(0,36,0.01),'up_time')
 cost_levels=ctrl.Antecedent(np.arange(0,1001,1),'cost')
     
 #Categorie madre
-reliability=ctrl.Consequent(np.arange(0,10.1, 0.01), 'Reliability')
-mission=ctrl.Consequent(np.arange(0,10.1, 0.01), 'Mission')
+reliability=ctrl.Consequent(np.arange(0,10.1, 0.01), 'reliability')
+mission=ctrl.Consequent(np.arange(0,10.1, 0.01), 'mission')
 
 # Add output variable (Consequent)
 criticity = ctrl.Consequent(np.arange(0, 10.1, 0.01), 'Criticity')
