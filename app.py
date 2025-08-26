@@ -414,9 +414,9 @@ criticities = []
 for nome, val in zip(parametri_nome_prova_con_2_parametri, inputs):
     valore = val if val is not None else 0.0
     
-    if nome in ["up_time", "normalizedfaultRateLevels"]:   # parametri per mission
+    if nome in ["up_time", "normalized_fault_rate_levels"]:   # parametri per mission
         mission_simulation.input[nome] = valore
-    elif nome in ["normalizedAge", "failure_rate"]:      # parametri per reliability
+    elif nome in ["normalized_age", "failure_rate"]:      # parametri per reliability
         reliability_simulation.input[nome] = valore
 # Compute the fuzzy output (Criticity)
 def show_fuzzy_output(fuzzy_var, sim):
