@@ -252,7 +252,7 @@ reliability['High']=fuzz.trapmf(reliability.universe, [5,8,10,10])
 
 mission['Low']=fuzz.trapmf(mission.universe, [0,0,2,5])
 mission['Medium']=fuzz.trimf(mission.universe, [3,5,7])
-mission['High']=fuzz.trapmf(mission.universe, [5,8,1,1])
+mission['High']=fuzz.trapmf(mission.universe, [5,8,10,10])
 
 # Define membership functions for Criticity
 criticity['VeryLow'] = fuzz.gaussmf(criticity.universe, 1, 0.7)
