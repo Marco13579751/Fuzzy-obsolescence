@@ -412,8 +412,12 @@ criticities = []
 
 # Calculate criticity for each device
 for nome, val in zip(parametri_nome_prova_con_2_parametri, inputs):
-    criticity_simulation.input[nome] = val if val is not None else 0.0
+    valore = val if val is not None else 0.0
     
+    if nome in ["mission_time", "mission_cost"]:   # parametri per mission
+        mission_simulation.input[nome] = valore
+    elif nome in ["up_time", "failure_rate"]:      # parametri per reliability
+        reliability_simulation.input[nome] = valore
 # Compute the fuzzy output (Criticity)
 def show_fuzzy_output(fuzzy_var, sim):
     sim.compute()
