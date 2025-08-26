@@ -288,19 +288,19 @@ rule_r=[
 
 rule_m=[
      # eq function high w uptime
-    ctrl.Rule(normalized_fault_rate_levels['Above trh'] & up_time['Low'], mission['Low']),
+    ctrl.Rule(normalized_fault_rate_levels['Above trh'] & up_time['Low'], mission['Medium']),
     ctrl.Rule(normalized_fault_rate_levels['Above trh'] & up_time['Middle'], mission['High']),
-    ctrl.Rule(normalized_fault_rate_levels['Above trh'] & up_time['High'], mission['VeryHigh']),
+    ctrl.Rule(normalized_fault_rate_levels['Above trh'] & up_time['High'], mission['High']),
 
     # eq function medium w uptime
-    ctrl.Rule(normalized_fault_rate_levels['Around trh'] & up_time['Low'], mission['VeryLow']),
+    ctrl.Rule(normalized_fault_rate_levels['Around trh'] & up_time['Low'], mission['Low']),
     ctrl.Rule(normalized_fault_rate_levels['Around trh'] & up_time['Middle'], mission['Medium']),
     ctrl.Rule(normalized_fault_rate_levels['Around trh'] & up_time['High'], mission['High']),
 
     # eq function low w uptime
-    ctrl.Rule(normalized_fault_rate_levels['Under trh'] & up_time['Low'], mission['VeryLow']),
-    ctrl.Rule(normalized_fault_rate_levels['Under trh'] & up_time['Middle'], mission['Low']),
-    ctrl.Rule(normalized_fault_rate_levels['Under trh'] & up_time['High'], mission['Medium']),
+    ctrl.Rule(normalized_fault_rate_levels['Under trh'] & up_time['Low'], mission['Low']),
+    ctrl.Rule(normalized_fault_rate_levels['Under trh'] & up_time['Middle'], mission['Medium']),
+    ctrl.Rule(normalized_fault_rate_levels['Under trh'] & up_time['High'], mission['High']),
     
 ]
 
