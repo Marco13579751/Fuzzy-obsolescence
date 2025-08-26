@@ -248,7 +248,7 @@ cost_levels['high']=fuzz.trapmf(cost_levels.universe, [500,800,1000,1000])
 #Membership madre
 reliability['Low']=fuzz.trapmf(reliability.universe, [0,0,2,5])
 reliability['Medium']=fuzz.trimf(reliability.universe, [3,5,7])
-reliability['High']=fuzz.trapmf(reliability.universe, [5,8,1,1])
+reliability['High']=fuzz.trapmf(reliability.universe, [5,8,10,10])
 
 mission['Low']=fuzz.trapmf(mission.universe, [0,0,2,5])
 mission['Medium']=fuzz.trimf(mission.universe, [3,5,7])
