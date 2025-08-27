@@ -569,44 +569,7 @@ for doc in valutazioni:
 
 
 
-st.subheader("📊 Test di input automatici")
 
-# --- Generazione di tutte le combinazioni
-all_combinations = [
-    {'normalized_age': round(age, 1), 'normalized_fault_rate_levels': round(fr, 1)}
-    for age in np.arange(0,11,1)
-    for fr in np.arange(0, 4, 1)
-]
-
-# --- Funzione per calcolare Criticity
-def compute_criticities(cases, sim):
-    results = []
-    for case in cases:
-        sim.input['normalized_age'] = case['normalized_age']
-        sim.input['normalized_fault_rate_levels'] = case['normalized_fault_rate_levels']
-        sim.compute()
-        results.append({
-            'Age': case['normalized_age'],
-            'FailureRate': case['normalized_fault_rate_levels'],
-            'Criticity': round(sim.output['Criticity'], 2)
-        })
-    return pd.DataFrame(results)
-
-# --- Costruzione del sistema fuzzy
-critic_ctrl = ctrl.ControlSystem(rules)
-sim = ctrl.ControlSystemSimulation(critic_ctrl)
-
-# --- Calcolo risultati
-df_all = compute_criticities(all_combinations, sim)
-
-# --- Mostra tabella completa
-st.subheader("📋 Tutte le combinazioni Age / FailureRate con relativa Criticità")
-st.dataframe(df_all)
-
-# --- Heatmap pivotata per visualizzazione 2D
-pivot = df_all.pivot(index='Age', columns='FailureRate', values='Criticity')
-st.subheader("🔥 Heatmap Criticità")
-st.dataframe(pivot)
 
 # --- Grafico 3D
 fig = plt.figure(figsize=(8, 6))
