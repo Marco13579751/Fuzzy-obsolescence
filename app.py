@@ -136,7 +136,7 @@ parametri_nome = [
     'normalizedUtilizationLevels', 'normalizedUptime',
     'normalizedfaultRateLevels', 'normalizedEoLS'
 ]
-parametri_nome_prova_con_2_parametri=['normalizedAge','normalizedfaultRateLevels','cost','failure_rate','up_time']
+parametri_nome_prova_con_2_parametri=['normalized_age','normalized_fault_rate_levels','cost_levels','failure_rate','up_time']
 
 inputs = []
 
@@ -151,7 +151,7 @@ colonne = st.columns(3)
 for i, nome in enumerate(parametri_nome_prova_con_2_parametri):
     col = colonne[i % 3]
     with col:
-        if nome == "normalizedAge":
+        if nome == "normalized_age":
             data_acquisto = st.date_input("Date of purchase")
             oggi = datetime.date.today()
             eta_giorni = (oggi - data_acquisto).days
@@ -159,14 +159,14 @@ for i, nome in enumerate(parametri_nome_prova_con_2_parametri):
             val = eta
             st.write(f"Age: {eta:.2f}")
 
-        elif nome == "normalizedfaultRateLevels":
+        elif nome == "normalized_fault_rate_levels":
             # menu a tendina per failure rate (senza normalizzazione)
             val = st.selectbox(
                 "Equipment function",
                 options=[1, 2, 3, 4],
                 key=f"failure_rate_{i}"
             )
-        elif nome=="cost" :
+        elif nome=="cost_levels" :
             val = st.number_input(
                 "Cost",
                 min_value=0.0,
@@ -197,13 +197,13 @@ for i, nome in enumerate(parametri_nome_prova_con_2_parametri):
 
 
 # --- Fuzzy logic ---
-normalized_age = ctrl.Antecedent(np.arange(0, 11, 0.1), 'normalizedAge')
+normalized_age = ctrl.Antecedent(np.arange(0, 11, 0.1), 'normalized_age')
 failure_rate=ctrl.Antecedent(np.arange(0, 1, 0.01), 'failure_rate')
 
-normalized_fault_rate_levels = ctrl.Antecedent(np.arange(0, 4, 0.01), 'normalizedfaultRateLevels')
+normalized_fault_rate_levels = ctrl.Antecedent(np.arange(0, 4, 0.01), 'normalized_fault_rate_levels')
 up_time=ctrl.Antecedent(np.arange(0,36,0.01),'up_time')
 
-cost_levels=ctrl.Antecedent(np.arange(0,1001,1),'cost')
+cost_levels=ctrl.Antecedent(np.arange(0,1001,1),'cost_levels')
     
 #Categorie madre
 reliability=ctrl.Consequent(np.arange(0,10.1, 0.01), 'reliability')
@@ -573,7 +573,7 @@ st.subheader("📊 Test di input automatici")
 
 # --- Generazione di tutte le combinazioni
 all_combinations = [
-    {'normalizedAge': round(age, 1), 'normalizedfaultRateLevels': round(fr, 1)}
+    {'normalized_age': round(age, 1), 'normalized_fault_rate_levels': round(fr, 1)}
     for age in np.arange(0,11,1)
     for fr in np.arange(0, 4, 1)
 ]
@@ -582,12 +582,12 @@ all_combinations = [
 def compute_criticities(cases, sim):
     results = []
     for case in cases:
-        sim.input['normalizedAge'] = case['normalizedAge']
-        sim.input['normalizedfaultRateLevels'] = case['normalizedfaultRateLevels']
+        sim.input['normalized_age'] = case['normalized_age']
+        sim.input['normalized_fault_rate_levels'] = case['normalized_fault_rate_levels']
         sim.compute()
         results.append({
-            'Age': case['normalizedAge'],
-            'FailureRate': case['normalizedfaultRateLevels'],
+            'Age': case['normalized_age'],
+            'FailureRate': case['normalized_fault_rate_levels'],
             'Criticity': round(sim.output['Criticity'], 2)
         })
     return pd.DataFrame(results)
