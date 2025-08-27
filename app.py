@@ -304,7 +304,7 @@ rule_m=[
     
 ]
 
-    
+
 
 rules = [
     #ctrl.Rule(normalized_age['New'], criticity['VeryLow']),
@@ -405,7 +405,29 @@ def plot_membership_functions(antecedent, title):
 mission_simulation=ctrl.ControlSystemSimulation(mission_ctrl)
 reliability_simulation=ctrl.ControlSystemSimulation(reliability_ctrl)
 
+rule_f = [
+    #mission high
+    ctrl.Rule(mission['High'] & reliability['High'], criticity['VeryHigh'])
+    ctrl.Rule(mission['High'] & reliability['Medium'], criticity['High'])
+    ctrl.Rule(mission['High'] & reliability['Low'], criticity['High'])
 
+    #mission medium
+    ctrl.Rule(mission['Medium'] & reliability['High'], criticity['VeryHigh'])
+    ctrl.Rule(mission['Medium'] & reliability['Medium'], criticity['Medium'])
+    ctrl.Rule(mission['Medium'] & reliability['Low'], criticity['Low'])
+
+    #mission low
+    ctrl.Rule(mission['Low'] & reliability['High'], criticity['High'])
+    ctrl.Rule(mission['Low'] & reliability['Medium'], criticity['Low'])
+    ctrl.Rule(mission['Low'] & reliability['Low'], criticity['VeryLow'])
+]
+    
+criticity_ctrl = ctrl.ControlSystem(rule_f)
+criticity_simulation = ctrl.ControlSystemSimulation(criticity_ctrl)
+
+# Passi dentro gli output già calcolati
+criticity_simulation.input['mission'] = mission_score
+criticity_simulation.input['reliability'] = reliability_score    
 
 # Initialize a list to store the calculated criticities
 criticities = []
@@ -460,9 +482,13 @@ def show_fuzzy_output(fuzzy_var, sim):
 
     st.pyplot(fig)
     plt.close(fig)
-show_fuzzy_output(reliability, reliability_simulation)
-show_fuzzy_output(mission, mission_simulation)
-#show_fuzzy_output(criticity, criticity_simulation)
+
+return output_value
+reliability_score=show_fuzzy_output(reliability, reliability_simulation)
+mission_score=show_fuzzy_output(mission, mission_simulation)
+criticity_simulation.compute()
+print(final_simulation.output['obsolescence'])
+#criticity_score=show_fuzzy_output(criticity, criticity_simulation)
 
 
 
