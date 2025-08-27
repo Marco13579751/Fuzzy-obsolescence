@@ -212,7 +212,7 @@ reliability_result = ctrl.Antecedent(np.arange(0, 10.1, 0.01), 'reliability_resu
 mission_result = ctrl.Antecedent(np.arange(0, 10.1, 0.01), 'mission_result')
 
 # Add output variable (Consequent)
-criticity = ctrl.Consequent(np.arange(0, 10.1, 0.01), 'Criticity')
+criticity = ctrl.Consequent(np.arange(0, 10.1, 0.01), 'criticity')
 
 
 
