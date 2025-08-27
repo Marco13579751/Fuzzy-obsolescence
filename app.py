@@ -571,15 +571,7 @@ for doc in valutazioni:
 
 
 
-# --- Grafico 3D
-fig = plt.figure(figsize=(8, 6))
-ax = fig.add_subplot(111, projection='3d')
-ax.plot_trisurf(df_all['Age'], df_all['FailureRate'], df_all['Criticity'], cmap='viridis', edgecolor='none')
-ax.set_xlabel('Age')
-ax.set_ylabel('Failure Rate')
-ax.set_zlabel('Criticity')
-ax.set_title('Criticity in funzione di Age e Failure Rate')
-st.pyplot(fig)
+
 
 #ctrl.Rule(normalized_eols['Absent'], criticity['VeryLow']),
 #ctrl.Rule(normalized_eols['PresentEoLBeforeToday'], criticity['High']),
