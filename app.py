@@ -454,36 +454,47 @@ for nome, val in zip(parametri_nome_prova_con_2_parametri, inputs):
         reliability_simulation.input[nome] = valore
 # Compute the fuzzy output (Criticity)
 def show_fuzzy_output(fuzzy_var, sim):
+    # Forzo il calcolo
     sim.compute()
-    print("DEBUG - fuzzy_var.label =", fuzzy_var.label)
-    print("DEBUG - sim.output keys =", sim.output.keys())
+    
+    # Normalizzo il nome (per evitare problemi di maiuscole/minuscole)
+    var_name = fuzzy_var.label
+    output_keys = list(sim.output.keys())
 
-    output_value = sim.output[fuzzy_var.label]
+    # Controllo robusto: cerco ignorando le maiuscole
+    matching_key = None
+    for k in output_keys:
+        if k.lower() == var_name.lower():
+            matching_key = k
+            break
 
+    if matching_key is None:
+        raise KeyError(f"Variabile '{var_name}' non trovata tra le uscite disponibili: {output_keys}")
+
+    output_value = sim.output[matching_key]
+
+    # Plot
     fig, ax = plt.subplots(figsize=(5, 2.5))
     colors = plt.cm.viridis(np.linspace(0, 1, len(fuzzy_var.terms)))
-
     x = fuzzy_var.universe
 
     for idx, term in enumerate(fuzzy_var.terms):
         mf = fuzzy_var[term].mf
         y = mf
 
-        # Plot della curva completa
+        # Plot della curva
         ax.plot(x, y, label=term.capitalize(), linewidth=1, color=colors[idx])
 
-        # Calcolo grado di attivazione del termine
+        # Attivazione
         activation = fuzz.interp_membership(x, y, output_value)
-
-        # Riempiamo solo fino al grado di attivazione
         ax.fill_between(x, 0, np.fmin(activation, y), alpha=0.4, color=colors[idx])
 
-    # Linea verticale sul valore defuzzificato
+    # Linea sul defuzzificato
     ax.axvline(x=output_value, color='red', linestyle='--', linewidth=1,
                label=f'Uscita = {output_value:.2f}')
 
-    # Stile coerente
-    ax.set_title(f"Output fuzzy: {fuzzy_var.label.capitalize()}", fontsize=9, weight='bold', pad=10)
+    # Stile
+    ax.set_title(f"Output fuzzy: {matching_key}", fontsize=9, weight='bold', pad=10)
     ax.set_xlabel("Valore", fontsize=6)
     ax.set_ylabel("Appartenenza", fontsize=6)
     ax.tick_params(labelsize=6)
@@ -506,10 +517,10 @@ mission_score=show_fuzzy_output(mission, mission_simulation)
 criticity_simulation.input['mission_result'] = mission_score
 criticity_simulation.input['reliability_result'] = reliability_score
 
-criticity_simulation.compute()
+#criticity_simulation.compute()
 
 print(criticity_simulation.output['criticity'])
-#criticity_score=show_fuzzy_output(criticity, criticity_simulation)
+criticity_score=show_fuzzy_output(criticity, criticity_simulation)
 
 
 
