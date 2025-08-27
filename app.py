@@ -407,19 +407,19 @@ reliability_simulation=ctrl.ControlSystemSimulation(reliability_ctrl)
 
 rule_f = [
     #mission high
-    ctrl.Rule(mission['High'] & reliability['High'], criticity['VeryHigh'])
-    ctrl.Rule(mission['High'] & reliability['Medium'], criticity['High'])
-    ctrl.Rule(mission['High'] & reliability['Low'], criticity['High'])
+    ctrl.Rule(mission['High'] & reliability['High'], criticity['VeryHigh']),
+    ctrl.Rule(mission['High'] & reliability['Medium'], criticity['High']),
+    ctrl.Rule(mission['High'] & reliability['Low'], criticity['High']),
 
     #mission medium
-    ctrl.Rule(mission['Medium'] & reliability['High'], criticity['VeryHigh'])
-    ctrl.Rule(mission['Medium'] & reliability['Medium'], criticity['Medium'])
-    ctrl.Rule(mission['Medium'] & reliability['Low'], criticity['Low'])
+    ctrl.Rule(mission['Medium'] & reliability['High'], criticity['VeryHigh']),
+    ctrl.Rule(mission['Medium'] & reliability['Medium'], criticity['Medium']),
+    ctrl.Rule(mission['Medium'] & reliability['Low'], criticity['Low']),
 
     #mission low
-    ctrl.Rule(mission['Low'] & reliability['High'], criticity['High'])
-    ctrl.Rule(mission['Low'] & reliability['Medium'], criticity['Low'])
-    ctrl.Rule(mission['Low'] & reliability['Low'], criticity['VeryLow'])
+    ctrl.Rule(mission['Low'] & reliability['High'], criticity['High']),
+    ctrl.Rule(mission['Low'] & reliability['Medium'], criticity['Low']),
+    ctrl.Rule(mission['Low'] & reliability['Low'], criticity['VeryLow']),
 ]
     
 criticity_ctrl = ctrl.ControlSystem(rule_f)
