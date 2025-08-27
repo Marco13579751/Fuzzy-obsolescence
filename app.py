@@ -435,18 +435,7 @@ rule_f = [
 ]
 
     
-criticity_ctrl = ctrl.ControlSystem(rule_f)
-criticity_simulation = ctrl.ControlSystemSimulation(criticity_ctrl)
 
-reliability_score=show_fuzzy_output(reliability, reliability_simulation)
-mission_score=show_fuzzy_output(mission, mission_simulation)
-
-criticity_simulation.input['mission_result'] = mission_score
-criticity_simulation.input['reliability_result'] = reliability_score
-
-criticity_simulation.compute()
-
-print(final_simulation.output['obsolescence'])
 
 # Passi dentro gli output già calcolati
 
@@ -507,6 +496,19 @@ def show_fuzzy_output(fuzzy_var, sim):
     plt.close(fig)
 
     return output_value
+
+criticity_ctrl = ctrl.ControlSystem(rule_f)
+criticity_simulation = ctrl.ControlSystemSimulation(criticity_ctrl)
+
+reliability_score=show_fuzzy_output(reliability, reliability_simulation)
+mission_score=show_fuzzy_output(mission, mission_simulation)
+
+criticity_simulation.input['mission_result'] = mission_score
+criticity_simulation.input['reliability_result'] = reliability_score
+
+criticity_simulation.compute()
+
+print(final_simulation.output['obsolescence'])
 #criticity_score=show_fuzzy_output(criticity, criticity_simulation)
 
 
