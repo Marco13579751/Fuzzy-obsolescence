@@ -483,7 +483,7 @@ def show_fuzzy_output(fuzzy_var, sim):
     st.pyplot(fig)
     plt.close(fig)
 
-return output_value
+    return output_value
 reliability_score=show_fuzzy_output(reliability, reliability_simulation)
 mission_score=show_fuzzy_output(mission, mission_simulation)
 criticity_simulation.compute()
