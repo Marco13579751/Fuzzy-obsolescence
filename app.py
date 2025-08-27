@@ -198,7 +198,7 @@ for i, nome in enumerate(parametri_nome_prova_con_2_parametri):
 
 # --- Fuzzy logic ---
 normalized_age = ctrl.Antecedent(np.arange(0, 11, 0.1), 'normalized_age')
-failure_rate=ctrl.Antecedent(np.arange(0, 1, 0.01), 'failure_rate')
+failure_rate=ctrl.Antecedent(np.arange(0, 1, 0.1), 'failure_rate')
 
 normalized_fault_rate_levels = ctrl.Antecedent(np.arange(0, 4, 0.01), 'normalized_fault_rate_levels')
 up_time=ctrl.Antecedent(np.arange(0,36,0.01),'up_time')
@@ -467,17 +467,17 @@ show_fuzzy_output(mission, mission_simulation)
 
 
 # Store the result (scaled by 10 as in your Matlab code)
-obsolescenza = criticity_simulation.output['Criticity'] * 10
+#obsolescenza = criticity_simulation.output['Criticity'] * 10
 
 
-if obsolescenza is not None:
-    st.write("**Obsolescence score:**", f"{obsolescenza:.2f}")
-    if obsolescenza > 60:
-        st.error("⚠️ Device partially obsolet")
-    else:
-        st.success("✅ Device in good condition")
-else:
-    st.info("🟡 Inserisci almeno un parametro per calcolare lo score")
+#if obsolescenza is not None:
+    #st.write("**Obsolescence score:**", f"{obsolescenza:.2f}")
+   # if obsolescenza > 60:
+       # st.error("⚠️ Device partially obsolet")
+   # else:
+     #   st.success("✅ Device in good condition")
+#else:
+   # st.info("🟡 Inserisci almeno un parametro per calcolare lo score")
 
 
 def gaussmf(x, mean, sigma):
