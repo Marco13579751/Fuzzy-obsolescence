@@ -508,7 +508,7 @@ criticity_simulation.input['reliability_result'] = reliability_score
 
 criticity_simulation.compute()
 
-print(criticity_simulation.output['obsolescence'])
+print(criticity_simulation.output['criticity'])
 #criticity_score=show_fuzzy_output(criticity, criticity_simulation)
 
 
