@@ -208,6 +208,8 @@ cost_levels=ctrl.Antecedent(np.arange(0,1001,1),'cost_levels')
 #Categorie madre
 reliability=ctrl.Consequent(np.arange(0,10.1, 0.01), 'reliability')
 mission=ctrl.Consequent(np.arange(0,10.1, 0.01), 'mission')
+reliability_result = ctrl.Antecedent(np.arange(0, 10.1, 0.01), 'reliability_result')
+mission_result = ctrl.Antecedent(np.arange(0, 10.1, 0.01), 'mission_result')
 
 # Add output variable (Consequent)
 criticity = ctrl.Consequent(np.arange(0, 10.1, 0.01), 'Criticity')
@@ -250,7 +252,7 @@ cost_levels['high']=fuzz.trapmf(cost_levels.universe, [500,800,1000,1000])
 #cost_levels['medium']=fuzz.gaussmf(cost_levels.universe, 500,70)
 #cost_levels['high']=fuzz.gaussmf(cost_levels.universe, 700,70)
 
-#Membership madre
+#Membership madre consequent
 reliability['Low']=fuzz.trapmf(reliability.universe, [0,0,2,5])
 reliability['Medium']=fuzz.trimf(reliability.universe, [3,5,7])
 reliability['High']=fuzz.trapmf(reliability.universe, [5,8,10,10])
@@ -258,6 +260,16 @@ reliability['High']=fuzz.trapmf(reliability.universe, [5,8,10,10])
 mission['Low']=fuzz.trapmf(mission.universe, [0,0,2,5])
 mission['Medium']=fuzz.trimf(mission.universe, [3,5,7])
 mission['High']=fuzz.trapmf(mission.universe, [5,8,10,10])
+
+# Membershipmadre antecedente 
+reliability_result['Low'] = fuzz.trapmf(reliability_result.universe, [0, 0, 2, 5])
+reliability_result['Medium'] = fuzz.trimf(reliability_result.universe, [3, 5, 7])
+reliability_result['High'] = fuzz.trapmf(reliability_result.universe, [5, 8, 10, 10])
+
+mission_result['Low'] = fuzz.trapmf(mission_result.universe, [0, 0, 2, 5])
+mission_result['Medium'] = fuzz.trimf(mission_result.universe, [3, 5, 7])
+mission_result['High'] = fuzz.trapmf(mission_result.universe, [5, 8, 10, 10])
+
 
 # Define membership functions for Criticity
 criticity['VeryLow'] = fuzz.gaussmf(criticity.universe, 1, 0.7)
@@ -406,28 +418,29 @@ mission_simulation=ctrl.ControlSystemSimulation(mission_ctrl)
 reliability_simulation=ctrl.ControlSystemSimulation(reliability_ctrl)
 
 rule_f = [
-    #mission high
-    ctrl.Rule(mission['High'] & reliability['High'], criticity['VeryHigh']),
-    ctrl.Rule(mission['High'] & reliability['Medium'], criticity['High']),
-    ctrl.Rule(mission['High'] & reliability['Low'], criticity['High']),
+    # mission high
+    ctrl.Rule(mission_result['High'] & reliability_result['High'], criticity['VeryHigh']),
+    ctrl.Rule(mission_result['High'] & reliability_result['Medium'], criticity['High']),
+    ctrl.Rule(mission_result['High'] & reliability_result['Low'], criticity['High']),
 
-    #mission medium
-    ctrl.Rule(mission['Medium'] & reliability['High'], criticity['VeryHigh']),
-    ctrl.Rule(mission['Medium'] & reliability['Medium'], criticity['Medium']),
-    ctrl.Rule(mission['Medium'] & reliability['Low'], criticity['Low']),
+    # mission medium
+    ctrl.Rule(mission_result['Medium'] & reliability_result['High'], criticity['VeryHigh']),
+    ctrl.Rule(mission_result['Medium'] & reliability_result['Medium'], criticity['Medium']),
+    ctrl.Rule(mission_result['Medium'] & reliability_result['Low'], criticity['Low']),
 
-    #mission low
-    ctrl.Rule(mission['Low'] & reliability['High'], criticity['High']),
-    ctrl.Rule(mission['Low'] & reliability['Medium'], criticity['Low']),
-    ctrl.Rule(mission['Low'] & reliability['Low'], criticity['VeryLow']),
+    # mission low
+    ctrl.Rule(mission_result['Low'] & reliability_result['High'], criticity['High']),
+    ctrl.Rule(mission_result['Low'] & reliability_result['Medium'], criticity['Low']),
+    ctrl.Rule(mission_result['Low'] & reliability_result['Low'], criticity['VeryLow']),
 ]
+
     
 criticity_ctrl = ctrl.ControlSystem(rule_f)
 criticity_simulation = ctrl.ControlSystemSimulation(criticity_ctrl)
 
 # Passi dentro gli output già calcolati
-criticity_simulation.input['mission'] = mission_score
-criticity_simulation.input['reliability'] = reliability_score    
+criticity_simulation.input['mission_result'] = mission_score
+criticity_simulation.input['reliability_result'] = reliability_score
 
 # Initialize a list to store the calculated criticities
 criticities = []
