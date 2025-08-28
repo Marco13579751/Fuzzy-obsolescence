@@ -589,7 +589,7 @@ if st.button("Save valuation"):
 
     doc = {
         "parametri": parametri_dict,
-        #"obsolescenza": float(f"{obsolescenza:.2f}") if obsolescenza is not None else None
+        "obsolescenza": float(f"{obsolescenza:.2f}") if obsolescenza is not None else None
     }
     
  
