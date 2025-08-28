@@ -606,7 +606,7 @@ def safe_format(v):
     except (ValueError, TypeError):
         return str(v)
 
-# Costruiamo una lista di dizionari dai tuoi dati
+# Costruiamo la lista di dizionari dai tuoi dati
 rows = []
 for doc in valutazioni:
     d = doc.to_dict()
@@ -614,31 +614,39 @@ for doc in valutazioni:
     score = d.get("obsolescenza", "N/D")
 
     if isinstance(params, dict):
-        # Trasformiamo ogni parametro in una colonna separata
-        row = {k: safe_format(v) for k, v in params.items()}
+        row = {k: float(v) if v is not None else 0.0 for k, v in params.items()}
     else:
-        # Se params non è un dict, creiamo colonne generiche
-        row = {f"param_{i+1}": safe_format(v) for i, v in enumerate(params)}
+        row = {f"param_{i+1}": float(v) if v is not None else 0.0 for i, v in enumerate(params)}
 
-    # Aggiungiamo la colonna del punteggio
-    row["Obsolescence"] = safe_format(score)
-
+    row["Obsolescence"] = float(score) if score is not None else 0.0
     rows.append(row)
 
 # Creiamo il DataFrame
 df = pd.DataFrame(rows)
 
-# Visualizzazione della tabella interattiva
+# Configuriamo AgGrid per essere editabile
+gb = GridOptionsBuilder.from_dataframe(df)
+gb.configure_default_column(editable=True, resizable=True)
+gb.configure_column("Obsolescence", editable=False)  # non modificabile
+grid_options = gb.build()
+
+# Visualizziamo la tabella interattiva
 st.write("### Valutazioni")
-st.dataframe(df)  # dataframe interattivo, ordinabile e scrollabile
+grid_response = AgGrid(
+    df,
+    gridOptions=grid_options,
+    data_return_mode=DataReturnMode.FILTERED_AND_SORTED,
+    update_mode=GridUpdateMode.VALUE_CHANGED,
+    fit_columns_on_grid_load=True,
+    enable_enterprise_modules=False,
+    height=400,
+    width='100%',
+)
 
-# Opzione di ordinamento: puoi usare un selectbox per scegliere la colonna e l'ordine
-col_to_sort = st.selectbox("Ordina per colonna:", options=df.columns)
-sort_order = st.radio("Ordine:", ["Crescente", "Decrescente"])
-
-df_sorted = df.sort_values(by=col_to_sort, ascending=(sort_order == "Crescente"))
-st.dataframe(df_sorted)
-
+# Recuperiamo il DataFrame modificato
+df_edited = grid_response['data']
+st.write("### Dati modificati")
+st.dataframe(df_edited)
 
 
 
