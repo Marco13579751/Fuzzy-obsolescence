@@ -606,25 +606,38 @@ def safe_format(v):
     except (ValueError, TypeError):
         return str(v)
 
+# Costruiamo una lista di dizionari dai tuoi dati
+rows = []
 for doc in valutazioni:
     d = doc.to_dict()
     params = d.get("parametri", ["N/D"]*13)
     score = d.get("obsolescenza", "N/D")
 
     if isinstance(params, dict):
-        formatted_params = ", ".join(
-            f"{k}: {safe_format(v)}" for k, v in params.items()
-        )
+        # Trasformiamo ogni parametro in una colonna separata
+        row = {k: safe_format(v) for k, v in params.items()}
     else:
-        formatted_params = str(params)
+        # Se params non è un dict, creiamo colonne generiche
+        row = {f"param_{i+1}": safe_format(v) for i, v in enumerate(params)}
 
-    try:
-        formatted_score = f"{float(score):.2f}"
-    except (ValueError, TypeError):
-        formatted_score = str(score)
+    # Aggiungiamo la colonna del punteggio
+    row["Obsolescence"] = safe_format(score)
 
-    st.write(f"- Parametri: {formatted_params} | Obsolescence: {formatted_score}")
+    rows.append(row)
 
+# Creiamo il DataFrame
+df = pd.DataFrame(rows)
+
+# Visualizzazione della tabella interattiva
+st.write("### Valutazioni")
+st.dataframe(df)  # dataframe interattivo, ordinabile e scrollabile
+
+# Opzione di ordinamento: puoi usare un selectbox per scegliere la colonna e l'ordine
+col_to_sort = st.selectbox("Ordina per colonna:", options=df.columns)
+sort_order = st.radio("Ordine:", ["Crescente", "Decrescente"])
+
+df_sorted = df.sort_values(by=col_to_sort, ascending=(sort_order == "Crescente"))
+st.dataframe(df_sorted)
 
 
 
