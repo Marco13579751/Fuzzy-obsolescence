@@ -525,17 +525,17 @@ criticity_score=show_fuzzy_output(criticity, criticity_simulation)
 
 
 # Store the result (scaled by 10 as in your Matlab code)
-#obsolescenza = criticity_simulation.output['Criticity'] * 10
+obsolescenza = criticity_simulation.output['criticity'] * 10
 
 
-#if obsolescenza is not None:
-    #st.write("**Obsolescence score:**", f"{obsolescenza:.2f}")
-   # if obsolescenza > 60:
-       # st.error("⚠️ Device partially obsolet")
-   # else:
-     #   st.success("✅ Device in good condition")
-#else:
-   # st.info("🟡 Inserisci almeno un parametro per calcolare lo score")
+if obsolescenza is not None:
+    st.write("**Obsolescence score:**", f"{obsolescenza:.2f}")
+    if obsolescenza > 60:
+        st.error("⚠️ Device partially obsolet")
+    else:
+        st.success("✅ Device in good condition")
+else:
+    st.info("🟡 Inserisci almeno un parametro per calcolare lo score")
 
 
 def gaussmf(x, mean, sigma):
