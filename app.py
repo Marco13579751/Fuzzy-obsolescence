@@ -11,6 +11,7 @@ import io
 import base64
 import IPython.display as display
 import datetime
+from st_aggrid import AgGrid, GridOptionsBuilder, DataReturnMode, GridUpdateMode
 
 
 # -- Configurazione e inizializzazione Firebase ---
