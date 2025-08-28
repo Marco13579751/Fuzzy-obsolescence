@@ -612,15 +612,12 @@ for doc in valutazioni:
     d = doc.to_dict()
     params = d.get("parametri", ["N/D"]*13)
     score = d.get("obsolescenza", "N/D")
-
     if isinstance(params, dict):
         row = {k: safe_float(v) for k, v in params.items()}
     else:
         row = {f"param_{i+1}": safe_float(v) for i, v in enumerate(params)}
-
     # qui usiamo safe_float invece di float diretto
     row["Obsolescence"] = safe_float(score)
-
     rows.append(row)
 
 # Creiamo il DataFrame
@@ -628,28 +625,80 @@ df = pd.DataFrame(rows)
 
 # Configuriamo AgGrid per essere editabile
 gb = GridOptionsBuilder.from_dataframe(df)
-gb.configure_default_column(editable=True, resizable=True)
-gb.configure_column("Obsolescence", editable=False)  # non modificabile
+
+# Configurazione generale
+gb.configure_default_column(
+    editable=True, 
+    resizable=True, 
+    sortable=True,
+    filter=True,
+    floatingFilter=False
+)
+
+# Configura colonne specifiche
+for col in df.columns:
+    if col != "Obsolescence":
+        gb.configure_column(
+            col, 
+            editable=True,
+            type=["numericColumn", "numberColumnFilter", "customNumericFormat"],
+            precision=2
+        )
+
+# La colonna Obsolescence non modificabile
+gb.configure_column(
+    "Obsolescence", 
+    editable=False,
+    cellStyle={'backgroundColor': '#f0f0f0'}  # colore di sfondo per indicare non editabile
+)
+
+# Configurazioni aggiuntive per l'editing
+gb.configure_grid_options(
+    enableRangeSelection=True,
+    enableClipboard=True,
+    suppressMovableColumns=False
+)
+
+# Costruisci le opzioni
 grid_options = gb.build()
 
-# Visualizziamo la tabella interattiva
-st.write("### Valutazioni")
+# Visualizza la tabella interattiva
+st.write("### Valutazioni (Clicca doppio click sulle celle per modificare)")
+
 grid_response = AgGrid(
     df,
     gridOptions=grid_options,
     data_return_mode=DataReturnMode.FILTERED_AND_SORTED,
-    update_mode=GridUpdateMode.VALUE_CHANGED,
+    update_mode=GridUpdateMode.MODEL_CHANGED,  # Cambiato da VALUE_CHANGED
     fit_columns_on_grid_load=True,
     enable_enterprise_modules=False,
+    allow_unsafe_jscode=True,  # Aggiunto per permettere alcune funzionalità
     height=400,
     width='100%',
+    reload_data=True,  # Aggiunto per aggiornare i dati
 )
 
-# Recuperiamo il DataFrame modificato
+# Recupera il DataFrame modificato
 df_edited = grid_response['data']
-st.write("### Dati modificati")
-st.dataframe(df_edited)
 
+# Mostra i dati modificati solo se ci sono state modifiche
+if not df.equals(df_edited):
+    st.write("### Dati modificati")
+    st.dataframe(df_edited)
+    
+    # Opzione per salvare le modifiche
+    if st.button("Salva modifiche"):
+        st.success("Modifiche salvate!")
+        # Qui puoi aggiungere il codice per salvare nel database
+        # ad esempio aggiornare la collection Firestore
+else:
+    st.write("### Nessuna modifica effettuata")
+
+# Debug info (rimuovi in produzione)
+with st.expander("Debug Info"):
+    st.write("DataFrame originale shape:", df.shape)
+    st.write("DataFrame editato shape:", df_edited.shape)
+    st.write("Sono uguali?", df.equals(df_edited))
 
 
 
