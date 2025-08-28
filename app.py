@@ -599,11 +599,11 @@ if st.button("Save valuation"):
 st.subheader("📋 Valutations saved")
 valutazioni = db.collection("ospedali").document(user_email).collection("valutazioni").stream()
 
-def safe_format(v):
+def safe_float(value, default=0.0):
     try:
-        return f"{float(v):.2f}"
+        return float(value)
     except (ValueError, TypeError):
-        return str(v)
+        return default
 
 # Costruiamo la lista di dizionari dai tuoi dati
 rows = []
@@ -613,11 +613,13 @@ for doc in valutazioni:
     score = d.get("obsolescenza", "N/D")
 
     if isinstance(params, dict):
-        row = {k: float(v) if v is not None else 0.0 for k, v in params.items()}
+        row = {k: safe_float(v) for k, v in params.items()}
     else:
-        row = {f"param_{i+1}": float(v) if v is not None else 0.0 for i, v in enumerate(params)}
+        row = {f"param_{i+1}": safe_float(v) for i, v in enumerate(params)}
 
-    row["Obsolescence"] = float(score) if score is not None else 0.0
+    # qui usiamo safe_float invece di float diretto
+    row["Obsolescence"] = safe_float(score)
+
     rows.append(row)
 
 # Creiamo il DataFrame
