@@ -574,7 +574,7 @@ old = gaussmf(x_age, 0.8, 0.1)
 #    "Age"
 #)
 plot_membership_functions(normalized_age, 'Age')
-plot_membership_functions(eq_function, 'Failure rate')
+plot_membership_functions(eq_function, 'Equipment function')
 plot_membership_functions(cost_levels, 'Cost')
 plot_membership_functions(failure_rate, 'Failure rate')
 plot_membership_functions(up_time, 'Uptime')
